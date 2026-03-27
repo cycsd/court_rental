@@ -28,13 +28,23 @@ function buildSummaryRows(result: TodayCheckResult): string {
     return result.timeSummary
         .map((ts) => {
             const ratio = `${ts.available} / ${ts.total}`;
+            const statusByCourt = new Map(
+                result.slots
+                    .filter((slot) => slot.time === ts.time)
+                    .map((slot) => [slot.court, slot.rawStatus])
+            );
             const available =
                 ts.availableCourts.length > 0
                     ? ts.availableCourts.map((c) => `<span class="badge ok">${escapeHtml(c)}</span>`).join(" ")
                     : '<span class="badge na">無可用</span>';
             const unavailable =
                 ts.unavailableCourts.length > 0
-                    ? ts.unavailableCourts.map((c) => `<span class="badge warn">${escapeHtml(c)}</span>`).join(" ")
+                    ? ts.unavailableCourts
+                        .map((c) => {
+                            const rawStatus = statusByCourt.get(c) ?? "";
+                            return `<span class="badge warn" title="${escapeHtml(rawStatus)}">${escapeHtml(c)}</span>`;
+                        })
+                        .join(" ")
                     : "—";
             const rowClass = ts.available === 0 ? "row-expired" : ts.available === ts.total ? "row-full" : "row-partial";
             return `<tr class="${rowClass}">
