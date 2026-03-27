@@ -73,4 +73,28 @@ describe("buildTimeSummary", () => {
         expect(summary[0].available).toBe(2);
         expect(summary[0].availableCourts).toEqual(["網球場5", "網球場6"]);
     });
+
+  it("groups the same time on different dates separately", () => {
+    const allSlots = [
+      {
+        date: "2026-03-27",
+        court: "網球場5",
+        time: "08:00",
+        rawStatus: "已過期 停止租借",
+        isRented: false
+      },
+      {
+        date: "2026-03-28",
+        court: "網球場5",
+        time: "08:00",
+        rawStatus: "Xplus",
+        isRented: true
+      }
+    ];
+
+    const summary = buildTimeSummary(allSlots, ["網球場5"]);
+    expect(summary).toHaveLength(2);
+    expect(summary[0]).toMatchObject({ date: "2026-03-27", time: "08:00", available: 1 });
+    expect(summary[1]).toMatchObject({ date: "2026-03-28", time: "08:00", available: 0 });
+  });
 });

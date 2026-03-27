@@ -27,21 +27,9 @@ function buildWeatherBadge(
     return `<span class="${classes} has-tip" data-tip="${escapeHtml(title)}" tabindex="0" role="button">${getWeatherTelegramIcon(weatherText)}</span>`;
 }
 
-function buildRows(result: TodayCheckResult): string {
-  return result.slots
-    .map((slot) => {
-        const statusClass = slot.isRented ? "expired" : "active";
-        const yesNo = slot.isRented ? "是" : "否";
-      return `<tr>
-<td>${escapeHtml(slot.time)}</td>
-<td class="${statusClass}">${escapeHtml(slot.rawStatus)}</td>
-<td>${yesNo}</td>
-</tr>`;
-    })
-    .join("\n");
-}
-function buildSummaryRows(result: TodayCheckResult): string {
-    return result.timeSummary
+function buildSummaryRows(result: TodayCheckResult, targetDate?: string): string {
+  return result.timeSummary
+    .filter((ts) => (targetDate ? ts.date === targetDate : true))
         .map((ts) => {
             const ratio = `${ts.available} / ${ts.total}`;
             const weatherBadge = buildWeatherBadge(
@@ -51,14 +39,13 @@ function buildSummaryRows(result: TodayCheckResult): string {
             );
             const statusByCourt = new Map(
                 result.slots
-                    .filter((slot) => slot.time === ts.time)
+                .filter((slot) => slot.date === ts.date && slot.time === ts.time)
                     .map((slot) => [slot.court, slot.rawStatus])
             );
             const available =
                 ts.availableCourts.length > 0
                     ? ts.availableCourts
-                        .map((c) => {
-                            const rawStatus = statusByCourt.get(c) ?? "";
+                  .map((c) => {
                             return `<span class="badge ok">${escapeHtml(c)}</span>`;
                         })
                         .join(" ")
@@ -73,7 +60,8 @@ function buildSummaryRows(result: TodayCheckResult): string {
                         .join(" ")
                     : "—";
             const rowClass = isCourtUsable(ts) ? "row-usable" : "row-not-usable";
-            return `<tr class="${rowClass}">
+          return `<tr class="${rowClass} daily-summary-row" data-date="${escapeHtml(ts.date)}" data-time="${escapeHtml(ts.time)}">
+<td>${escapeHtml(ts.date)}</td>
 <td>${escapeHtml(ts.time)}</td>
 <td>${ratio}</td>
           <td>${weatherBadge}</td>
@@ -84,14 +72,56 @@ function buildSummaryRows(result: TodayCheckResult): string {
         .join("\n");
 }
 
-function buildDetailRows(result: TodayCheckResult): string {
+function buildRangeSummaryRows(result: TodayCheckResult): string {
+  return result.timeSummary
+    .map((ts) => {
+      const ratio = `${ts.available} / ${ts.total}`;
+      const weatherBadge = buildWeatherBadge(
+        ts.weatherText,
+        ts.temperatureC,
+        ts.precipitationProbability
+      );
+      const statusByCourt = new Map(
+        result.slots
+          .filter((slot) => slot.date === ts.date && slot.time === ts.time)
+          .map((slot) => [slot.court, slot.rawStatus])
+      );
+      const available =
+        ts.availableCourts.length > 0
+          ? ts.availableCourts.map((c) => `<span class="badge ok">${escapeHtml(c)}</span>`).join(" ")
+          : '<span class="badge na">無可用場地</span>';
+      const unavailable =
+        ts.unavailableCourts.length > 0
+          ? ts.unavailableCourts
+            .map((c) => {
+              const rawStatus = statusByCourt.get(c) ?? "";
+              return `<span class="badge warn has-tip" data-tip="${escapeHtml(rawStatus)}" tabindex="0" role="button">${escapeHtml(c)}</span>`;
+            })
+            .join(" ")
+          : "—";
+      const rowClass = isCourtUsable(ts) ? "row-usable" : "row-not-usable";
+      return `<tr class="${rowClass}" data-date="${escapeHtml(ts.date)}" data-time="${escapeHtml(ts.time)}" data-available="${ts.available}" data-total="${ts.total}">
+<td>${escapeHtml(ts.date)}</td>
+<td>${escapeHtml(ts.time)}</td>
+<td>${ratio}</td>
+<td>${weatherBadge}</td>
+<td>${available}</td>
+<td>${unavailable}</td>
+</tr>`;
+    })
+    .join("\n");
+}
+
+function buildDetailRows(result: TodayCheckResult, targetDate?: string): string {
     return result.slots
+      .filter((slot) => (targetDate ? slot.date === targetDate : true))
         .slice()
-        .sort((a, b) => a.time.localeCompare(b.time) || a.court.localeCompare(b.court))
+      .sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time) || a.court.localeCompare(b.court))
         .map((slot) => {
             const statusClass = slot.isRented ? "expired" : "active";
             const yesNo = slot.isRented ? "是" : "否";
-            return `<tr>
+          return `<tr class="daily-detail-row" data-date="${escapeHtml(slot.date)}" data-time="${escapeHtml(slot.time)}">
+<td>${escapeHtml(slot.date)}</td>
 <td>${escapeHtml(slot.time)}</td>
 <td>${escapeHtml(slot.court)}</td>
 <td class="${statusClass}">${escapeHtml(slot.rawStatus)}</td>
@@ -101,8 +131,70 @@ function buildDetailRows(result: TodayCheckResult): string {
         .join("\n");
 }
 
+function buildRangeDetailRows(result: TodayCheckResult): string {
+  return result.slots
+    .slice()
+    .sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time) || a.court.localeCompare(b.court))
+    .map((slot) => {
+      const statusClass = slot.isRented ? "expired" : "active";
+      const yesNo = slot.isRented ? "是" : "否";
+      return `<tr data-date="${escapeHtml(slot.date)}" data-time="${escapeHtml(slot.time)}">
+<td>${escapeHtml(slot.date)}</td>
+<td>${escapeHtml(slot.time)}</td>
+<td>${escapeHtml(slot.court)}</td>
+<td class="${statusClass}">${escapeHtml(slot.rawStatus)}</td>
+<td>${yesNo}</td>
+</tr>`;
+    })
+    .join("\n");
+}
+
+function buildDailyTabs(dates: string[]): string {
+  return dates
+    .map((date, index) => {
+      const activeClass = index === 0 ? " active" : "";
+      return `<button class="day-tab${activeClass}" data-day="${escapeHtml(date)}" type="button">${escapeHtml(date)}</button>`;
+    })
+    .join("\n");
+}
+
+function buildDailyPanels(result: TodayCheckResult, dates: string[]): string {
+  return dates
+    .map((date, index) => {
+      const activeClass = index === 0 ? " active" : "";
+      const summaryRows = buildSummaryRows(result, date);
+      const detailRows = buildDetailRows(result, date);
+      const hasSummary = summaryRows.trim().length > 0;
+      const hasDetail = detailRows.trim().length > 0;
+
+      return `<section class="day-panel${activeClass}" data-day="${escapeHtml(date)}">
+  <h3>${escapeHtml(date)} 每日時段總覽</h3>
+  <table>
+    <thead>
+      <tr><th>時間</th><th>可用數</th><th>天氣</th><th>可用場地(停止租借)</th><th>不可用場地</th></tr>
+    </thead>
+    <tbody>
+      ${hasSummary ? summaryRows.replaceAll(`<td>${escapeHtml(date)}</td>\n`, "") : '<tr><td colspan="5">此日期目前無資料</td></tr>'}
+      <tr class="daily-summary-empty" style="display:none;"><td colspan="5">此日期在目前時間範圍沒有符合資料</td></tr>
+    </tbody>
+  </table>
+  <h3>${escapeHtml(date)} 各場地明細</h3>
+  <table>
+    <thead>
+      <tr><th>時間</th><th>場地</th><th>狀態</th><th>是否已租借</th></tr>
+    </thead>
+    <tbody>
+      ${hasDetail ? detailRows.replaceAll(`<td>${escapeHtml(date)}</td>\n`, "") : '<tr><td colspan="4">此日期目前無資料</td></tr>'}
+      <tr class="daily-detail-empty" style="display:none;"><td colspan="4">此日期在目前時間範圍沒有符合資料</td></tr>
+    </tbody>
+  </table>
+</section>`;
+    })
+    .join("\n");
+}
+
 function buildHtml(result: TodayCheckResult): string {
-    const timeLabels = result.timeSummary.map((ts) => ts.time);
+  const timeLabels = result.timeSummary.map((ts) => `${ts.date} ${ts.time}`);
     const availableData = result.timeSummary.map((ts) => ts.available);
     const unavailableData = result.timeSummary.map((ts) => ts.total - ts.available);
     const timeStatusDetails = result.timeSummary.map((ts) => {
@@ -114,13 +206,20 @@ function buildHtml(result: TodayCheckResult): string {
         );
         return [...availableLines, ...unavailableLines];
     });
+  const dayTabs = buildDailyTabs(result.dateRange.days);
+  const dayPanels = buildDailyPanels(result, result.dateRange.days);
+  const rangeSummaryRows = buildRangeSummaryRows(result);
+  const rangeDetailRows = buildRangeDetailRows(result);
+  const uniqueTimes = [...new Set(result.timeSummary.map((ts) => ts.time))].sort();
+  const minTime = uniqueTimes[0] ?? "00:00";
+  const maxTime = uniqueTimes[uniqueTimes.length - 1] ?? "23:59";
 
   return `<!doctype html>
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>${escapeHtml(result.venueName)} 今日時段報表</title>
+<title>${escapeHtml(result.venueName)} 未來 7 天時段報表</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 :root {
@@ -312,15 +411,95 @@ th, td {
   font-size: 13px;
   line-height: 1.8;
 }
+.date-col {
+  min-width: 110px;
+}
+.day-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.day-tab {
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #334155;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.day-tab.active {
+  border-color: #2563eb;
+  background: #2563eb;
+  color: #ffffff;
+}
+.day-panel {
+  display: none;
+}
+.day-panel.active {
+  display: block;
+}
+.mode-switch {
+  display: inline-flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.mode-btn {
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #334155;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.mode-btn.active {
+  border-color: #0f766e;
+  background: #0f766e;
+  color: #ffffff;
+}
+.mode-panel {
+  display: none;
+}
+.mode-panel.active {
+  display: block;
+}
+.range-filters {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(150px, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.filter-item {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.filter-item input {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 6px 8px;
+  font: inherit;
+  color: var(--text);
+  background: #fff;
+}
+@media (max-width: 900px) {
+  .range-filters {
+    grid-template-columns: repeat(2, minmax(150px, 1fr));
+  }
+}
 </style>
 </head>
 <body>
 <div class="container">
   <div class="card">
-    <h1>${escapeHtml(result.venueName)} 今日時段報表</h1>
+    <h1>${escapeHtml(result.venueName)} 未來 7 天時段報表</h1>
     <div class="meta">
       <div>檢查時間: ${escapeHtml(result.checkedAt)}</div>
       <div>時區: ${escapeHtml(result.timezone)}</div>
+      <div>查詢日期: ${escapeHtml(result.dateRange.startDate)} ~ ${escapeHtml(result.dateRange.endDate)}</div>
       <div>來源: <a href="${escapeHtml(result.venueUrl)}" target="_blank" rel="noreferrer">${escapeHtml(result.venueUrl)}</a></div>
     </div>
   </div>
@@ -343,37 +522,101 @@ th, td {
   </div>
 
   <div class="card">
-    <h2>各時段場地可用彙總</h2>
-    <table>
-      <thead>
-        <tr><th>時間</th><th>可用數</th><th>天氣</th><th>可用場地(停止租借)</th><th>不可用場地</th></tr>
-      </thead>
-      <tbody>
-        ${buildSummaryRows(result)}
-      </tbody>
-    </table>
-  </div>
+    <h2>檢視模式</h2>
+    <div class="mode-switch">
+    <button type="button" class="mode-btn active" data-mode="daily">每日分頁</button>
+      <button type="button" class="mode-btn" data-mode="range">區間總覽</button>
+    </div>
 
-  <div class="card">
-    <h2>各場地時段明細</h2>
-    <table>
-      <thead>
-        <tr><th>時間</th><th>場地</th><th>狀態</th><th>是否已租借</th></tr>
-      </thead>
-      <tbody>
-        ${buildDetailRows(result)}
-      </tbody>
-    </table>
+    <section id="mode-daily" class="mode-panel active">
+      <h3>每日分頁檢視</h3>
+      <div class="range-filters">
+        <label class="filter-item">起始時間
+          <input id="dailyFilterStartTime" type="time" value="${escapeHtml(minTime)}" step="3600" />
+        </label>
+        <label class="filter-item">結束時間
+          <input id="dailyFilterEndTime" type="time" value="${escapeHtml(maxTime)}" step="3600" />
+        </label>
+      </div>
+      <div class="day-tabs">
+        ${dayTabs}
+      </div>
+      ${dayPanels}
+    </section>
+
+    <section id="mode-range" class="mode-panel">
+      <div class="range-filters">
+        <label class="filter-item">起始日期
+          <input id="filterStartDate" type="date" min="${escapeHtml(result.dateRange.startDate)}" max="${escapeHtml(result.dateRange.endDate)}" value="${escapeHtml(result.dateRange.startDate)}" />
+        </label>
+        <label class="filter-item">結束日期
+          <input id="filterEndDate" type="date" min="${escapeHtml(result.dateRange.startDate)}" max="${escapeHtml(result.dateRange.endDate)}" value="${escapeHtml(result.dateRange.endDate)}" />
+        </label>
+        <label class="filter-item">起始時間
+          <input id="filterStartTime" type="time" value="${escapeHtml(minTime)}" step="3600" />
+        </label>
+        <label class="filter-item">結束時間
+          <input id="filterEndTime" type="time" value="${escapeHtml(maxTime)}" step="3600" />
+        </label>
+      </div>
+
+      <h3>區間總覽：各日期時段場地可用彙總</h3>
+      <table>
+        <thead>
+          <tr><th class="date-col">日期</th><th>時間</th><th>可用數</th><th>天氣</th><th>可用場地(停止租借)</th><th>不可用場地</th></tr>
+        </thead>
+        <tbody id="rangeSummaryBody">
+          ${rangeSummaryRows}
+          <tr id="rangeSummaryEmpty" style="display:none;"><td colspan="6">此區間沒有符合資料</td></tr>
+        </tbody>
+      </table>
+
+      <h3>區間總覽：各場地明細</h3>
+      <table>
+        <thead>
+          <tr><th class="date-col">日期</th><th>時間</th><th>場地</th><th>狀態</th><th>是否已租借</th></tr>
+        </thead>
+        <tbody id="rangeDetailBody">
+          ${rangeDetailRows}
+          <tr id="rangeDetailEmpty" style="display:none;"><td colspan="5">此區間沒有符合資料</td></tr>
+        </tbody>
+      </table>
+    </section>
   </div>
 </div>
 
 <script>
+const allSummary = ${JSON.stringify(result.timeSummary)};
+const allSlots = ${JSON.stringify(result.slots)};
+
 const timeLabels = ${JSON.stringify(timeLabels)};
 const availableData = ${JSON.stringify(availableData)};
 const unavailableData = ${JSON.stringify(unavailableData)};
 const timeStatusDetails = ${JSON.stringify(timeStatusDetails)};
 
-new Chart(document.getElementById("stackedChart"), {
+const toDateNumber = (dateStr) => Number(dateStr.replaceAll("-", ""));
+const toTimeNumber = (timeStr) => Number(timeStr.replaceAll(":", ""));
+
+const isInSelectedTimeRange = (time, startTime, endTime) => {
+  if (!startTime || !endTime) return true;
+  const t = toTimeNumber(time);
+  return t >= toTimeNumber(startTime) && t <= toTimeNumber(endTime);
+};
+
+const isInSelectedRange = (date, time) => {
+  const startDate = document.getElementById("filterStartDate").value;
+  const endDate = document.getElementById("filterEndDate").value;
+  const startTime = document.getElementById("filterStartTime").value;
+  const endTime = document.getElementById("filterEndTime").value;
+
+  if (!startDate || !endDate || !startTime || !endTime) return true;
+
+  const d = toDateNumber(date);
+  const t = toTimeNumber(time);
+  return d >= toDateNumber(startDate) && d <= toDateNumber(endDate) && t >= toTimeNumber(startTime) && t <= toTimeNumber(endTime);
+};
+
+const stackedChart = new Chart(document.getElementById("stackedChart"), {
   type: "bar",
   data: {
     labels: timeLabels,
@@ -403,7 +646,7 @@ new Chart(document.getElementById("stackedChart"), {
   }
 });
 
-new Chart(document.getElementById("ratioChart"), {
+const ratioChart = new Chart(document.getElementById("ratioChart"), {
   type: "doughnut",
   data: {
     labels: ["可用(停止租借)", "不可用(已租借)"],
@@ -417,6 +660,142 @@ new Chart(document.getElementById("ratioChart"), {
     plugins: { legend: { position: "bottom" } }
   }
 });
+
+const updateCharts = (filteredSummary) => {
+  const labels = filteredSummary.map((ts) => ts.date + " " + ts.time);
+  const available = filteredSummary.map((ts) => ts.available);
+  const unavailable = filteredSummary.map((ts) => ts.total - ts.available);
+
+  stackedChart.data.labels = labels;
+  stackedChart.data.datasets[0].data = available;
+  stackedChart.data.datasets[1].data = unavailable;
+  stackedChart.options.plugins.tooltip.callbacks.afterBody = (items) => {
+    const dataIndex = items[0]?.dataIndex ?? 0;
+    const summary = filteredSummary[dataIndex];
+    if (!summary) return ["---", "無資料"];
+    const lines = [
+      ...summary.availableCourts.map((court) => "✅ " + court + ": 可用(停止租借)"),
+      ...summary.unavailableCourts.map((court) => "❌ " + court + ": 不可用(已租借)")
+    ];
+    return ["---", ...lines];
+  };
+  stackedChart.update();
+
+  const totalAvailable = available.reduce((sum, value) => sum + value, 0);
+  const totalUnavailable = unavailable.reduce((sum, value) => sum + value, 0);
+  ratioChart.data.datasets[0].data = [totalAvailable, totalUnavailable];
+  ratioChart.update();
+};
+
+const applyRangeFilter = () => {
+  const summaryRows = document.querySelectorAll("#rangeSummaryBody tr[data-date]");
+  const detailRows = document.querySelectorAll("#rangeDetailBody tr[data-date]");
+
+  let summaryVisible = 0;
+  let detailVisible = 0;
+
+  for (const row of summaryRows) {
+    const match = isInSelectedRange(row.dataset.date ?? "", row.dataset.time ?? "");
+    row.style.display = match ? "" : "none";
+    if (match) summaryVisible += 1;
+  }
+
+  for (const row of detailRows) {
+    const match = isInSelectedRange(row.dataset.date ?? "", row.dataset.time ?? "");
+    row.style.display = match ? "" : "none";
+    if (match) detailVisible += 1;
+  }
+
+  document.getElementById("rangeSummaryEmpty").style.display = summaryVisible === 0 ? "" : "none";
+  document.getElementById("rangeDetailEmpty").style.display = detailVisible === 0 ? "" : "none";
+
+  const filteredSummary = allSummary.filter((ts) => isInSelectedRange(ts.date, ts.time));
+  updateCharts(filteredSummary);
+};
+
+const applyDailyFilter = () => {
+  const activeDayTab = document.querySelector(".day-tab.active");
+  const activeDay = activeDayTab?.dataset.day;
+  if (!activeDay) {
+    updateCharts([]);
+    return;
+  }
+
+  const startTimeInput = document.getElementById("dailyFilterStartTime");
+  const endTimeInput = document.getElementById("dailyFilterEndTime");
+
+  if (startTimeInput.value > endTimeInput.value) {
+    endTimeInput.value = startTimeInput.value;
+  }
+
+  const startTime = startTimeInput.value;
+  const endTime = endTimeInput.value;
+
+  const panel = document.querySelector('.day-panel.active[data-day="' + activeDay + '"]');
+  if (!panel) {
+    updateCharts([]);
+    return;
+  }
+
+  const summaryRows = panel.querySelectorAll(".daily-summary-row");
+  const detailRows = panel.querySelectorAll(".daily-detail-row");
+  const summaryEmptyRow = panel.querySelector(".daily-summary-empty");
+  const detailEmptyRow = panel.querySelector(".daily-detail-empty");
+
+  let summaryVisible = 0;
+  let detailVisible = 0;
+
+  for (const row of summaryRows) {
+    const time = row.dataset.time ?? "";
+    const match = isInSelectedTimeRange(time, startTime, endTime);
+    row.style.display = match ? "" : "none";
+    if (match) summaryVisible += 1;
+  }
+
+  for (const row of detailRows) {
+    const time = row.dataset.time ?? "";
+    const match = isInSelectedTimeRange(time, startTime, endTime);
+    row.style.display = match ? "" : "none";
+    if (match) detailVisible += 1;
+  }
+
+  if (summaryEmptyRow) {
+    summaryEmptyRow.style.display = summaryVisible === 0 ? "" : "none";
+  }
+  if (detailEmptyRow) {
+    detailEmptyRow.style.display = detailVisible === 0 ? "" : "none";
+  }
+
+  const filteredSummary = allSummary.filter(
+    (ts) => ts.date === activeDay && isInSelectedTimeRange(ts.time, startTime, endTime)
+  );
+  updateCharts(filteredSummary);
+};
+
+const filterInputs = [
+  document.getElementById("filterStartDate"),
+  document.getElementById("filterEndDate"),
+  document.getElementById("filterStartTime"),
+  document.getElementById("filterEndTime")
+];
+
+for (const input of filterInputs) {
+  input.addEventListener("change", () => {
+    const startDateInput = document.getElementById("filterStartDate");
+    const endDateInput = document.getElementById("filterEndDate");
+    const startTimeInput = document.getElementById("filterStartTime");
+    const endTimeInput = document.getElementById("filterEndTime");
+
+    if (startDateInput.value > endDateInput.value) {
+      endDateInput.value = startDateInput.value;
+    }
+    if (startTimeInput.value > endTimeInput.value) {
+      endTimeInput.value = startTimeInput.value;
+    }
+
+    applyRangeFilter();
+  });
+}
 
 // Mobile-friendly tooltip behavior: tap to toggle, tap elsewhere to close.
 const tipTargets = document.querySelectorAll(".has-tip");
@@ -439,6 +818,59 @@ for (const el of tipTargets) {
 document.addEventListener("click", () => {
   clearTips();
 });
+
+const dayTabs = document.querySelectorAll(".day-tab");
+const dayPanels = document.querySelectorAll(".day-panel");
+const modeButtons = document.querySelectorAll(".mode-btn");
+const modeRange = document.getElementById("mode-range");
+const modeDaily = document.getElementById("mode-daily");
+const dailyFilterStartTime = document.getElementById("dailyFilterStartTime");
+const dailyFilterEndTime = document.getElementById("dailyFilterEndTime");
+
+const setMode = (mode) => {
+  for (const button of modeButtons) {
+    button.classList.toggle("active", button.dataset.mode === mode);
+  }
+  modeRange.classList.toggle("active", mode === "range");
+  modeDaily.classList.toggle("active", mode === "daily");
+
+  if (mode === "daily") {
+    applyDailyFilter();
+  } else {
+    applyRangeFilter();
+  }
+};
+
+for (const button of modeButtons) {
+  button.addEventListener("click", () => {
+    setMode(button.dataset.mode);
+  });
+}
+
+const setActiveDay = (date) => {
+  for (const tab of dayTabs) {
+    tab.classList.toggle("active", tab.dataset.day === date);
+  }
+  for (const panel of dayPanels) {
+    panel.classList.toggle("active", panel.dataset.day === date);
+  }
+};
+
+for (const tab of dayTabs) {
+  tab.addEventListener("click", () => {
+    const date = tab.dataset.day;
+    if (!date) return;
+    setActiveDay(date);
+    if (modeDaily.classList.contains("active")) {
+      applyDailyFilter();
+    }
+  });
+}
+
+dailyFilterStartTime.addEventListener("change", applyDailyFilter);
+dailyFilterEndTime.addEventListener("change", applyDailyFilter);
+
+applyRangeFilter();
 </script>
 </body>
 </html>`;

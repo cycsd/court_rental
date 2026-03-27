@@ -29,7 +29,7 @@ export async function dispatchNotifications(result: TodayCheckResult): Promise<v
         pass: env.EMAIL_SMTP_PASS!,
         from: env.EMAIL_FROM!,
         to: env.EMAIL_TO,
-        subject: "[Court Rental] 今日場地檢查結果",
+        subject: "[Court Rental] 未來 7 天場地檢查結果",
         text: message
       }).then(() => {
         logger.info("Email notification sent");

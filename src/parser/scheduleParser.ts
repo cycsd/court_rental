@@ -21,7 +21,7 @@ function isStopRentStatus(rawStatus: string): boolean {
   return STATUS_KEYWORDS.some((keyword) => rawStatus.includes(keyword));
 }
 
-export function parseTodaySlots(input: ParseInput): SlotStatus[] {
+export function parseSlotsForDate(input: ParseInput): SlotStatus[] {
   const normalized = normalizeWhitespace(input.pageText);
   const md = input.monthDay.replace(/\s+/g, "");
 
@@ -61,14 +61,19 @@ export function parseTodaySlots(input: ParseInput): SlotStatus[] {
   return [...unique.values()].sort((a, b) => a.time.localeCompare(b.time));
 }
 
+export function parseTodaySlots(input: ParseInput): SlotStatus[] {
+  return parseSlotsForDate(input);
+}
+
 export function buildTimeSummary(
     allSlots: SlotStatus[],
     allCourtNames: string[]
 ): TimeSlotSummary[] {
-    const times = [...new Set(allSlots.map((s) => s.time))].sort();
+  const dateTimes = [...new Set(allSlots.map((s) => `${s.date} ${s.time}`))].sort();
 
-    return times.map((time) => {
-        const slotsAtTime = allSlots.filter((s) => s.time === time);
+  return dateTimes.map((dateTime) => {
+    const [date, time] = dateTime.split(" ");
+    const slotsAtTime = allSlots.filter((s) => s.date === date && s.time === time);
         const availableCourts = slotsAtTime
             .filter((s) => !s.isRented)
             .map((s) => s.court);
@@ -78,7 +83,7 @@ export function buildTimeSummary(
 
         return {
             time,
-            date: slotsAtTime[0]?.date ?? "",
+          date,
             availableCourts,
             unavailableCourts,
             total: allCourtNames.length,

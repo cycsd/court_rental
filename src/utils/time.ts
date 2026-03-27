@@ -1,12 +1,14 @@
 import { DateTime } from "luxon";
 
-export function getTodayDateParts(tz: string): {
+export type DateParts = {
   year: number;
   month: number;
   day: number;
   isoDate: string;
   monthDay: string;
-} {
+};
+
+export function getTodayDateParts(tz: string): DateParts {
     const now = DateTime.now().setZone(tz);
   return {
       year: now.year,
@@ -15,6 +17,20 @@ export function getTodayDateParts(tz: string): {
       isoDate: now.toISODate()!,
       monthDay: `${now.month}/${now.day}`
   };
+}
+
+export function getDateRangeParts(tz: string, daysAhead: number): DateParts[] {
+  const start = DateTime.now().setZone(tz).startOf("day");
+  return Array.from({ length: daysAhead + 1 }, (_, offset) => {
+    const date = start.plus({ days: offset });
+    return {
+      year: date.year,
+      month: date.month,
+      day: date.day,
+      isoDate: date.toISODate()!,
+      monthDay: `${date.month}/${date.day}`
+    };
+  });
 }
 
 export function nowIsoInTimezone(tz: string): string {

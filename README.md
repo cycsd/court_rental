@@ -2,6 +2,8 @@
 
 TypeScript tool that checks today's timeslots on Taipei VBS venue page and marks whether each slot is "expired / stop-rent".
 
+Current behavior: fetches data for today plus the next 6 days (7 days total).
+
 ## Quick Start
 
 1. Install dependencies:
@@ -39,7 +41,7 @@ npm run schedule
 4. Output JSON is written to:
 
 - `output/today-status.json`
-- `output/today-status.html` (visual chart report)
+- `output/today-status.html` (7-day visual chart report)
 
 ## Notifications
 
@@ -110,6 +112,9 @@ WEATHER_LON=121.507
     - 改抓資料使用 github action
     - 顯示這些資料用 github page
 - 分成以天或以周顯示
+- 以使用者開啟頁面的日期及時間作為起始的篩選條件
+    - 修正下個月的資訊沒有抓到問題
+    - 修正月底最後一日狀態抓到 comment info 問題
 - [x] 可以抓不同場地的資料
 - [x] 加入各時段天氣
 - [x] 依照天氣及是否有租借判斷場地是否可以使用，判斷依據

@@ -24,6 +24,11 @@ export type TodayCheckResult = {
   venueUrl: string;
   checkedAt: string;
   timezone: string;
+  dateRange: {
+    startDate: string;
+    endDate: string;
+    days: string[];
+  };
     courts: string[];
   totalSlots: number;
     rentedSlots: number;

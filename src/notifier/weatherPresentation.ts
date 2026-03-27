@@ -12,12 +12,12 @@ export type WeatherIconType =
   | "unknown";
 
 export function isRainyWeather(weatherText?: string, precipitationProbability?: number): boolean {
-  if ((precipitationProbability ?? 0) >= 30) {
-    return true;
-  }
+  // if ((precipitationProbability ?? 0) >= 30) {
+  //   return true;
+  // }
 
   const text = weatherText ?? "";
-  return /(雨|陣雨|雷雨|毛毛雨|凍雨)/.test(text);
+  return (precipitationProbability ?? 0) >= 30 && /(雨|陣雨|雷雨|毛毛雨|凍雨)/.test(text);
 }
 
 export function getWeatherIconType(weatherText?: string): WeatherIconType {
@@ -112,7 +112,7 @@ export type WeatherSnapshot = {
 
 export function isCourtWetted(
     ts: TimeSlotSummary,
-    weatherHistory: (hourKey: string) => WeatherSnapshot | undefined
+  weatherHistory: (dateHourKey: string) => WeatherSnapshot | undefined
 ): boolean {
     // 條件二：當前時段若下雨，視為場地潮濕
     if (isRainyWeather(ts.weatherText, ts.precipitationProbability)) return true;
@@ -125,10 +125,10 @@ export function isCourtWetted(
     const lookupPrevHours = (count: number): WeatherSnapshot[] =>
         Array.from({ length: count }, (_, i) => currentHour - count + i)
             .filter((h) => h >= 0)
-            .map((h) => weatherHistory(`${String(h).padStart(2, "0")}:00`))
+        .map((h) => weatherHistory(`${ts.date} ${String(h).padStart(2, "0")}:00`))
             .filter((w): w is WeatherSnapshot => w != null);
 
-    const prev7 = lookupPrevHours(7);
+  const prev7 = lookupPrevHours(6);
     const prev5 = lookupPrevHours(5);
 
     const prev7NoRain = prev7.every(

@@ -34,8 +34,9 @@ function weatherCodeText(code: number): string {
 }
 
 function hourKey(isoTime: string): string {
+  const date = isoTime.slice(0, 10);
   const hour = isoTime.slice(11, 13);
-  return `${hour}:00`;
+  return `${date} ${hour}:00`;
 }
 
 export async function fetchTodayHourlyWeather(
@@ -49,12 +50,26 @@ export async function fetchTodayHourlyWeather(
   url.searchParams.set("hourly", "temperature_2m,precipitation_probability,weather_code");
   url.searchParams.set("timezone", timezone);
 
-  const response = await fetch(url.toString());
-  if (!response.ok) {
-    throw new Error(`Open-Meteo request failed with HTTP ${response.status}`);
+  let lastError: unknown;
+  let data: OpenMeteoResponse | null = null;
+
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      const response = await fetch(url.toString());
+      if (!response.ok) {
+        throw new Error(`Open-Meteo request failed with HTTP ${response.status}`);
+      }
+      data = (await response.json()) as OpenMeteoResponse;
+      break;
+    } catch (error) {
+      lastError = error;
+    }
   }
 
-  const data = (await response.json()) as OpenMeteoResponse;
+  if (!data) {
+    throw new Error(`Open-Meteo request failed after retries: ${String(lastError)}`);
+  }
+
   const hourly = data.hourly;
   const map = new Map<string, WeatherAtHour>();
 
@@ -80,7 +95,7 @@ export function mergeWeatherToSummary(
 ): TimeSlotSummary[] {
   // First pass: merge weather fields
   const merged = summary.map((slot) => {
-    const weather = weatherMap.get(slot.time);
+    const weather = weatherMap.get(`${slot.date} ${slot.time}`);
     if (!weather) {
       return slot;
     }
@@ -93,7 +108,7 @@ export function mergeWeatherToSummary(
   });
 
   // Second pass: compute isWetted now that every slot has weather data
-  // weatherMap has all 24 hours so lookups like 01:00-07:00 work correctly for early slots
+  // weatherMap has hourly entries across days so prev-hour lookups stay on the same date.
   return merged.map((slot) => ({
     ...slot,
     isWetted: isCourtWetted(slot, (key) => weatherMap.get(key))
