@@ -59,7 +59,7 @@ function buildSummaryRows(result: TodayCheckResult): string {
                     ? ts.availableCourts
                         .map((c) => {
                             const rawStatus = statusByCourt.get(c) ?? "";
-                            return `<span class="badge ok" title="${escapeHtml(rawStatus)}">${escapeHtml(c)}</span>`;
+                            return `<span class="badge ok">${escapeHtml(c)}</span>`;
                         })
                         .join(" ")
                     : '<span class="badge na">無可用</span>';
