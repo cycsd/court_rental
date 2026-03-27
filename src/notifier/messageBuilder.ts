@@ -1,4 +1,5 @@
 import type { TodayCheckResult } from "../types/schedule.js";
+import { formatIsoDateWithWeekday } from "../utils/time.js";
 import { buildTelegramWeatherSummary, isCourtUsable } from "./weatherPresentation.js";
 
 export function buildNotificationMessage(result: TodayCheckResult): string {
@@ -16,7 +17,7 @@ export function buildNotificationMessage(result: TodayCheckResult): string {
                 ts.temperatureC,
                 ts.precipitationProbability
             );
-            return `${icon} ${ts.date} ${ts.time}  ${ts.available}/${ts.total}  ${weatherSummary}  ${label}`;
+            return `${icon} ${formatIsoDateWithWeekday(ts.date, result.timezone)} ${ts.time}  ${ts.available}/${ts.total}  ${weatherSummary}  ${label}`;
         })
         .join("\n");
 
@@ -26,7 +27,7 @@ export function buildNotificationMessage(result: TodayCheckResult): string {
   return [
       "🎾 Court Rental 未來 7 天場地狀態",
       `🕐 ${result.checkedAt}`,
-      `📅 範圍：${result.dateRange.startDate} ~ ${result.dateRange.endDate}`,
+      `📅 範圍：${formatIsoDateWithWeekday(result.dateRange.startDate, result.timezone)} ~ ${formatIsoDateWithWeekday(result.dateRange.endDate, result.timezone)}`,
       `🏟️ 場地：${courts}`,
       `📊 有可用(停止租借)場地的時段：${availableCount} / ${result.timeSummary.length}`,
       `🎯 適合打球的時段：${usableCount} / ${result.timeSummary.length}`,

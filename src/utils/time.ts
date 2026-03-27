@@ -36,3 +36,9 @@ export function getDateRangeParts(tz: string, daysAhead: number): DateParts[] {
 export function nowIsoInTimezone(tz: string): string {
     return DateTime.now().setZone(tz).toISO()!;
 }
+
+export function formatIsoDateWithWeekday(isoDate: string, tz: string): string {
+  const date = DateTime.fromISO(isoDate, { zone: tz });
+  const weekdayText = ["週一", "週二", "週三", "週四", "週五", "週六", "週日"][date.weekday - 1] ?? "";
+  return `${date.toISODate()} (${weekdayText})`;
+}

@@ -1,4 +1,5 @@
 import type { TodayCheckResult } from "../types/schedule.js";
+import { formatIsoDateWithWeekday } from "../utils/time.js";
 import { isCourtUsable } from "./weatherPresentation.js";
 
 export function printConsoleSummary(result: TodayCheckResult): void {
@@ -7,7 +8,7 @@ export function printConsoleSummary(result: TodayCheckResult): void {
   console.log(`URL: ${result.venueUrl}`);
   console.log(`Checked At: ${result.checkedAt}`);
   console.log(`Timezone: ${result.timezone}`);
-  console.log(`Date Range: ${result.dateRange.startDate} ~ ${result.dateRange.endDate}`);
+  console.log(`Date Range: ${formatIsoDateWithWeekday(result.dateRange.startDate, result.timezone)} ~ ${formatIsoDateWithWeekday(result.dateRange.endDate, result.timezone)}`);
     console.log(`Courts: ${result.courts.join(", ")}`);
   console.log(`Total Slots: ${result.totalSlots}`);
     console.log(`Rented Slots (視為不可用): ${result.rentedSlots}`);
@@ -27,7 +28,7 @@ export function printConsoleSummary(result: TodayCheckResult): void {
             ? `${ts.weatherText} ${ts.temperatureC?.toFixed(1) ?? "-"}C/${ts.precipitationProbability ?? "-"}%`
             : "-";
         const available = ts.availableCourts.length > 0 ? ts.availableCourts.join(", ") : "無可用(停止租借)場地";
-      console.log(`${usableIcon} ${ts.date} | ${ts.time} | ${ratio.padEnd(6)} | ${weather.padEnd(18)} | ${available}`);
+      console.log(`${usableIcon} ${formatIsoDateWithWeekday(ts.date, result.timezone)} | ${ts.time} | ${ratio.padEnd(6)} | ${weather.padEnd(18)} | ${available}`);
     }
 
   console.log("\n=== 各場地日期時段明細 ===");
@@ -37,7 +38,7 @@ export function printConsoleSummary(result: TodayCheckResult): void {
             .filter((s) => s.court === court)
           .sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
         for (const slot of courtSlots) {
-          console.log(`  ${slot.date} ${slot.time} | ${slot.isRented ? "Y" : "N"} | ${slot.rawStatus}`);
+          console.log(`  ${formatIsoDateWithWeekday(slot.date, result.timezone)} ${slot.time} | ${slot.isRented ? "Y" : "N"} | ${slot.rawStatus}`);
         }
   }
 }

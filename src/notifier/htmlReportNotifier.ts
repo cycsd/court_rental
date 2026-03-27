@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import type { TodayCheckResult } from "../types/schedule.js";
+import { formatIsoDateWithWeekday } from "../utils/time.js";
 import {
     buildWeatherTooltipText,
     getWeatherBadgeClassName,
@@ -49,7 +50,7 @@ function buildSummaryRows(result: TodayCheckResult, targetDate?: string): string
                             return `<span class="badge ok">${escapeHtml(c)}</span>`;
                         })
                         .join(" ")
-                    : '<span class="badge na">無可用</span>';
+                : '<span class="badge na">無可用場地</span>';
             const unavailable =
                 ts.unavailableCourts.length > 0
                     ? ts.unavailableCourts
@@ -61,7 +62,7 @@ function buildSummaryRows(result: TodayCheckResult, targetDate?: string): string
                     : "—";
             const rowClass = isCourtUsable(ts) ? "row-usable" : "row-not-usable";
           return `<tr class="${rowClass} daily-summary-row" data-date="${escapeHtml(ts.date)}" data-time="${escapeHtml(ts.time)}">
-<td>${escapeHtml(ts.date)}</td>
+<td>${escapeHtml(formatIsoDateWithWeekday(ts.date, result.timezone))}</td>
 <td>${escapeHtml(ts.time)}</td>
 <td>${ratio}</td>
           <td>${weatherBadge}</td>
@@ -101,7 +102,7 @@ function buildRangeSummaryRows(result: TodayCheckResult): string {
           : "—";
       const rowClass = isCourtUsable(ts) ? "row-usable" : "row-not-usable";
       return `<tr class="${rowClass}" data-date="${escapeHtml(ts.date)}" data-time="${escapeHtml(ts.time)}" data-available="${ts.available}" data-total="${ts.total}">
-<td>${escapeHtml(ts.date)}</td>
+<td>${escapeHtml(formatIsoDateWithWeekday(ts.date, result.timezone))}</td>
 <td>${escapeHtml(ts.time)}</td>
 <td>${ratio}</td>
 <td>${weatherBadge}</td>
@@ -121,7 +122,7 @@ function buildDetailRows(result: TodayCheckResult, targetDate?: string): string 
             const statusClass = slot.isRented ? "expired" : "active";
             const yesNo = slot.isRented ? "是" : "否";
           return `<tr class="daily-detail-row" data-date="${escapeHtml(slot.date)}" data-time="${escapeHtml(slot.time)}">
-<td>${escapeHtml(slot.date)}</td>
+<td>${escapeHtml(formatIsoDateWithWeekday(slot.date, result.timezone))}</td>
 <td>${escapeHtml(slot.time)}</td>
 <td>${escapeHtml(slot.court)}</td>
 <td class="${statusClass}">${escapeHtml(slot.rawStatus)}</td>
@@ -139,7 +140,7 @@ function buildRangeDetailRows(result: TodayCheckResult): string {
       const statusClass = slot.isRented ? "expired" : "active";
       const yesNo = slot.isRented ? "是" : "否";
       return `<tr data-date="${escapeHtml(slot.date)}" data-time="${escapeHtml(slot.time)}">
-<td>${escapeHtml(slot.date)}</td>
+<td>${escapeHtml(formatIsoDateWithWeekday(slot.date, result.timezone))}</td>
 <td>${escapeHtml(slot.time)}</td>
 <td>${escapeHtml(slot.court)}</td>
 <td class="${statusClass}">${escapeHtml(slot.rawStatus)}</td>
@@ -149,11 +150,11 @@ function buildRangeDetailRows(result: TodayCheckResult): string {
     .join("\n");
 }
 
-function buildDailyTabs(dates: string[]): string {
+function buildDailyTabs(dates: string[], timezone: string): string {
   return dates
     .map((date, index) => {
       const activeClass = index === 0 ? " active" : "";
-      return `<button class="day-tab${activeClass}" data-day="${escapeHtml(date)}" type="button">${escapeHtml(date)}</button>`;
+      return `<button class="day-tab${activeClass}" data-day="${escapeHtml(date)}" type="button">${escapeHtml(formatIsoDateWithWeekday(date, timezone))}</button>`;
     })
     .join("\n");
 }
@@ -167,24 +168,26 @@ function buildDailyPanels(result: TodayCheckResult, dates: string[]): string {
       const hasSummary = summaryRows.trim().length > 0;
       const hasDetail = detailRows.trim().length > 0;
 
+      const formattedDate = formatIsoDateWithWeekday(date, result.timezone);
+
       return `<section class="day-panel${activeClass}" data-day="${escapeHtml(date)}">
-  <h3>${escapeHtml(date)} 每日時段總覽</h3>
+  <h3>${escapeHtml(formattedDate)} 每日時段總覽</h3>
   <table>
     <thead>
       <tr><th>時間</th><th>可用數</th><th>天氣</th><th>可用場地(停止租借)</th><th>不可用場地</th></tr>
     </thead>
     <tbody>
-      ${hasSummary ? summaryRows.replaceAll(`<td>${escapeHtml(date)}</td>\n`, "") : '<tr><td colspan="5">此日期目前無資料</td></tr>'}
+      ${hasSummary ? summaryRows.replaceAll(`<td>${escapeHtml(formattedDate)}</td>\n`, "") : '<tr><td colspan="5">此日期目前無資料</td></tr>'}
       <tr class="daily-summary-empty" style="display:none;"><td colspan="5">此日期在目前時間範圍沒有符合資料</td></tr>
     </tbody>
   </table>
-  <h3>${escapeHtml(date)} 各場地明細</h3>
+  <h3>${escapeHtml(formattedDate)} 各場地明細</h3>
   <table>
     <thead>
       <tr><th>時間</th><th>場地</th><th>狀態</th><th>是否已租借</th></tr>
     </thead>
     <tbody>
-      ${hasDetail ? detailRows.replaceAll(`<td>${escapeHtml(date)}</td>\n`, "") : '<tr><td colspan="4">此日期目前無資料</td></tr>'}
+      ${hasDetail ? detailRows.replaceAll(`<td>${escapeHtml(formattedDate)}</td>\n`, "") : '<tr><td colspan="4">此日期目前無資料</td></tr>'}
       <tr class="daily-detail-empty" style="display:none;"><td colspan="4">此日期在目前時間範圍沒有符合資料</td></tr>
     </tbody>
   </table>
@@ -194,7 +197,10 @@ function buildDailyPanels(result: TodayCheckResult, dates: string[]): string {
 }
 
 function buildHtml(result: TodayCheckResult): string {
-  const timeLabels = result.timeSummary.map((ts) => `${ts.date} ${ts.time}`);
+  const dateLabelMap = Object.fromEntries(
+    result.dateRange.days.map((date) => [date, formatIsoDateWithWeekday(date, result.timezone)])
+  );
+  const timeLabels = result.timeSummary.map((ts) => `${dateLabelMap[ts.date] ?? ts.date} ${ts.time}`);
     const availableData = result.timeSummary.map((ts) => ts.available);
     const unavailableData = result.timeSummary.map((ts) => ts.total - ts.available);
     const timeStatusDetails = result.timeSummary.map((ts) => {
@@ -206,7 +212,7 @@ function buildHtml(result: TodayCheckResult): string {
         );
         return [...availableLines, ...unavailableLines];
     });
-  const dayTabs = buildDailyTabs(result.dateRange.days);
+  const dayTabs = buildDailyTabs(result.dateRange.days, result.timezone);
   const dayPanels = buildDailyPanels(result, result.dateRange.days);
   const rangeSummaryRows = buildRangeSummaryRows(result);
   const rangeDetailRows = buildRangeDetailRows(result);
@@ -499,7 +505,7 @@ th, td {
     <div class="meta">
       <div>檢查時間: ${escapeHtml(result.checkedAt)}</div>
       <div>時區: ${escapeHtml(result.timezone)}</div>
-      <div>查詢日期: ${escapeHtml(result.dateRange.startDate)} ~ ${escapeHtml(result.dateRange.endDate)}</div>
+      <div>查詢日期: ${escapeHtml(formatIsoDateWithWeekday(result.dateRange.startDate, result.timezone))} ~ ${escapeHtml(formatIsoDateWithWeekday(result.dateRange.endDate, result.timezone))}</div>
       <div>來源: <a href="${escapeHtml(result.venueUrl)}" target="_blank" rel="noreferrer">${escapeHtml(result.venueUrl)}</a></div>
     </div>
   </div>
@@ -588,6 +594,7 @@ th, td {
 <script>
 const allSummary = ${JSON.stringify(result.timeSummary)};
 const allSlots = ${JSON.stringify(result.slots)};
+const dateLabelMap = ${JSON.stringify(dateLabelMap)};
 
 const timeLabels = ${JSON.stringify(timeLabels)};
 const availableData = ${JSON.stringify(availableData)};
@@ -662,7 +669,7 @@ const ratioChart = new Chart(document.getElementById("ratioChart"), {
 });
 
 const updateCharts = (filteredSummary) => {
-  const labels = filteredSummary.map((ts) => ts.date + " " + ts.time);
+  const labels = filteredSummary.map((ts) => (dateLabelMap[ts.date] ?? ts.date) + " " + ts.time);
   const available = filteredSummary.map((ts) => ts.available);
   const unavailable = filteredSummary.map((ts) => ts.total - ts.available);
 
