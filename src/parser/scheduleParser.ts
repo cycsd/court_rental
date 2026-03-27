@@ -1,4 +1,4 @@
-import type { SlotStatus } from "../types/schedule.js";
+import type { SlotStatus, TimeSlotSummary } from "../types/schedule.js";
 
 type ParseInput = {
   pageText: string;
@@ -59,4 +59,30 @@ export function parseTodaySlots(input: ParseInput): SlotStatus[] {
   }
 
   return [...unique.values()].sort((a, b) => a.time.localeCompare(b.time));
+}
+
+export function buildTimeSummary(
+    allSlots: SlotStatus[],
+    allCourtNames: string[]
+): TimeSlotSummary[] {
+    const times = [...new Set(allSlots.map((s) => s.time))].sort();
+
+    return times.map((time) => {
+        const slotsAtTime = allSlots.filter((s) => s.time === time);
+        const availableCourts = slotsAtTime
+            .filter((s) => !s.isExpiredStopRent)
+            .map((s) => s.court);
+        const unavailableCourts = slotsAtTime
+            .filter((s) => s.isExpiredStopRent)
+            .map((s) => s.court);
+
+        return {
+            time,
+            date: slotsAtTime[0]?.date ?? "",
+            availableCourts,
+            unavailableCourts,
+            total: allCourtNames.length,
+            available: availableCourts.length
+        };
+    });
 }

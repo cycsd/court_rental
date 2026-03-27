@@ -1,29 +1,28 @@
 import type { TodayCheckResult } from "../types/schedule.js";
 
 export function buildNotificationMessage(result: TodayCheckResult): string {
-  const expiredSlots = result.slots.filter((slot) => slot.isExpiredStopRent);
-  const activeSlots = result.slots.filter((slot) => !slot.isExpiredStopRent);
+    const courts = result.courts.join("、");
+    const timeLine = result.timeSummary
+        .map((ts) => {
+            const icon = ts.available === ts.total ? "✅" : ts.available > 0 ? "⚠️" : "❌";
+            const label =
+                ts.available === 0
+                    ? "全部停止租借"
+                    : ts.availableCourts.join("、");
+            return `${icon} ${ts.time}  ${ts.available}/${ts.total}  ${label}`;
+        })
+        .join("\n");
 
-  const expiredText =
-    expiredSlots.length > 0
-      ? expiredSlots.map((slot) => `${slot.time} ${slot.rawStatus}`).join("\n")
-      : "無";
-
-  const activeText =
-    activeSlots.length > 0 ? activeSlots.map((slot) => `${slot.time} ${slot.rawStatus}`).join("\n") : "無";
-
+    const availableCount = result.timeSummary.filter((ts) => ts.available > 0).length;
   return [
-    "Court Rental 每日檢查結果",
-    `時間: ${result.checkedAt}`,
-    `總時段: ${result.totalSlots}`,
-    `已過期/停止租借: ${result.expiredSlots}`,
-    `可用或其他狀態: ${result.totalSlots - result.expiredSlots}`,
+      "🎾 Court Rental 今日場地狀態",
+      `🕐 ${result.checkedAt}`,
+      `🏟️ 場地：${courts}`,
+      `📊 有可用場地的時段：${availableCount} / ${result.timeSummary.length}`,
     "",
-    "已過期/停止租借時段:",
-    expiredText,
-    "",
-    "其他時段:",
-    activeText,
+      "各時段（✅ 全可用  ⚠️ 部分可用  ❌ 全停止）",
+      "─────────────────────────",
+      timeLine,
     "",
     `來源: ${result.venueUrl}`
   ].join("\n");
