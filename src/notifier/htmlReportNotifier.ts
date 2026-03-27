@@ -24,7 +24,7 @@ function buildWeatherBadge(
 ): string {
     const title = buildWeatherTooltipText(weatherText, temperatureC, precipitationProbability);
     const classes = getWeatherBadgeClassName(weatherText, precipitationProbability);
-    return `<span class="${classes}" title="${escapeHtml(title)}">${getWeatherTelegramIcon(weatherText)}</span>`;
+    return `<span class="${classes} has-tip" data-tip="${escapeHtml(title)}" tabindex="0" role="button">${getWeatherTelegramIcon(weatherText)}</span>`;
 }
 
 function buildRows(result: TodayCheckResult): string {
@@ -68,7 +68,7 @@ function buildSummaryRows(result: TodayCheckResult): string {
                     ? ts.unavailableCourts
                         .map((c) => {
                             const rawStatus = statusByCourt.get(c) ?? "";
-                            return `<span class="badge warn" title="${escapeHtml(rawStatus)}">${escapeHtml(c)}</span>`;
+                            return `<span class="badge warn has-tip" data-tip="${escapeHtml(rawStatus)}" tabindex="0" role="button">${escapeHtml(c)}</span>`;
                         })
                         .join(" ")
                     : "—";
@@ -176,6 +176,7 @@ body {
   .stats { grid-template-columns: 1fr; }
 }
 .badge {
+  position: relative;
   display: inline-block;
   border-radius: 6px;
   padding: 2px 8px;
@@ -187,6 +188,7 @@ body {
 .badge.warn { background: #fee2e2; color: #991b1b; }
 .badge.na { background: #f1f5f9; color: var(--muted); }
 .weather-badge {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -240,6 +242,55 @@ body {
 .weather-badge span, .weather-badge {
   font-size: 20px;
   line-height: 1;
+}
+.has-tip::after {
+  content: attr(data-tip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.96);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.45;
+  padding: 6px 8px;
+  border-radius: 8px;
+  white-space: nowrap;
+  max-width: min(280px, 80vw);
+  overflow-wrap: normal;
+  white-space: normal;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.25);
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 0.15s ease;
+  z-index: 20;
+}
+.has-tip::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 2px);
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: rgba(15, 23, 42, 0.96);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease;
+  z-index: 20;
+}
+.has-tip:hover::after,
+.has-tip:hover::before,
+.has-tip:focus-visible::after,
+.has-tip:focus-visible::before,
+.has-tip.show-tip::after,
+.has-tip.show-tip::before {
+  opacity: 1;
+  visibility: visible;
+}
+.has-tip {
+  cursor: pointer;
 }
 .row-usable { background: #f0fdf4; }
 .row-not-usable { background: #fff5f5; }
@@ -364,6 +415,28 @@ new Chart(document.getElementById("ratioChart"), {
     responsive: true,
     plugins: { legend: { position: "bottom" } }
   }
+});
+
+// Mobile-friendly tooltip behavior: tap to toggle, tap elsewhere to close.
+const tipTargets = document.querySelectorAll(".has-tip");
+const clearTips = () => {
+  for (const el of tipTargets) el.classList.remove("show-tip");
+};
+
+for (const el of tipTargets) {
+  el.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const shown = el.classList.contains("show-tip");
+    clearTips();
+    if (!shown) el.classList.add("show-tip");
+  });
+  el.addEventListener("blur", () => {
+    el.classList.remove("show-tip");
+  });
+}
+
+document.addEventListener("click", () => {
+  clearTips();
 });
 </script>
 </body>
