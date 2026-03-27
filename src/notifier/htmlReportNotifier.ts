@@ -68,18 +68,14 @@ function buildHtml(result: TodayCheckResult): string {
     const timeLabels = result.timeSummary.map((ts) => ts.time);
     const availableData = result.timeSummary.map((ts) => ts.available);
     const unavailableData = result.timeSummary.map((ts) => ts.total - ts.available);
-    const courtColors = ["#6366f1", "#22c55e", "#f59e0b", "#3b82f6", "#ec4899"];
-    const courtNames = result.courts;
-    // Per-court dataset for grouped bar (1 = expired, 0 = available within a court)
-    const courtDatasets = courtNames.map((court, idx) => {
-        const data = result.timeSummary.map((ts) =>
-            ts.unavailableCourts.includes(court) ? 1 : 0
+    const timeStatusDetails = result.timeSummary.map((ts) => {
+        const availableLines = ts.availableCourts.map(
+            (court) => `✅ ${court}: 可用(停止租借)`
         );
-        return {
-            label: court,
-            data,
-            backgroundColor: courtColors[idx % courtColors.length]
-        };
+        const unavailableLines = ts.unavailableCourts.map(
+            (court) => `❌ ${court}: 不可用(已租借)`
+        );
+        return [...availableLines, ...unavailableLines];
     });
 
   return `<!doctype html>
@@ -232,7 +228,7 @@ th, td {
 const timeLabels = ${JSON.stringify(timeLabels)};
 const availableData = ${JSON.stringify(availableData)};
 const unavailableData = ${JSON.stringify(unavailableData)};
-const courtDatasets = ${JSON.stringify(courtDatasets)};
+const timeStatusDetails = ${JSON.stringify(timeStatusDetails)};
 
 new Chart(document.getElementById("stackedChart"), {
   type: "bar",
@@ -249,7 +245,18 @@ new Chart(document.getElementById("stackedChart"), {
       x: { stacked: true },
       y: { stacked: true, beginAtZero: true, ticks: { stepSize: 1 } }
     },
-    plugins: { legend: { position: "bottom" } }
+    plugins: {
+      legend: { position: "bottom" },
+      tooltip: {
+        callbacks: {
+          afterBody: (items) => {
+            const dataIndex = items[0]?.dataIndex ?? 0;
+            const lines = timeStatusDetails[dataIndex] ?? [];
+            return ["---", ...lines];
+          }
+        }
+      }
+    }
   }
 });
 
