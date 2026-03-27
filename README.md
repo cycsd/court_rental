@@ -91,3 +91,14 @@ OUTPUT_HTML=output/today-status.html
 - `npm run test`
 - `npm run lint`
 - `npm run format`
+
+
+## Roadmap
+
+- 可以發佈成 github page （爬蟲用使用者自己瀏覽器的,會被 CROS 擋）
+    - 改抓資料使用 github action
+    - 顯示這些資料用 github page
+- 分成以天或以周顯示
+- 可以抓不同場地的資料
+- 加入各時段天氣
+- 依照天氣及是否有租借判斷場地是否可以使用
