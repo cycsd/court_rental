@@ -7,7 +7,7 @@ export function buildNotificationMessage(result: TodayCheckResult): string {
             const icon = ts.available === ts.total ? "✅" : ts.available > 0 ? "⚠️" : "❌";
             const label =
                 ts.available === 0
-                    ? "全部停止租借"
+                    ? "無可用(停止租借)場地"
                     : ts.availableCourts.join("、");
             return `${icon} ${ts.time}  ${ts.available}/${ts.total}  ${label}`;
         })
@@ -18,9 +18,9 @@ export function buildNotificationMessage(result: TodayCheckResult): string {
       "🎾 Court Rental 今日場地狀態",
       `🕐 ${result.checkedAt}`,
       `🏟️ 場地：${courts}`,
-      `📊 有可用場地的時段：${availableCount} / ${result.timeSummary.length}`,
+      `📊 有可用(停止租借)場地的時段：${availableCount} / ${result.timeSummary.length}`,
     "",
-      "各時段（✅ 全可用  ⚠️ 部分可用  ❌ 全停止）",
+      "各時段（✅ 全可用(停止租借)  ⚠️ 部分可用  ❌ 無可用）",
       "─────────────────────────",
       timeLine,
     "",

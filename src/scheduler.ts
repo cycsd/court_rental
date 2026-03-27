@@ -18,7 +18,7 @@ async function runOnce(): Promise<void> {
     {
       checkedAt: result.checkedAt,
       totalSlots: result.totalSlots,
-      expiredSlots: result.expiredSlots,
+          rentedSlots: result.rentedSlots,
           jsonOutput: env.OUTPUT_JSON,
           htmlOutput: env.OUTPUT_HTML
     },

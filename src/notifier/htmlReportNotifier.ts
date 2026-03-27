@@ -14,8 +14,8 @@ function escapeHtml(text: string): string {
 function buildRows(result: TodayCheckResult): string {
   return result.slots
     .map((slot) => {
-      const statusClass = slot.isExpiredStopRent ? "expired" : "active";
-      const yesNo = slot.isExpiredStopRent ? "是" : "否";
+        const statusClass = slot.isRented ? "expired" : "active";
+        const yesNo = slot.isRented ? "是" : "否";
       return `<tr>
 <td>${escapeHtml(slot.time)}</td>
 <td class="${statusClass}">${escapeHtml(slot.rawStatus)}</td>
@@ -52,8 +52,8 @@ function buildDetailRows(result: TodayCheckResult): string {
         .slice()
         .sort((a, b) => a.time.localeCompare(b.time) || a.court.localeCompare(b.court))
         .map((slot) => {
-            const statusClass = slot.isExpiredStopRent ? "expired" : "active";
-            const yesNo = slot.isExpiredStopRent ? "是" : "否";
+            const statusClass = slot.isRented ? "expired" : "active";
+            const yesNo = slot.isRented ? "是" : "否";
             return `<tr>
 <td>${escapeHtml(slot.time)}</td>
 <td>${escapeHtml(slot.court)}</td>
@@ -188,13 +188,13 @@ th, td {
 
   <div class="card stats">
     <div class="stat"><div class="label">總時段</div><div class="value">${result.totalSlots}</div></div>
-    <div class="stat"><div class="label">已過期/停止租借</div><div class="value">${result.expiredSlots}</div></div>
-    <div class="stat"><div class="label">其他狀態</div><div class="value">${result.totalSlots - result.expiredSlots}</div></div>
+    <div class="stat"><div class="label">可用（停止租借）</div><div class="value">${result.totalSlots - result.rentedSlots}</div></div>
+    <div class="stat"><div class="label">不可用（已租借）</div><div class="value">${result.rentedSlots}</div></div>
   </div>
 
   <div class="grid2">
     <div class="card">
-      <h2>各時段可用場地數（堆疊長條圖）</h2>
+      <h2>各時段可用場地數（停止租借）</h2>
       <canvas id="stackedChart" height="120"></canvas>
     </div>
     <div class="card">
@@ -207,7 +207,7 @@ th, td {
     <h2>各時段場地可用彙總</h2>
     <table>
       <thead>
-        <tr><th>時間</th><th>可用數</th><th>可用場地</th><th>停止租借場地</th></tr>
+        <tr><th>時間</th><th>可用數</th><th>可用場地(停止租借)</th><th>不可用場地</th></tr>
       </thead>
       <tbody>
         ${buildSummaryRows(result)}
@@ -219,7 +219,7 @@ th, td {
     <h2>各場地時段明細</h2>
     <table>
       <thead>
-        <tr><th>時間</th><th>場地</th><th>狀態</th><th>已過期/停止租借</th></tr>
+        <tr><th>時間</th><th>場地</th><th>狀態</th><th>是否已租借</th></tr>
       </thead>
       <tbody>
         ${buildDetailRows(result)}
@@ -239,8 +239,8 @@ new Chart(document.getElementById("stackedChart"), {
   data: {
     labels: timeLabels,
     datasets: [
-      { label: "可用場地數", data: availableData, backgroundColor: "#22c55e" },
-      { label: "停止租借場地數", data: unavailableData, backgroundColor: "#ef4444" }
+      { label: "可用場地數(停止租借)", data: availableData, backgroundColor: "#22c55e" },
+      { label: "不可用場地數", data: unavailableData, backgroundColor: "#ef4444" }
     ]
   },
   options: {
@@ -256,10 +256,10 @@ new Chart(document.getElementById("stackedChart"), {
 new Chart(document.getElementById("ratioChart"), {
   type: "doughnut",
   data: {
-    labels: ["已過期/停止租借", "其他狀態"],
+    labels: ["可用(停止租借)", "不可用(已租借)"],
     datasets: [{
-      data: [${result.expiredSlots}, ${result.totalSlots - result.expiredSlots}],
-      backgroundColor: ["#ef4444", "#22c55e"]
+      data: [${result.totalSlots - result.rentedSlots}, ${result.rentedSlots}],
+      backgroundColor: ["#22c55e", "#ef4444"]
     }]
   },
   options: {

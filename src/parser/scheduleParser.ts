@@ -7,7 +7,7 @@ type ParseInput = {
   courtName?: string;
 };
 
-const STATUS_KEYWORDS = ["已過期", "停止租借"];
+const STATUS_KEYWORDS = ["停止租借"];
 
 function normalizeWhitespace(value: string): string {
   return value.replace(/[\u00A0\u3000]/g, " ").replace(/\s+/g, " ").trim();
@@ -17,7 +17,7 @@ function pad2(value: string): string {
   return value.length === 1 ? `0${value}` : value;
 }
 
-function isExpiredStopRent(rawStatus: string): boolean {
+function isStopRentStatus(rawStatus: string): boolean {
   return STATUS_KEYWORDS.some((keyword) => rawStatus.includes(keyword));
 }
 
@@ -48,7 +48,7 @@ export function parseTodaySlots(input: ParseInput): SlotStatus[] {
       court: input.courtName ?? "Unknown Court",
       time: `${hour}:${minute}`,
       rawStatus: status,
-      isExpiredStopRent: isExpiredStopRent(status)
+        isRented: !isStopRentStatus(status)
     });
   }
 
@@ -70,10 +70,10 @@ export function buildTimeSummary(
     return times.map((time) => {
         const slotsAtTime = allSlots.filter((s) => s.time === time);
         const availableCourts = slotsAtTime
-            .filter((s) => !s.isExpiredStopRent)
+            .filter((s) => !s.isRented)
             .map((s) => s.court);
         const unavailableCourts = slotsAtTime
-            .filter((s) => s.isExpiredStopRent)
+            .filter((s) => s.isRented)
             .map((s) => s.court);
 
         return {

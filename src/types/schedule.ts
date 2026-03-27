@@ -3,7 +3,7 @@ export type SlotStatus = {
   court: string;
   time: string;
   rawStatus: string;
-  isExpiredStopRent: boolean;
+    isRented: boolean;
 };
 
 export type TimeSlotSummary = {
@@ -21,7 +21,7 @@ export type TodayCheckResult = {
   timezone: string;
     courts: string[];
   totalSlots: number;
-  expiredSlots: number;
+    rentedSlots: number;
   slots: SlotStatus[];
     timeSummary: TimeSlotSummary[];
 };

@@ -21,7 +21,7 @@ export async function checkTodayStatus(): Promise<TodayCheckResult> {
   }
 
     const courtNames = courtsData.map((c) => c.courtName);
-    const expiredSlots = allSlots.filter((slot) => slot.isExpiredStopRent).length;
+    const rentedSlots = allSlots.filter((slot) => slot.isRented).length;
     const timeSummary = buildTimeSummary(allSlots, courtNames);
 
   return {
@@ -30,7 +30,7 @@ export async function checkTodayStatus(): Promise<TodayCheckResult> {
     timezone: env.TIMEZONE,
       courts: courtNames,
       totalSlots: allSlots.length,
-    expiredSlots,
+      rentedSlots,
       slots: allSlots,
       timeSummary
   };
