@@ -13,8 +13,8 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "dayjs": "^1.11.13",
     "dotenv": "^16.4.5",
+    "luxon": "^3.7.2",
     "node-cron": "^3.0.3",
     "nodemailer": "^6.9.16",
     "pino": "^9.5.0",
@@ -22,6 +22,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/luxon": "^3.7.1",
     "@types/node": "^22.10.1",
     "@types/nodemailer": "^7.0.11",
     "@typescript-eslint/eslint-plugin": "^8.18.0",

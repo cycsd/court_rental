@@ -1,9 +1,4 @@
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
-
-dayjs.extend(utc);
-dayjs.extend(timezone);
+import { DateTime } from "luxon";
 
 export function getTodayDateParts(tz: string): {
   year: number;
@@ -12,16 +7,16 @@ export function getTodayDateParts(tz: string): {
   isoDate: string;
   monthDay: string;
 } {
-  const now = dayjs().tz(tz);
+    const now = DateTime.now().setZone(tz);
   return {
-    year: now.year(),
-    month: now.month() + 1,
-    day: now.date(),
-    isoDate: now.format("YYYY-MM-DD"),
-    monthDay: `${now.month() + 1}/${now.date()}`
+      year: now.year,
+      month: now.month,
+      day: now.day,
+      isoDate: now.toISODate()!,
+      monthDay: `${now.month}/${now.day}`
   };
 }
 
 export function nowIsoInTimezone(tz: string): string {
-  return dayjs().tz(tz).format();
+    return DateTime.now().setZone(tz).toISO()!;
 }
