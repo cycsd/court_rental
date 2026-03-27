@@ -93,8 +93,9 @@ export function mergeWeatherToSummary(
   });
 
   // Second pass: compute isUsable now that every slot has weather data
-  return merged.map((slot, idx) => ({
+  // weatherMap has all 24 hours so lookups like 01:00-07:00 work correctly for early slots
+  return merged.map((slot) => ({
     ...slot,
-    isUsable: isCourtUsable(slot, merged, idx)
+    isUsable: isCourtUsable(slot, (key) => weatherMap.get(key))
   }));
 }

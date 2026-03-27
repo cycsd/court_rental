@@ -104,10 +104,15 @@ export function getWeatherBadgeClassName(
   return `weather-badge weather-${iconType}${alertClass}`;
 }
 
+export type WeatherSnapshot = {
+    weatherText?: string;
+    temperatureC?: number;
+    precipitationProbability?: number;
+};
+
 export function isCourtUsable(
     ts: TimeSlotSummary,
-    allSlots: TimeSlotSummary[],
-    currentIndex: number
+    weatherHistory: (hourKey: string) => WeatherSnapshot | undefined
 ): boolean {
     // 條件一：該時段至少有一個場地未被租借
     if (ts.available === 0) return false;
@@ -115,9 +120,18 @@ export function isCourtUsable(
     // 條件二：當前時段不在下雨
     if (isRainyWeather(ts.weatherText, ts.precipitationProbability)) return false;
 
-    // 條件三：（前 7 個時段均不下雨）或（前 5 個時段均不下雨且溫度皆超過 23 度）
-    const prev7 = allSlots.slice(Math.max(0, currentIndex - 7), currentIndex);
-    const prev5 = allSlots.slice(Math.max(0, currentIndex - 5), currentIndex);
+    // 條件三：（前 7 個小時均不下雨）或（前 5 個小時均不下雨且溫度皆超過 23 度）
+    // 可在修改成只要前一個時段判定為可使用就好，因為目前的場地是否還是溼的可以依據前一個時段的場地是否是溼的來判斷即可
+    const currentHour = parseInt(ts.time.slice(0, 2), 10);
+
+    const lookupPrevHours = (count: number): WeatherSnapshot[] =>
+        Array.from({ length: count }, (_, i) => currentHour - count + i)
+            .filter((h) => h >= 0)
+            .map((h) => weatherHistory(`${String(h).padStart(2, "0")}:00`))
+            .filter((w): w is WeatherSnapshot => w != null);
+
+    const prev7 = lookupPrevHours(7);
+    const prev5 = lookupPrevHours(5);
 
     const prev7NoRain = prev7.every(
         (s) => !isRainyWeather(s.weatherText, s.precipitationProbability)
