@@ -1,0 +1,34 @@
+{
+  "name": "court-rental-checker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Check today's venue timeslots and detect expired/stop-rent statuses.",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "check:today": "tsx src/index.ts",
+    "schedule": "tsx src/scheduler.ts",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "dayjs": "^1.11.13",
+    "dotenv": "^16.4.5",
+    "node-cron": "^3.0.3",
+    "pino": "^9.5.0",
+    "playwright": "^1.49.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "@typescript-eslint/eslint-plugin": "^8.18.0",
+    "@typescript-eslint/parser": "^8.18.0",
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.4.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
