@@ -118,6 +118,8 @@ export function isCourtWetted(
     if (isRainyWeather(ts.weatherText, ts.precipitationProbability)) return true;
 
     // 條件三：（前 7 個小時均不下雨）或（前 5 個小時均不下雨且溫度皆超過 23 度）
+    // 溫度條件可在依據現在溫度調整，
+    // ex 例如現在溫度 30 度，則可以在縮短判定的小時數，畢竟溫度不會一下上升，所以前幾小時的溫度也應該不會太低，乾的速度會比較快。
     const currentHour = parseInt(ts.time.slice(0, 2), 10);
 
     const lookupPrevHours = (count: number): WeatherSnapshot[] =>
