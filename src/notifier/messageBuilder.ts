@@ -1,11 +1,11 @@
 import type { TodayCheckResult } from "../types/schedule.js";
-import { buildTelegramWeatherSummary } from "./weatherPresentation.js";
+import { buildTelegramWeatherSummary, isCourtUsable } from "./weatherPresentation.js";
 
 export function buildNotificationMessage(result: TodayCheckResult): string {
     const courts = result.courts.join("、");
     const timeLine = result.timeSummary
         .map((ts) => {
-            const usable = ts.isUsable ?? false;
+            const usable = isCourtUsable(ts);
             const icon = usable ? "✅" : ts.available === 0 ? "❌" : "⚠️";
             const label =
                 ts.available === 0
@@ -20,7 +20,7 @@ export function buildNotificationMessage(result: TodayCheckResult): string {
         })
         .join("\n");
 
-    const usableCount = result.timeSummary.filter((ts) => ts.isUsable ?? false).length;
+    const usableCount = result.timeSummary.filter((ts) => isCourtUsable(ts)).length;
 
     const availableCount = result.timeSummary.filter((ts) => ts.available > 0).length;
   return [

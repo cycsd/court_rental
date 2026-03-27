@@ -4,7 +4,8 @@ import type { TodayCheckResult } from "../types/schedule.js";
 import {
     buildWeatherTooltipText,
     getWeatherBadgeClassName,
-    getWeatherTelegramIcon
+    getWeatherTelegramIcon,
+    isCourtUsable
 } from "./weatherPresentation.js";
 
 function escapeHtml(text: string): string {
@@ -71,7 +72,7 @@ function buildSummaryRows(result: TodayCheckResult): string {
                         })
                         .join(" ")
                     : "—";
-            const rowClass = (ts.isUsable ?? false) ? "row-usable" : "row-not-usable";
+            const rowClass = isCourtUsable(ts) ? "row-usable" : "row-not-usable";
             return `<tr class="${rowClass}">
 <td>${escapeHtml(ts.time)}</td>
 <td>${ratio}</td>

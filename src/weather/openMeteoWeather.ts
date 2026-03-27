@@ -1,5 +1,5 @@
 import type { TimeSlotSummary } from "../types/schedule.js";
-import { isCourtUsable } from "../notifier/weatherPresentation.js";
+import { isCourtWetted } from "../notifier/weatherPresentation.js";
 
 type OpenMeteoHourly = {
   time: string[];
@@ -92,10 +92,10 @@ export function mergeWeatherToSummary(
     };
   });
 
-  // Second pass: compute isUsable now that every slot has weather data
+  // Second pass: compute isWetted now that every slot has weather data
   // weatherMap has all 24 hours so lookups like 01:00-07:00 work correctly for early slots
   return merged.map((slot) => ({
     ...slot,
-    isUsable: isCourtUsable(slot, (key) => weatherMap.get(key))
+    isWetted: isCourtWetted(slot, (key) => weatherMap.get(key))
   }));
 }

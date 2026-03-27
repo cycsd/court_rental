@@ -16,7 +16,7 @@ export type TimeSlotSummary = {
     weatherText?: string;
     temperatureC?: number;
     precipitationProbability?: number;
-    isUsable?: boolean;
+    isWetted?: boolean;
 };
 
 export type TodayCheckResult = {
