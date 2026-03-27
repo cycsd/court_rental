@@ -40,6 +40,37 @@ npm run schedule
 
 - `output/today-status.json`
 
+## Notifications
+
+Notifications are optional and can be enabled independently.
+
+### Telegram
+
+Set in `.env`:
+
+```env
+TELEGRAM_ENABLED=true
+TELEGRAM_BOT_TOKEN=123456:ABC...
+TELEGRAM_CHAT_ID=123456789
+```
+
+### Email (SMTP)
+
+Set in `.env`:
+
+```env
+EMAIL_ENABLED=true
+EMAIL_SMTP_HOST=smtp.gmail.com
+EMAIL_SMTP_PORT=587
+EMAIL_SMTP_SECURE=false
+EMAIL_SMTP_USER=your_account@gmail.com
+EMAIL_SMTP_PASS=your_app_password
+EMAIL_FROM=your_account@gmail.com
+EMAIL_TO=receiver1@example.com,receiver2@example.com
+```
+
+If both are enabled, the app sends both notifications after each check.
+
 ## Scripts
 
 - `npm run dev`

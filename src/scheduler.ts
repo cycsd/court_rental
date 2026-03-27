@@ -2,6 +2,7 @@ import cron from "node-cron";
 import pino from "pino";
 import { env } from "./config/env.js";
 import { writeJsonOutput } from "./notifier/jsonNotifier.js";
+import { dispatchNotifications } from "./notifier/notificationDispatcher.js";
 import { checkTodayStatus } from "./service/checkTodayStatus.js";
 
 const logger = pino({ name: "court-rental-scheduler" });
@@ -10,6 +11,7 @@ const CRON_EXPR = process.env.CRON_EXPR ?? "0 6,12,18 * * *";
 async function runOnce(): Promise<void> {
   const result = await checkTodayStatus();
   await writeJsonOutput(result, env.OUTPUT_JSON);
+    await dispatchNotifications(result);
   logger.info(
     {
       checkedAt: result.checkedAt,

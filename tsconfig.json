@@ -10,7 +10,7 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "rootDir": ".",
-    "types": ["node", "vitest/globals"],
+    "types": ["node", "vitest/globals", "nodemailer"],
     "noEmit": true
   },
   "include": ["src", "tests", "eslint.config.js"]
