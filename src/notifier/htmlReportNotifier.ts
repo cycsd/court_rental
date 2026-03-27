@@ -71,7 +71,7 @@ function buildSummaryRows(result: TodayCheckResult): string {
                         })
                         .join(" ")
                     : "—";
-            const rowClass = ts.available === 0 ? "row-expired" : ts.available === ts.total ? "row-full" : "row-partial";
+            const rowClass = (ts.isUsable ?? false) ? "row-usable" : "row-not-usable";
             return `<tr class="${rowClass}">
 <td>${escapeHtml(ts.time)}</td>
 <td>${ratio}</td>
@@ -240,9 +240,8 @@ body {
   font-size: 20px;
   line-height: 1;
 }
-.row-expired { background: #fff5f5; }
-.row-full { background: #f0fdf4; }
-.row-partial { background: #fffbeb; }
+.row-usable { background: #f0fdf4; }
+.row-not-usable { background: #fff5f5; }
 table {
   width: 100%;
   border-collapse: collapse;

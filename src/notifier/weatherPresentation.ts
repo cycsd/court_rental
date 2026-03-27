@@ -1,3 +1,5 @@
+import type { TimeSlotSummary } from "../types/schedule.js";
+
 export type WeatherIconType =
   | "thunder"
   | "rain"
@@ -100,4 +102,33 @@ export function getWeatherBadgeClassName(
     : "";
 
   return `weather-badge weather-${iconType}${alertClass}`;
+}
+
+export function isCourtUsable(
+    ts: TimeSlotSummary,
+    allSlots: TimeSlotSummary[],
+    currentIndex: number
+): boolean {
+    // 條件一：該時段至少有一個場地未被租借
+    if (ts.available === 0) return false;
+
+    // 條件二：當前時段不在下雨
+    if (isRainyWeather(ts.weatherText, ts.precipitationProbability)) return false;
+
+    // 條件三：（前 7 個時段均不下雨）或（前 5 個時段均不下雨且溫度皆超過 23 度）
+    const prev7 = allSlots.slice(Math.max(0, currentIndex - 7), currentIndex);
+    const prev5 = allSlots.slice(Math.max(0, currentIndex - 5), currentIndex);
+
+    const prev7NoRain = prev7.every(
+        (s) => !isRainyWeather(s.weatherText, s.precipitationProbability)
+    );
+    const prev5NoRainAndWarm = prev5.every(
+        (s) =>
+            !isRainyWeather(s.weatherText, s.precipitationProbability) &&
+            (s.temperatureC ?? 0) > 23
+    );
+
+    if (!prev7NoRain && !prev5NoRainAndWarm) return false;
+
+    return true;
 }

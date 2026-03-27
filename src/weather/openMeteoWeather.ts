@@ -1,4 +1,5 @@
 import type { TimeSlotSummary } from "../types/schedule.js";
+import { isCourtUsable } from "../notifier/weatherPresentation.js";
 
 type OpenMeteoHourly = {
   time: string[];
@@ -77,7 +78,8 @@ export function mergeWeatherToSummary(
   summary: TimeSlotSummary[],
   weatherMap: Map<string, WeatherAtHour>
 ): TimeSlotSummary[] {
-  return summary.map((slot) => {
+  // First pass: merge weather fields
+  const merged = summary.map((slot) => {
     const weather = weatherMap.get(slot.time);
     if (!weather) {
       return slot;
@@ -89,4 +91,10 @@ export function mergeWeatherToSummary(
       precipitationProbability: weather.precipitationProbability
     };
   });
+
+  // Second pass: compute isUsable now that every slot has weather data
+  return merged.map((slot, idx) => ({
+    ...slot,
+    isUsable: isCourtUsable(slot, merged, idx)
+  }));
 }
