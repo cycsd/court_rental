@@ -257,9 +257,10 @@ body {
   padding: 6px 8px;
   border-radius: 8px;
   white-space: nowrap;
-  max-width: min(280px, 80vw);
-  overflow-wrap: normal;
-  white-space: normal;
+  max-width: min(360px, 92vw);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: keep-all;
   box-shadow: 0 6px 18px rgba(15, 23, 42, 0.25);
   opacity: 0;
   pointer-events: none;
