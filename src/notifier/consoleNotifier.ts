@@ -16,12 +16,15 @@ export function printConsoleSummary(result: TodayCheckResult): void {
   }
 
     console.log("\n=== 各時段可用場地（停止租借） ===");
-    console.log("時間  | 可用數 | 可用場地(停止租借)");
-    console.log("------+--------+------------------------------");
+    console.log("時間  | 可用數 | 天氣 | 可用場地(停止租借)");
+    console.log("------+--------+--------------------+------------------------------");
     for (const ts of result.timeSummary) {
         const ratio = `${ts.available}/${ts.total}`;
+        const weather = ts.weatherText
+            ? `${ts.weatherText} ${ts.temperatureC?.toFixed(1) ?? "-"}C/${ts.precipitationProbability ?? "-"}%`
+            : "-";
         const available = ts.availableCourts.length > 0 ? ts.availableCourts.join(", ") : "無可用(停止租借)場地";
-        console.log(`${ts.time} | ${ratio.padEnd(6)} | ${available}`);
+        console.log(`${ts.time} | ${ratio.padEnd(6)} | ${weather.padEnd(18)} | ${available}`);
     }
 
     console.log("\n=== 各場地時段明細 ===");

@@ -83,6 +83,17 @@ The app generates an HTML chart report every run.
 OUTPUT_HTML=output/today-status.html
 ```
 
+## Weather Data
+
+The app fetches hourly weather from Open-Meteo (no API key required) and shows it per time slot in both Console and HTML summary table.
+
+Configure location in `.env`:
+
+```env
+WEATHER_LAT=25.086
+WEATHER_LON=121.507
+```
+
 ## Scripts
 
 - `npm run dev`

@@ -31,6 +31,26 @@ const asStringArray = (value: string | undefined): string[] => {
 const envSchema = z.object({
   VENUE_URL: z.string().url(),
   TIMEZONE: z.string().default("Asia/Taipei"),
+    WEATHER_LAT: z
+        .string()
+        .optional()
+        .transform((value) => {
+            if (!value) {
+                return 25.086;
+            }
+            const parsed = Number.parseFloat(value);
+            return Number.isNaN(parsed) ? 25.086 : parsed;
+        }),
+    WEATHER_LON: z
+        .string()
+        .optional()
+        .transform((value) => {
+            if (!value) {
+                return 121.507;
+            }
+            const parsed = Number.parseFloat(value);
+            return Number.isNaN(parsed) ? 121.507 : parsed;
+        }),
   OUTPUT_JSON: z.string().default("output/today-status.json"),
     OUTPUT_HTML: z.string().default("output/today-status.html"),
   HEADLESS: z

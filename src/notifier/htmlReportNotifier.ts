@@ -1,6 +1,11 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import type { TodayCheckResult } from "../types/schedule.js";
+import {
+    buildWeatherTooltipText,
+    getWeatherBadgeClassName,
+    getWeatherTelegramIcon
+} from "./weatherPresentation.js";
 
 function escapeHtml(text: string): string {
   return text
@@ -9,6 +14,16 @@ function escapeHtml(text: string): string {
     .replace(/>/g, "&gt;")
     .replace(/\"/g, "&quot;")
     .replace(/'/g, "&#39;");
+}
+
+function buildWeatherBadge(
+    weatherText?: string,
+    temperatureC?: number,
+    precipitationProbability?: number
+): string {
+    const title = buildWeatherTooltipText(weatherText, temperatureC, precipitationProbability);
+    const classes = getWeatherBadgeClassName(weatherText, precipitationProbability);
+    return `<span class="${classes}" title="${escapeHtml(title)}">${getWeatherTelegramIcon(weatherText)}</span>`;
 }
 
 function buildRows(result: TodayCheckResult): string {
@@ -28,6 +43,11 @@ function buildSummaryRows(result: TodayCheckResult): string {
     return result.timeSummary
         .map((ts) => {
             const ratio = `${ts.available} / ${ts.total}`;
+            const weatherBadge = buildWeatherBadge(
+                ts.weatherText,
+                ts.temperatureC,
+                ts.precipitationProbability
+            );
             const statusByCourt = new Map(
                 result.slots
                     .filter((slot) => slot.time === ts.time)
@@ -35,7 +55,12 @@ function buildSummaryRows(result: TodayCheckResult): string {
             );
             const available =
                 ts.availableCourts.length > 0
-                    ? ts.availableCourts.map((c) => `<span class="badge ok">${escapeHtml(c)}</span>`).join(" ")
+                    ? ts.availableCourts
+                        .map((c) => {
+                            const rawStatus = statusByCourt.get(c) ?? "";
+                            return `<span class="badge ok" title="${escapeHtml(rawStatus)}">${escapeHtml(c)}</span>`;
+                        })
+                        .join(" ")
                     : '<span class="badge na">無可用</span>';
             const unavailable =
                 ts.unavailableCourts.length > 0
@@ -50,6 +75,7 @@ function buildSummaryRows(result: TodayCheckResult): string {
             return `<tr class="${rowClass}">
 <td>${escapeHtml(ts.time)}</td>
 <td>${ratio}</td>
+          <td>${weatherBadge}</td>
 <td>${available}</td>
 <td>${unavailable}</td>
 </tr>`;
@@ -159,6 +185,61 @@ body {
 .badge.ok { background: #dcfce7; color: #166534; }
 .badge.warn { background: #fee2e2; color: #991b1b; }
 .badge.na { background: #f1f5f9; color: var(--muted); }
+.weather-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  line-height: 1;
+  cursor: help;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+}
+.weather-unknown {
+  background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+  border-color: #cbd5e1;
+}
+.weather-sunny {
+  background: linear-gradient(180deg, #fef9c3 0%, #fde68a 100%);
+  border-color: #f59e0b;
+}
+.weather-partly-sunny {
+  background: linear-gradient(180deg, #fef3c7 0%, #fde68a 100%);
+  border-color: #f59e0b;
+}
+.weather-partly-cloudy {
+  background: linear-gradient(180deg, #ecfeff 0%, #cffafe 100%);
+  border-color: #06b6d4;
+}
+.weather-cloudy {
+  background: linear-gradient(180deg, #e2e8f0 0%, #cbd5e1 100%);
+  border-color: #94a3b8;
+}
+.weather-fog {
+  background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+  border-color: #94a3b8;
+}
+.weather-rain {
+  background: linear-gradient(180deg, #dbeafe 0%, #bfdbfe 100%);
+  border-color: #60a5fa;
+}
+.weather-thunder {
+  background: linear-gradient(180deg, #ede9fe 0%, #ddd6fe 100%);
+  border-color: #8b5cf6;
+}
+.weather-snow {
+  background: linear-gradient(180deg, #f8fafc 0%, #dbeafe 100%);
+  border-color: #93c5fd;
+}
+.weather-alert {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18);
+}
+.weather-badge span, .weather-badge {
+  font-size: 20px;
+  line-height: 1;
+}
 .row-expired { background: #fff5f5; }
 .row-full { background: #f0fdf4; }
 .row-partial { background: #fffbeb; }
@@ -213,7 +294,7 @@ th, td {
     <h2>各時段場地可用彙總</h2>
     <table>
       <thead>
-        <tr><th>時間</th><th>可用數</th><th>可用場地(停止租借)</th><th>不可用場地</th></tr>
+        <tr><th>時間</th><th>可用數</th><th>天氣</th><th>可用場地(停止租借)</th><th>不可用場地</th></tr>
       </thead>
       <tbody>
         ${buildSummaryRows(result)}

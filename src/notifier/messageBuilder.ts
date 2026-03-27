@@ -1,4 +1,5 @@
 import type { TodayCheckResult } from "../types/schedule.js";
+import { buildTelegramWeatherSummary } from "./weatherPresentation.js";
 
 export function buildNotificationMessage(result: TodayCheckResult): string {
     const courts = result.courts.join("、");
@@ -9,7 +10,12 @@ export function buildNotificationMessage(result: TodayCheckResult): string {
                 ts.available === 0
                     ? "無可用(停止租借)場地"
                     : ts.availableCourts.join("、");
-            return `${icon} ${ts.time}  ${ts.available}/${ts.total}  ${label}`;
+            const weatherSummary = buildTelegramWeatherSummary(
+                ts.weatherText,
+                ts.temperatureC,
+                ts.precipitationProbability
+            );
+            return `${icon} ${ts.time}  ${ts.available}/${ts.total}  ${weatherSummary}  ${label}`;
         })
         .join("\n");
 

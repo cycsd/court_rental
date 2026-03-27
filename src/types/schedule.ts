@@ -13,6 +13,9 @@ export type TimeSlotSummary = {
     unavailableCourts: string[];
     total: number;
     available: number;
+    weatherText?: string;
+    temperatureC?: number;
+    precipitationProbability?: number;
 };
 
 export type TodayCheckResult = {
