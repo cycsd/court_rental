@@ -1,5 +1,5 @@
 node_modules/
-output/*.json
+output/
 .env
 playwright-report/
 coverage/

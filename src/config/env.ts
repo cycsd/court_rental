@@ -32,6 +32,7 @@ const envSchema = z.object({
   VENUE_URL: z.string().url(),
   TIMEZONE: z.string().default("Asia/Taipei"),
   OUTPUT_JSON: z.string().default("output/today-status.json"),
+    OUTPUT_HTML: z.string().default("output/today-status.html"),
   HEADLESS: z
     .string()
     .optional()

@@ -39,6 +39,7 @@ npm run schedule
 4. Output JSON is written to:
 
 - `output/today-status.json`
+- `output/today-status.html` (visual chart report)
 
 ## Notifications
 
@@ -70,6 +71,17 @@ EMAIL_TO=receiver1@example.com,receiver2@example.com
 ```
 
 If both are enabled, the app sends both notifications after each check.
+
+## Visual Report
+
+The app generates an HTML chart report every run.
+
+- Default path: `output/today-status.html`
+- Configure path via `.env`:
+
+```env
+OUTPUT_HTML=output/today-status.html
+```
 
 ## Scripts
 
