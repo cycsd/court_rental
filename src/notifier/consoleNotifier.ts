@@ -2,6 +2,7 @@ import type { TodayCheckResult } from "../types/schedule.js";
 
 export function printConsoleSummary(result: TodayCheckResult): void {
   console.log("=== Court Rental Today Status ===");
+    console.log(`Venue: ${result.venueName}`);
   console.log(`URL: ${result.venueUrl}`);
   console.log(`Checked At: ${result.checkedAt}`);
   console.log(`Timezone: ${result.timezone}`);

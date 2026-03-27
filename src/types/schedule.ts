@@ -16,6 +16,7 @@ export type TimeSlotSummary = {
 };
 
 export type TodayCheckResult = {
+    venueName: string;
   venueUrl: string;
   checkedAt: string;
   timezone: string;

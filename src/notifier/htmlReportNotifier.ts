@@ -93,7 +93,7 @@ function buildHtml(result: TodayCheckResult): string {
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Court Rental 報表</title>
+<title>${escapeHtml(result.venueName)} 今日時段報表</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 :root {
@@ -184,7 +184,7 @@ th, td {
 <body>
 <div class="container">
   <div class="card">
-    <h1>Court Rental 今日時段報表</h1>
+    <h1>${escapeHtml(result.venueName)} 今日時段報表</h1>
     <div class="meta">
       <div>檢查時間: ${escapeHtml(result.checkedAt)}</div>
       <div>時區: ${escapeHtml(result.timezone)}</div>

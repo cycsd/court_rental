@@ -7,7 +7,8 @@ import { getTodayDateParts, nowIsoInTimezone } from "../utils/time.js";
 
 export async function checkTodayStatus(): Promise<TodayCheckResult> {
   const today = getTodayDateParts(env.TIMEZONE);
-    const courtsData = await fetchAllCourtsData(env.VENUE_URL, env.HEADLESS);
+    const scrapeResult = await fetchAllCourtsData(env.VENUE_URL, env.HEADLESS);
+    const { venueName, courtsData } = scrapeResult;
 
     const allSlots: SlotStatus[] = [];
     for (const courtData of courtsData) {
@@ -25,6 +26,7 @@ export async function checkTodayStatus(): Promise<TodayCheckResult> {
     const timeSummary = buildTimeSummary(allSlots, courtNames);
 
   return {
+      venueName,
     venueUrl: env.VENUE_URL,
     checkedAt: nowIsoInTimezone(env.TIMEZONE),
     timezone: env.TIMEZONE,
