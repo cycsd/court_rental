@@ -603,6 +603,56 @@ const timeStatusDetails = ${JSON.stringify(timeStatusDetails)};
 
 const toDateNumber = (dateStr) => Number(dateStr.replaceAll("-", ""));
 const toTimeNumber = (timeStr) => Number(timeStr.replaceAll(":", ""));
+const formatDateInputValue = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return year + "-" + month + "-" + day;
+};
+const formatTimeInputValue = (date) => {
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  return hours + ":" + minutes;
+};
+const clampRangeValue = (value, min, max) => {
+  if (value < min) return min;
+  if (value > max) return max;
+  return value;
+};
+
+const initializeDefaultFiltersFromNow = () => {
+  const now = new Date();
+  const nowDateValue = formatDateInputValue(now);
+  const nowTimeValue = formatTimeInputValue(now);
+
+  const startDateInput = document.getElementById("filterStartDate");
+  const endDateInput = document.getElementById("filterEndDate");
+  const startTimeInput = document.getElementById("filterStartTime");
+  const endTimeInput = document.getElementById("filterEndTime");
+  const dailyStartTimeInput = document.getElementById("dailyFilterStartTime");
+  const dailyEndTimeInput = document.getElementById("dailyFilterEndTime");
+
+  const minDate = startDateInput.min;
+  const maxDate = endDateInput.max;
+  const maxTime = endTimeInput.value;
+
+  const clampedDate = clampRangeValue(nowDateValue, minDate, maxDate);
+  const clampedTime = clampRangeValue(nowTimeValue, startTimeInput.value, maxTime);
+
+  startDateInput.value = clampedDate;
+  startTimeInput.value = clampedTime;
+  dailyStartTimeInput.value = clampRangeValue(nowTimeValue, dailyStartTimeInput.value, dailyEndTimeInput.value);
+
+  if (startDateInput.value > endDateInput.value) {
+    endDateInput.value = startDateInput.value;
+  }
+  if (startTimeInput.value > endTimeInput.value) {
+    endTimeInput.value = startTimeInput.value;
+  }
+  if (dailyStartTimeInput.value > dailyEndTimeInput.value) {
+    dailyEndTimeInput.value = dailyStartTimeInput.value;
+  }
+};
 
 const isInSelectedTimeRange = (time, startTime, endTime) => {
   if (!startTime || !endTime) return true;
@@ -834,6 +884,8 @@ const modeDaily = document.getElementById("mode-daily");
 const dailyFilterStartTime = document.getElementById("dailyFilterStartTime");
 const dailyFilterEndTime = document.getElementById("dailyFilterEndTime");
 
+initializeDefaultFiltersFromNow();
+
 const setMode = (mode) => {
   for (const button of modeButtons) {
     button.classList.toggle("active", button.dataset.mode === mode);
@@ -863,6 +915,17 @@ const setActiveDay = (date) => {
   }
 };
 
+const syncDailyViewToStartDate = () => {
+  const startDateInput = document.getElementById("filterStartDate");
+  const selectedDate = startDateInput.value;
+  if (!selectedDate) return;
+
+  const targetTab = Array.from(dayTabs).find((tab) => tab.dataset.day === selectedDate);
+  if (targetTab) {
+    setActiveDay(selectedDate);
+  }
+};
+
 for (const tab of dayTabs) {
   tab.addEventListener("click", () => {
     const date = tab.dataset.day;
@@ -877,7 +940,11 @@ for (const tab of dayTabs) {
 dailyFilterStartTime.addEventListener("change", applyDailyFilter);
 dailyFilterEndTime.addEventListener("change", applyDailyFilter);
 
+syncDailyViewToStartDate();
 applyRangeFilter();
+if (modeDaily.classList.contains("active")) {
+  applyDailyFilter();
+}
 </script>
 </body>
 </html>`;
