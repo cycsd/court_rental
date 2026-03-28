@@ -28,6 +28,27 @@ describe("parseTodaySlots", () => {
       expect(slots[1].isRented).toBe(true);
       expect(slots[2].isRented).toBe(true);
   });
+
+  it("does not include page footer legend text in the last slot status", () => {
+    const text = `
+      2026 / 3 / 31 ( 二 )
+      3/31 20:00 | X網球
+      3/31 21:00 | 網球練習 可租借時段 ( Can be rented ) 不可租借時段 ( Can not be rented ) 注意事項：申請租借日期需於活動前10天完成手續。
+    `;
+
+    const slots = parseTodaySlots({
+      pageText: text,
+      isoDate: "2026-03-31",
+      monthDay: "3/31",
+      courtName: "網球場5"
+    });
+
+    expect(slots).toHaveLength(2);
+    expect(slots[1]).toMatchObject({
+      time: "21:00",
+      rawStatus: "網球練習"
+    });
+  });
 });
 
 describe("buildTimeSummary", () => {

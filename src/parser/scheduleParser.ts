@@ -8,6 +8,14 @@ type ParseInput = {
 };
 
 const STATUS_KEYWORDS = ["停止租借"];
+const STATUS_TRAILING_MARKERS = [
+  "可租借時段 ( Can be rented )",
+  "不可租借時段 ( Can not be rented )",
+  "注意事項：",
+  "Notice:",
+  "Photos 圖片集",
+  "Department of Sports, Taipei City Government Venue Booking System"
+];
 
 function normalizeWhitespace(value: string): string {
   return value.replace(/[\u00A0\u3000]/g, " ").replace(/\s+/g, " ").trim();
@@ -21,6 +29,19 @@ function isStopRentStatus(rawStatus: string): boolean {
   return STATUS_KEYWORDS.some((keyword) => rawStatus.includes(keyword));
 }
 
+function sanitizeRawStatus(rawStatus: string): string {
+  let cutAt = rawStatus.length;
+
+  for (const marker of STATUS_TRAILING_MARKERS) {
+    const index = rawStatus.indexOf(marker);
+    if (index >= 0 && index < cutAt) {
+      cutAt = index;
+    }
+  }
+
+  return normalizeWhitespace(rawStatus.slice(0, cutAt));
+}
+
 export function parseSlotsForDate(input: ParseInput): SlotStatus[] {
   const normalized = normalizeWhitespace(input.pageText);
   const md = input.monthDay.replace(/\s+/g, "");
@@ -29,7 +50,7 @@ export function parseSlotsForDate(input: ParseInput): SlotStatus[] {
   // - "3/27 08 : 00 | 已過期 停止租借"
   // - "3/27 08:00 已過期 停止租借"
   const slotRegex = new RegExp(
-    `${md}\\s*(\\d{1,2})\\s*[:：]\\s*(\\d{2})\\s*(?:[|｜]\\s*)?([^\\n\\r]+?)\\s*(?=${md}\\s*\\d{1,2}\\s*[:：]|\\d{4}\\s*\/\\s*\\d{1,2}\\s*\/\\s*\\d{1,2}|$)`,
+    `${md}\\s*(\\d{1,2})\\s*[:：]\\s*(\\d{2})\\s*(?:[|｜]\\s*)?([^\\n\\r]+?)\\s*(?=${md}\\s*\\d{1,2}\\s*[:：]|\\d{1,2}\\s*\/\\s*\\d{1,2}\\s*\\d{1,2}\\s*[:：]|\\d{4}\\s*\/\\s*\\d{1,2}\\s*\/\\s*\\d{1,2}|可租借時段\\s*\\(\\s*Can be rented\\s*\\)|$)`,
     "g"
   );
 
@@ -37,7 +58,7 @@ export function parseSlotsForDate(input: ParseInput): SlotStatus[] {
   for (const match of normalized.matchAll(slotRegex)) {
     const hour = pad2(match[1]);
     const minute = pad2(match[2]);
-    const status = normalizeWhitespace(match[3]);
+    const status = sanitizeRawStatus(normalizeWhitespace(match[3]));
 
     if (!status) {
       continue;

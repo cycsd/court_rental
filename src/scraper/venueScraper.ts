@@ -14,6 +14,65 @@ function normalizeWhitespace(value: string): string {
     return value.replace(/[\u00A0\u3000]/g, " ").replace(/\s+/g, " ").trim();
 }
 
+const SCHEDULE_CONTAINER_SELECTORS = [
+    ".tab-pane.active",
+    ".tab-content",
+    ".BookingDate",
+    ".bookingDate",
+    ".BookDateTable",
+    ".VenueBookDateTable",
+    "#tab-content",
+    "main"
+];
+
+const FOOTER_MARKERS = [
+    "可租借時段 ( Can be rented )",
+    "Notice:",
+    "Department of Sports, Taipei City Government Venue Booking System"
+];
+
+export function trimTrailingNonScheduleText(value: string): string {
+    const firstScheduleIdx = value.search(/\d{1,2}\s*\/\s*\d{1,2}\s*\d{1,2}\s*[:：]\s*\d{2}/);
+    let cutAt = value.length;
+    for (const marker of FOOTER_MARKERS) {
+        const idx = value.indexOf(marker);
+        if (idx >= 0 && idx < cutAt && (firstScheduleIdx < 0 || idx > firstScheduleIdx)) {
+            cutAt = idx;
+        }
+    }
+    return normalizeWhitespace(value.slice(0, cutAt));
+}
+
+function scoreScheduleText(value: string): number {
+    const dateTimeHits = value.match(/\d{1,2}\s*\/\s*\d{1,2}\s*\d{1,2}\s*[:：]\s*\d{2}/g)?.length ?? 0;
+    const isoDateHits = value.match(/\d{4}\s*\/\s*\d{1,2}\s*\/\s*\d{1,2}/g)?.length ?? 0;
+    return dateTimeHits * 1000 + isoDateHits * 100 + Math.min(value.length, 500);
+}
+
+async function extractScheduleText(page: import("playwright").Page): Promise<string> {
+    const candidates: string[] = [];
+
+    for (const selector of SCHEDULE_CONTAINER_SELECTORS) {
+        const texts = await page.locator(selector).allInnerTexts().catch(() => []);
+        for (const text of texts) {
+            const normalized = trimTrailingNonScheduleText(normalizeWhitespace(text));
+            if (!normalized) continue;
+            candidates.push(normalized);
+        }
+    }
+
+    const best = candidates
+        .filter((text) => /\d{1,2}\s*\/\s*\d{1,2}\s*\d{1,2}\s*[:：]\s*\d{2}/.test(text))
+        .sort((a, b) => scoreScheduleText(b) - scoreScheduleText(a))[0];
+
+    if (best) {
+        return best;
+    }
+
+    const bodyText = await page.locator("body").innerText();
+    return trimTrailingNonScheduleText(normalizeWhitespace(bodyText));
+}
+
 function extractVenueName(rawHeading: string): string {
     const normalized = normalizeWhitespace(rawHeading);
     if (!normalized) {
@@ -54,7 +113,7 @@ export async function fetchAllCourtsData(url: string, headless: boolean): Promis
 
         // Fallback: no tabs found, return body text as a single unknown court
         if (tabCount === 0) {
-            const scheduleText = await page.locator("body").innerText();
+            const scheduleText = await extractScheduleText(page);
             return {
                 venueName,
                 courtsData: [{ courtName: "網球場", scheduleText }]
@@ -76,7 +135,7 @@ export async function fetchAllCourtsData(url: string, headless: boolean): Promis
             await page.waitForLoadState("networkidle", { timeout: 15000 }).catch(() => { });
             await page.waitForTimeout(800);
 
-            const scheduleText = await page.locator("body").innerText();
+            const scheduleText = await extractScheduleText(page);
             results.push({ courtName, scheduleText });
         }
 
@@ -99,7 +158,7 @@ export async function fetchVenuePageText(url: string, headless: boolean): Promis
       await page.waitForLoadState("networkidle", { timeout: 60000 });
     await page.waitForTimeout(1500);
 
-      return await page.locator("body").innerText();
+      return await extractScheduleText(page);
   } finally {
     await browser.close();
   }
