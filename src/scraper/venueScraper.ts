@@ -10,6 +10,10 @@ export type VenueScrapeResult = {
     courtsData: CourtPageData[];
 };
 
+export type VenueScrapeOptions = {
+    includeNextMonth?: boolean;
+};
+
 function normalizeWhitespace(value: string): string {
     return value.replace(/[\u00A0\u3000]/g, " ").replace(/\s+/g, " ").trim();
 }
@@ -171,6 +175,14 @@ async function extractScheduleTextAcrossMonthBoundary(page: Page): Promise<strin
     return combineScheduleTexts([currentMonthText, nextMonthText]);
 }
 
+async function extractScheduleTextForWindow(page: Page, includeNextMonth: boolean): Promise<string> {
+    if (!includeNextMonth) {
+        return extractScheduleText(page);
+    }
+
+    return extractScheduleTextAcrossMonthBoundary(page);
+}
+
 function extractVenueName(rawHeading: string): string {
     const normalized = normalizeWhitespace(rawHeading);
     if (!normalized) {
@@ -192,7 +204,12 @@ function extractVenueName(rawHeading: string): string {
     return `${zhName} / (${enName})`;
 }
 
-export async function fetchAllCourtsData(url: string, headless: boolean): Promise<VenueScrapeResult> {
+export async function fetchAllCourtsData(
+    url: string,
+    headless: boolean,
+    options: VenueScrapeOptions = {}
+): Promise<VenueScrapeResult> {
+    const includeNextMonth = options.includeNextMonth ?? false;
     const browser = await chromium.launch({ headless });
 
     try {
@@ -211,7 +228,7 @@ export async function fetchAllCourtsData(url: string, headless: boolean): Promis
 
         // Fallback: no tabs found, return body text as a single unknown court
         if (tabCount === 0) {
-            const scheduleText = await extractScheduleTextAcrossMonthBoundary(page);
+            const scheduleText = await extractScheduleTextForWindow(page, includeNextMonth);
             return {
                 venueName,
                 courtsData: [{ courtName: "網球場", scheduleText }]
@@ -233,7 +250,7 @@ export async function fetchAllCourtsData(url: string, headless: boolean): Promis
             await page.waitForLoadState("networkidle", { timeout: 15000 }).catch(() => { });
             await page.waitForTimeout(800);
 
-            const scheduleText = await extractScheduleTextAcrossMonthBoundary(page);
+            const scheduleText = await extractScheduleTextForWindow(page, includeNextMonth);
             results.push({ courtName, scheduleText });
         }
 
@@ -247,7 +264,12 @@ export async function fetchAllCourtsData(url: string, headless: boolean): Promis
 }
 
 // Kept for direct single-page text usage if needed
-export async function fetchVenuePageText(url: string, headless: boolean): Promise<string> {
+export async function fetchVenuePageText(
+    url: string,
+    headless: boolean,
+    options: VenueScrapeOptions = {}
+): Promise<string> {
+    const includeNextMonth = options.includeNextMonth ?? false;
   const browser = await chromium.launch({ headless });
 
   try {
@@ -256,7 +278,7 @@ export async function fetchVenuePageText(url: string, headless: boolean): Promis
       await page.waitForLoadState("networkidle", { timeout: 60000 });
     await page.waitForTimeout(1500);
 
-      return await extractScheduleTextAcrossMonthBoundary(page);
+      return await extractScheduleTextForWindow(page, includeNextMonth);
   } finally {
     await browser.close();
   }

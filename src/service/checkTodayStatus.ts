@@ -11,7 +11,11 @@ const logger = pino({ name: "check-today-status" });
 
 export async function checkTodayStatus(): Promise<TodayCheckResult> {
   const dateRange = getDateRangeParts(env.TIMEZONE, 6);
-    const scrapeResult = await fetchAllCourtsData(env.VENUE_URL, env.HEADLESS);
+  const monthWindowCount = new Set(dateRange.map((date) => `${date.year}-${date.month}`)).size;
+  const includeNextMonth = monthWindowCount > 1;
+  const scrapeResult = await fetchAllCourtsData(env.VENUE_URL, env.HEADLESS, {
+    includeNextMonth
+  });
     const { venueName, courtsData } = scrapeResult;
 
     const allSlots: SlotStatus[] = [];
