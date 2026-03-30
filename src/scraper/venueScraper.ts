@@ -311,10 +311,10 @@ async function extractScheduleTextAcrossMonthBoundary(page: Page): Promise<strin
     }
 
     const currentMonthLabel = await getVisibleMonthLabel(page);
-    const todayMonth = await readDatePickerYearMonth(page);
-    const fallbackToday = getTaipeiTodayYearMonth();
-    const baseToday = todayMonth ?? fallbackToday;
-    const expectedNextMonth = addOneMonth(baseToday);
+    // const todayMonth = await readDatePickerYearMonth(page);
+    const todayMonth = getTaipeiTodayYearMonth();
+    // const baseToday = todayMonth ?? fallbackToday;
+    const expectedNextMonth = addOneMonth(todayMonth);
     let nextMonthText = "";
     let shouldRestoreMonth = false;
 
