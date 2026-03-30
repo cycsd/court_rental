@@ -99,7 +99,7 @@ function buildRangeSummaryRows(result: TodayCheckResult): string {
           : "—";
       const rowClass = isCourtUsable(ts) ? "row-usable" : "row-not-usable";
       return `<tr class="${rowClass}" data-date="${escapeHtml(ts.date)}" data-time="${escapeHtml(ts.time)}" data-available="${ts.available}" data-total="${ts.total}">
-<td>${escapeHtml(formatIsoDateWithWeekday(ts.date, result.timezone))}</td>
+    <td>${buildRangeDateCell(ts.date, result.timezone)}</td>
 <td>${escapeHtml(ts.time)}</td>
 <td>${weatherBadge}</td>
 <td>${available}</td>
@@ -136,7 +136,7 @@ function buildRangeDetailRows(result: TodayCheckResult): string {
       const statusClass = slot.isRented ? "expired" : "active";
       const yesNo = slot.isRented ? "是" : "否";
       return `<tr data-date="${escapeHtml(slot.date)}" data-time="${escapeHtml(slot.time)}">
-<td>${escapeHtml(formatIsoDateWithWeekday(slot.date, result.timezone))}</td>
+<td>${buildRangeDateCell(slot.date, result.timezone)}</td>
 <td>${escapeHtml(slot.time)}</td>
 <td>${escapeHtml(slot.court)}</td>
 <td class="${statusClass}">${escapeHtml(slot.rawStatus)}</td>
@@ -153,6 +153,16 @@ function buildDailyTabs(dates: string[], timezone: string): string {
       return `<button class="day-tab${activeClass}" data-day="${escapeHtml(date)}" type="button">${escapeHtml(formatIsoDateWithWeekday(date, timezone))}</button>`;
     })
     .join("\n");
+}
+
+function buildRangeDateCell(isoDate: string, timezone: string): string {
+  const label = formatIsoDateWithWeekday(isoDate, timezone);
+  const matched = label.match(/^(\d{4}-\d{2}-\d{2})\s+(\(.+\))$/);
+  if (!matched) {
+    return escapeHtml(label);
+  }
+
+  return `<span class="range-date-wrap"><span class="range-date-main">${escapeHtml(matched[1])}</span><span class="range-date-week">${escapeHtml(matched[2])}</span></span>`;
 }
 
 function buildDailyPanels(result: TodayCheckResult, dates: string[]): string {
@@ -416,6 +426,15 @@ th, td {
 .date-col {
   min-width: 110px;
 }
+
+.range-date-wrap {
+  display: inline;
+}
+
+.range-date-main,
+.range-date-week {
+  display: inline;
+}
 .day-tabs {
   display: flex;
   flex-wrap: wrap;
@@ -490,6 +509,17 @@ th, td {
 @media (max-width: 900px) {
   .range-filters {
     grid-template-columns: repeat(2, minmax(150px, 1fr));
+  }
+
+  .range-date-wrap {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 2px;
+    line-height: 1.2;
+  }
+
+  .range-date-week {
+    color: var(--muted);
   }
 }
 
