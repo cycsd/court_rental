@@ -49,6 +49,36 @@ describe("parseTodaySlots", () => {
       rawStatus: "網球練習"
     });
   });
+
+  it("parses zero-padded next-month dates", () => {
+    const text = `
+      2026 / 4 / 01 ( 三 )
+      4/01 08 : 00 | 已過期 停止租借
+      4/01 09 : 00 | Xplus
+      2026 / 4 / 02 ( 四 )
+      4/02 08 : 00 | 已過期 停止租借
+    `;
+
+    const slots = parseTodaySlots({
+      pageText: text,
+      isoDate: "2026-04-01",
+      monthDay: "4/1",
+      courtName: "網球場5"
+    });
+
+    expect(slots).toHaveLength(2);
+    expect(slots[0]).toMatchObject({
+      date: "2026-04-01",
+      time: "08:00",
+      rawStatus: "已過期 停止租借",
+      isRented: false
+    });
+    expect(slots[1]).toMatchObject({
+      time: "09:00",
+      rawStatus: "Xplus",
+      isRented: true
+    });
+  });
 });
 
 describe("buildTimeSummary", () => {

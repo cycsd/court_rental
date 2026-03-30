@@ -1,4 +1,4 @@
-import { chromium } from "playwright";
+import { chromium, type Locator, type Page } from "playwright";
 
 export type CourtPageData = {
     courtName: string;
@@ -31,6 +31,11 @@ const FOOTER_MARKERS = [
     "Department of Sports, Taipei City Government Venue Booking System"
 ];
 
+const MONTH_LABEL_REGEX = /\d{4}\s*年\s*\d{1,2}\s*月/;
+const PREVIOUS_MONTH_BUTTON_SELECTOR = "#DatePickupPrevBtn";
+const TODAY_BUTTON_SELECTOR = "#DatePickupTodayBtn";
+const NEXT_MONTH_BUTTON_SELECTOR = "#DatePickupNextBtn";
+
 export function trimTrailingNonScheduleText(value: string): string {
     const firstScheduleIdx = value.search(/\d{1,2}\s*\/\s*\d{1,2}\s*\d{1,2}\s*[:：]\s*\d{2}/);
     let cutAt = value.length;
@@ -43,13 +48,17 @@ export function trimTrailingNonScheduleText(value: string): string {
     return normalizeWhitespace(value.slice(0, cutAt));
 }
 
+export function combineScheduleTexts(values: string[]): string {
+    return [...new Set(values.map((value) => normalizeWhitespace(value)).filter(Boolean))].join("\n");
+}
+
 function scoreScheduleText(value: string): number {
     const dateTimeHits = value.match(/\d{1,2}\s*\/\s*\d{1,2}\s*\d{1,2}\s*[:：]\s*\d{2}/g)?.length ?? 0;
     const isoDateHits = value.match(/\d{4}\s*\/\s*\d{1,2}\s*\/\s*\d{1,2}/g)?.length ?? 0;
     return dateTimeHits * 1000 + isoDateHits * 100 + Math.min(value.length, 500);
 }
 
-async function extractScheduleText(page: import("playwright").Page): Promise<string> {
+async function extractScheduleText(page: Page): Promise<string> {
     const candidates: string[] = [];
 
     for (const selector of SCHEDULE_CONTAINER_SELECTORS) {
@@ -71,6 +80,95 @@ async function extractScheduleText(page: import("playwright").Page): Promise<str
 
     const bodyText = await page.locator("body").innerText();
     return trimTrailingNonScheduleText(normalizeWhitespace(bodyText));
+}
+
+async function getVisibleMonthLabel(page: Page): Promise<string | null> {
+    const label = await page.getByText(MONTH_LABEL_REGEX).first().textContent().catch(() => null);
+    return label ? normalizeWhitespace(label) : null;
+}
+
+async function isActionable(locator: Locator): Promise<boolean> {
+    const target = locator.first();
+    const count = await target.count();
+
+    if (count === 0) {
+        return false;
+    }
+
+    const disabled = await target.isDisabled().catch(() => false);
+    return !disabled;
+}
+
+async function waitForMonthLabel(
+    page: Page,
+    predicate: (currentLabel: string | null) => boolean
+): Promise<void> {
+    await page
+        .waitForFunction(
+            ({ regexSource }) => {
+                const bodyText = document.body?.innerText ?? "";
+                const match = bodyText.match(new RegExp(regexSource));
+                return match ? match[0].replace(/\s+/g, " ").trim() : null;
+            },
+            { regexSource: MONTH_LABEL_REGEX.source },
+            { timeout: 15000 }
+        )
+        .catch(() => null);
+
+    const startedAt = Date.now();
+    while (Date.now() - startedAt < 15000) {
+        const currentLabel = await getVisibleMonthLabel(page);
+        if (predicate(currentLabel)) {
+            break;
+        }
+        await page.waitForTimeout(250);
+    }
+
+    await page.waitForLoadState("networkidle", { timeout: 15000 }).catch(() => { });
+    await page.waitForTimeout(500);
+}
+
+async function restoreCurrentMonthView(page: Page, currentMonthLabel: string | null): Promise<void> {
+    const todayButton = page.locator(TODAY_BUTTON_SELECTOR);
+    if (await isActionable(todayButton)) {
+        await todayButton.first().click();
+        await waitForMonthLabel(page, (label) => !currentMonthLabel || label === currentMonthLabel);
+        return;
+    }
+
+    const previousMonthButton = page.locator(PREVIOUS_MONTH_BUTTON_SELECTOR);
+    if (await isActionable(previousMonthButton)) {
+        await previousMonthButton.first().click();
+        await waitForMonthLabel(page, (label) => !currentMonthLabel || label === currentMonthLabel);
+    }
+}
+
+async function extractScheduleTextAcrossMonthBoundary(page: Page): Promise<string> {
+    const currentMonthText = await extractScheduleText(page);
+    const nextMonthButton = page.locator(NEXT_MONTH_BUTTON_SELECTOR);
+
+    if (!(await isActionable(nextMonthButton))) {
+        return currentMonthText;
+    }
+
+    const currentMonthLabel = await getVisibleMonthLabel(page);
+    let nextMonthText = "";
+    let shouldRestoreMonth = false;
+
+    try {
+        await nextMonthButton.first().click();
+        await waitForMonthLabel(page, (label) => label !== currentMonthLabel);
+
+        const nextMonthLabel = await getVisibleMonthLabel(page);
+        shouldRestoreMonth = nextMonthLabel !== currentMonthLabel;
+        nextMonthText = await extractScheduleText(page);
+    } finally {
+        if (shouldRestoreMonth) {
+            await restoreCurrentMonthView(page, currentMonthLabel);
+        }
+    }
+
+    return combineScheduleTexts([currentMonthText, nextMonthText]);
 }
 
 function extractVenueName(rawHeading: string): string {
@@ -113,7 +211,7 @@ export async function fetchAllCourtsData(url: string, headless: boolean): Promis
 
         // Fallback: no tabs found, return body text as a single unknown court
         if (tabCount === 0) {
-            const scheduleText = await extractScheduleText(page);
+            const scheduleText = await extractScheduleTextAcrossMonthBoundary(page);
             return {
                 venueName,
                 courtsData: [{ courtName: "網球場", scheduleText }]
@@ -135,7 +233,7 @@ export async function fetchAllCourtsData(url: string, headless: boolean): Promis
             await page.waitForLoadState("networkidle", { timeout: 15000 }).catch(() => { });
             await page.waitForTimeout(800);
 
-            const scheduleText = await extractScheduleText(page);
+            const scheduleText = await extractScheduleTextAcrossMonthBoundary(page);
             results.push({ courtName, scheduleText });
         }
 
@@ -158,7 +256,7 @@ export async function fetchVenuePageText(url: string, headless: boolean): Promis
       await page.waitForLoadState("networkidle", { timeout: 60000 });
     await page.waitForTimeout(1500);
 
-      return await extractScheduleText(page);
+      return await extractScheduleTextAcrossMonthBoundary(page);
   } finally {
     await browser.close();
   }

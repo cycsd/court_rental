@@ -25,6 +25,23 @@ function pad2(value: string): string {
   return value.length === 1 ? `0${value}` : value;
 }
 
+function escapeForRegex(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function buildMonthDayPattern(monthDay: string): string {
+  const normalized = monthDay.replace(/\s+/g, "");
+  const [monthPart, dayPart] = normalized.split("/");
+  const month = Number(monthPart);
+  const day = Number(dayPart);
+
+  if (!Number.isFinite(month) || !Number.isFinite(day)) {
+    return escapeForRegex(normalized);
+  }
+
+  return `0?${month}\\s*\\/\\s*0?${day}`;
+}
+
 function isStopRentStatus(rawStatus: string): boolean {
   return STATUS_KEYWORDS.some((keyword) => rawStatus.includes(keyword));
 }
@@ -44,13 +61,13 @@ function sanitizeRawStatus(rawStatus: string): string {
 
 export function parseSlotsForDate(input: ParseInput): SlotStatus[] {
   const normalized = normalizeWhitespace(input.pageText);
-  const md = input.monthDay.replace(/\s+/g, "");
+  const mdPattern = buildMonthDayPattern(input.monthDay);
 
   // Examples matched:
   // - "3/27 08 : 00 | 已過期 停止租借"
   // - "3/27 08:00 已過期 停止租借"
   const slotRegex = new RegExp(
-    `${md}\\s*(\\d{1,2})\\s*[:：]\\s*(\\d{2})\\s*(?:[|｜]\\s*)?([^\\n\\r]+?)\\s*(?=${md}\\s*\\d{1,2}\\s*[:：]|\\d{1,2}\\s*\/\\s*\\d{1,2}\\s*\\d{1,2}\\s*[:：]|\\d{4}\\s*\/\\s*\\d{1,2}\\s*\/\\s*\\d{1,2}|可租借時段\\s*\\(\\s*Can be rented\\s*\\)|$)`,
+    `${mdPattern}\\s*(\\d{1,2})\\s*[:：]\\s*(\\d{2})\\s*(?:[|｜]\\s*)?([^\\n\\r]+?)\\s*(?=${mdPattern}\\s*\\d{1,2}\\s*[:：]|\\d{1,2}\\s*\/\\s*\\d{1,2}\\s*\\d{1,2}\\s*[:：]|\\d{4}\\s*\/\\s*\\d{1,2}\\s*\/\\s*\\d{1,2}|可租借時段\\s*\\(\\s*Can be rented\\s*\\)|$)`,
     "g"
   );
 
