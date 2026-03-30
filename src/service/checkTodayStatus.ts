@@ -9,26 +9,106 @@ import { fetchTodayHourlyWeather, mergeWeatherToSummary } from "../weather/openM
 
 const logger = pino({ name: "check-today-status" });
 
+type DateRangePart = ReturnType<typeof getDateRangeParts>[number];
+
+function collectSlots(
+  courtsData: { courtName: string; scheduleText: string }[],
+  dateRange: DateRangePart[]
+): SlotStatus[] {
+  const allSlots: SlotStatus[] = [];
+  for (const courtData of courtsData) {
+    for (const date of dateRange) {
+      const slots = parseSlotsForDate({
+        pageText: courtData.scheduleText,
+        isoDate: date.isoDate,
+        monthDay: date.monthDay,
+        courtName: courtData.courtName
+      });
+      allSlots.push(...slots);
+    }
+  }
+
+  return allSlots;
+}
+
+function findMissingNextMonthCoverage(
+  slots: SlotStatus[],
+  courtNames: string[],
+  dateRange: DateRangePart[]
+): string[] {
+  if (dateRange.length === 0) {
+    return [];
+  }
+
+  const firstMonth = dateRange[0].month;
+  const nextMonthDates = dateRange.filter((date) => date.month !== firstMonth).map((date) => date.isoDate);
+  if (nextMonthDates.length === 0) {
+    return [];
+  }
+
+  const covered = new Set(slots.map((slot) => `${slot.court}|${slot.date}`));
+  const missing: string[] = [];
+
+  for (const courtName of courtNames) {
+    for (const isoDate of nextMonthDates) {
+      if (!covered.has(`${courtName}|${isoDate}`)) {
+        missing.push(`${courtName} @ ${isoDate}`);
+      }
+    }
+  }
+
+  return missing;
+}
+
 export async function checkTodayStatus(): Promise<TodayCheckResult> {
   const dateRange = getDateRangeParts(env.TIMEZONE, 6);
   const monthWindowCount = new Set(dateRange.map((date) => `${date.year}-${date.month}`)).size;
   const includeNextMonth = monthWindowCount > 1;
-  const scrapeResult = await fetchAllCourtsData(env.VENUE_URL, env.HEADLESS, {
+  let scrapeResult = await fetchAllCourtsData(env.VENUE_URL, env.HEADLESS, {
     includeNextMonth
   });
-    const { venueName, courtsData } = scrapeResult;
+  let { venueName, courtsData } = scrapeResult;
+  let allSlots = collectSlots(courtsData, dateRange);
 
-    const allSlots: SlotStatus[] = [];
-    for (const courtData of courtsData) {
-      for (const date of dateRange) {
-        const slots = parseSlotsForDate({
-          pageText: courtData.scheduleText,
-          isoDate: date.isoDate,
-          monthDay: date.monthDay,
-          courtName: courtData.courtName
-        });
-        allSlots.push(...slots);
+  if (includeNextMonth) {
+    const initialMissingCoverage = findMissingNextMonthCoverage(allSlots, courtsData.map((c) => c.courtName), dateRange);
+    if (initialMissingCoverage.length > 0) {
+      logger.warn(
+        {
+          missingCount: initialMissingCoverage.length,
+          missingCoverage: initialMissingCoverage.slice(0, 10)
+        },
+        "Detected incomplete next-month coverage, retrying scrape once"
+      );
+
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const retryScrapeResult = await fetchAllCourtsData(env.VENUE_URL, env.HEADLESS, {
+        includeNextMonth
+      });
+      const retrySlots = collectSlots(retryScrapeResult.courtsData, dateRange);
+      const retryMissingCoverage = findMissingNextMonthCoverage(
+        retrySlots,
+        retryScrapeResult.courtsData.map((c) => c.courtName),
+        dateRange
+      );
+
+      if (retryMissingCoverage.length <= initialMissingCoverage.length) {
+        scrapeResult = retryScrapeResult;
+        venueName = retryScrapeResult.venueName;
+        courtsData = retryScrapeResult.courtsData;
+        allSlots = retrySlots;
       }
+
+      if (retryMissingCoverage.length > 0) {
+        logger.warn(
+          {
+            missingCount: retryMissingCoverage.length,
+            missingCoverage: retryMissingCoverage.slice(0, 10)
+          },
+          "Next-month coverage still incomplete after retry"
+        );
+      }
+    }
   }
 
     const courtNames = courtsData.map((c) => c.courtName);

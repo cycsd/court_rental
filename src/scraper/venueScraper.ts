@@ -37,6 +37,7 @@ const FOOTER_MARKERS = [
 
 const MONTH_LABEL_REGEX = /\d{4}\s*年\s*\d{1,2}\s*月/;
 const DATE_PICKER_VALUE_SELECTOR = "#DatePickerValue";
+const DATE_PICKUP_LOADING_SELECTOR = "#DatePickupLoadingDiv";
 const PREVIOUS_MONTH_BUTTON_SELECTOR = "#DatePickupPrevBtn";
 const TODAY_BUTTON_SELECTOR = "#DatePickupTodayBtn";
 const NEXT_MONTH_BUTTON_SELECTOR = "#DatePickupNextBtn";
@@ -172,8 +173,39 @@ async function waitForDatePickerYearMonth(
 }
 
 async function waitForPageSettle(page: Page): Promise<void> {
+    await waitForDatePickupLoadingDone(page);
     await page.waitForLoadState("networkidle", { timeout: 8000 }).catch(() => { });
+    await waitForDatePickupLoadingDone(page);
     await page.waitForTimeout(300);
+}
+
+async function waitForDatePickupLoadingDone(page: Page, timeoutMs = 12000): Promise<void> {
+    await page
+        .waitForFunction(
+            ({ selector }) => {
+                const loading = document.querySelector(selector) as HTMLElement | null;
+                if (!loading) {
+                    return true;
+                }
+
+                const style = window.getComputedStyle(loading);
+                const hidden =
+                    style.display === "none" ||
+                    style.visibility === "hidden" ||
+                    style.opacity === "0" ||
+                    loading.offsetParent === null;
+
+                return hidden || !loading.classList.contains("Open");
+            },
+            { selector: DATE_PICKUP_LOADING_SELECTOR },
+            { timeout: timeoutMs }
+        )
+        .catch(() => { });
+}
+
+async function waitForCalendarControlsReady(page: Page): Promise<void> {
+    await page.locator(DATE_PICKER_VALUE_SELECTOR).first().waitFor({ state: "visible", timeout: 12000 }).catch(() => { });
+    await waitForPageSettle(page);
 }
 
 async function clickWithRetry(page: Page, locator: Locator, maxAttempts = BUTTON_CLICK_MAX_ATTEMPTS): Promise<boolean> {
@@ -264,14 +296,14 @@ async function waitForMonthLabel(
 async function restoreCurrentMonthView(page: Page, currentMonthLabel: string | null): Promise<void> {
     const todayButton = page.locator(TODAY_BUTTON_SELECTOR);
     if (await isActionable(todayButton)) {
-        await todayButton.first().click();
+        await clickWithRetry(page, todayButton, 1);
         await waitForMonthLabel(page, (label) => !currentMonthLabel || label === currentMonthLabel);
         return;
     }
 
     const previousMonthButton = page.locator(PREVIOUS_MONTH_BUTTON_SELECTOR);
     if (await isActionable(previousMonthButton)) {
-        await previousMonthButton.first().click();
+        await clickWithRetry(page, previousMonthButton, 1);
         await waitForMonthLabel(page, (label) => !currentMonthLabel || label === currentMonthLabel);
     }
 }
@@ -292,7 +324,7 @@ async function resetToToday(page: Page): Promise<void> {
         const ok = await waitForDatePickerYearMonth(
             page,
             (value) => isSameYearMonth(value, expectedToday),
-            5000
+            9000
         );
         if (ok) {
             return;
@@ -303,6 +335,8 @@ async function resetToToday(page: Page): Promise<void> {
 }
 
 async function extractScheduleTextAcrossMonthBoundary(page: Page): Promise<string> {
+    await resetToToday(page);
+    await waitForCalendarControlsReady(page);
     const currentMonthText = await extractScheduleText(page);
     const nextMonthButton = page.locator(NEXT_MONTH_BUTTON_SELECTOR);
 
@@ -311,10 +345,9 @@ async function extractScheduleTextAcrossMonthBoundary(page: Page): Promise<strin
     }
 
     const currentMonthLabel = await getVisibleMonthLabel(page);
-    // const todayMonth = await readDatePickerYearMonth(page);
-    const todayMonth = getTaipeiTodayYearMonth();
-    // const baseToday = todayMonth ?? fallbackToday;
-    const expectedNextMonth = addOneMonth(todayMonth);
+    // const pickerMonth = await readDatePickerYearMonth(page);
+    // const expectedNextMonth = addOneMonth(pickerMonth ?? getTaipeiTodayYearMonth());
+    const expectedNextMonth = addOneMonth(getTaipeiTodayYearMonth());
     let nextMonthText = "";
     let shouldRestoreMonth = false;
 
@@ -330,7 +363,7 @@ async function extractScheduleTextAcrossMonthBoundary(page: Page): Promise<strin
             nextMonthReady = await waitForDatePickerYearMonth(
                 page,
                 (value) => isSameYearMonth(value, expectedNextMonth),
-                5000
+                9000
             );
             if (nextMonthReady) {
                 break;
@@ -431,6 +464,7 @@ export async function fetchAllCourtsData(
             await tab.click();
             await page.waitForLoadState("networkidle", { timeout: 15000 }).catch(() => { });
             await page.waitForTimeout(800);
+            await waitForCalendarControlsReady(page);
 
             // When reading next-month data, reset month first so "next month" is always based on today.
             if (includeNextMonth) {

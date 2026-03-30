@@ -16,6 +16,8 @@ concurrency:
 jobs:
   scrape-and-deploy:
     runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Taipei
 
     steps:
       - name: Checkout
@@ -47,8 +49,22 @@ jobs:
           EMAIL_ENABLED=false
           EOF
 
-      - name: Generate latest status files
-        run: npm run check:today
+      - name: Generate latest status files (with retry)
+        run: |
+          for attempt in 1 2 3; do
+            echo "Run attempt #$attempt"
+            if npm run check:today; then
+              break
+            fi
+
+            if [ "$attempt" -eq 3 ]; then
+              echo "check:today failed after 3 attempts"
+              exit 1
+            fi
+
+            echo "Retry after 20 seconds..."
+            sleep 20
+          done
 
       - name: Prepare pages content
         run: |
