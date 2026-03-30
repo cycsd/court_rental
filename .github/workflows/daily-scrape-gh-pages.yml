@@ -1,0 +1,66 @@
+name: Daily Scrape And Deploy
+
+on:
+  schedule:
+    # 11:00 Asia/Taipei = 03:00 UTC
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: gh-pages-deploy
+  cancel-in-progress: true
+
+jobs:
+  scrape-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Build runtime .env
+        run: |
+          cat > .env <<EOF
+          VENUE_URL=https://vbs.sports.taipei/venues/?K=1042#Schedule
+          TIMEZONE=Asia/Taipei
+          WEATHER_LAT=25.086
+          WEATHER_LON=121.507
+          OUTPUT_JSON=output/today-status.json
+          OUTPUT_HTML=output/today-status.html
+          HEADLESS=true
+          TELEGRAM_ENABLED=false
+          EMAIL_ENABLED=false
+          EOF
+
+      - name: Generate latest status files
+        run: npm run check:today
+
+      - name: Prepare pages content
+        run: |
+          mkdir -p public
+          cp output/today-status.html public/today-status.html
+          cp output/today-status.html public/index.html
+          cp output/today-status.json public/today-status.json
+
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          publish_branch: gh-pages
+          force_orphan: true

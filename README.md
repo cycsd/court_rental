@@ -105,20 +105,60 @@ WEATHER_LON=121.507
 - `npm run lint`
 - `npm run format`
 
+## GitHub Actions + Pages
+
+This repository can run a daily scrape on GitHub Actions and deploy the generated report to `gh-pages`.
+
+Workflow file:
+
+- `.github/workflows/daily-scrape-gh-pages.yml`
+
+Behavior:
+
+- Runs every day at 11:00 (Asia/Taipei).
+- Also supports manual trigger via `workflow_dispatch`.
+- Executes `npm run check:today` to generate:
+    - `output/today-status.html`
+    - `output/today-status.json`
+- Deploys to `gh-pages` branch:
+    - `index.html` (same content as `today-status.html`)
+    - `today-status.html`
+    - `today-status.json`
+
+Setup steps:
+
+1. Push this repository to GitHub.
+2. In GitHub repository settings, go to `Pages` and set source branch to `gh-pages`.
+3. (Optional) Configure repository variables in `Settings -> Secrets and variables -> Actions -> Variables`:
+     - `VENUE_URL`
+     - `TIMEZONE`
+     - `WEATHER_LAT`
+     - `WEATHER_LON`
+4. Run workflow once manually from `Actions` tab to initialize first deployment.
+
+Notes:
+
+- If variables are not set, defaults are used (`VENUE_URL=https://vbs.sports.taipei/venues/?K=1042#Schedule`, `TIMEZONE=Asia/Taipei`).
+- Notifications are disabled in CI by default (`TELEGRAM_ENABLED=false`, `EMAIL_ENABLED=false`).
+
 
 ## Roadmap
 
 - 可以發佈成 github page （爬蟲用使用者自己瀏覽器的,會被 CROS 擋）
     - 改抓資料使用 github action
     - 顯示這些資料用 github page
+- [ ] 調整可使用場地，可以動態調整自己預約的文字
 - [x] 分成以天或以周顯示
 - [x] 以使用者開啟頁面的日期及時間作為起始的篩選條件
     - 修正一開始圖表沒有符合當天時間而是整個區間
-- 修正下個月的資訊沒有抓到問題
-- 修正月底最後一日狀態抓到 comment info 問題
+- [ ] 新增以有沒有空場及場地是否溼或2個一起的篩選條件
+- [ ]修正下個月的資訊沒有抓到問題
+- [ ] 修正月底最後一日狀態抓到 comment info 問題
+- [ ] 手機版面 fit content
 - [x] 可以抓不同場地的資料
 - [x] 加入各時段天氣
-- [x] 依照天氣及是否有租借判斷場地是否可以使用，判斷依據
-    - 該時段有沒有被租借
-    - 該時段沒有下雨且前5個小時都不能下雨且溫度需要超過23度
+- [ ] 依照天氣及是否有租借判斷場地是否可以使用，判斷依據
+    - [ ]在做更細微的調整判斷
+    - [x]該時段有沒有被租借
+    - [x]該時段沒有下雨且前5個小時都不能下雨且溫度需要超過23度
     
