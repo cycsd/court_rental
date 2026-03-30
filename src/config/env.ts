@@ -31,6 +31,35 @@ const asStringArray = (value: string | undefined): string[] => {
 const envSchema = z.object({
   VENUE_URL: z.string().url(),
   TIMEZONE: z.string().default("Asia/Taipei"),
+    WETNESS_PROFILE: z
+        .enum(["conservative", "balanced", "aggressive"])
+        .default("balanced"),
+    WETNESS_LOOKBACK_HOURS: z
+        .string()
+        .optional()
+        .transform((value) => {
+            if (!value) {
+                return undefined;
+            }
+            const parsed = Number.parseInt(value, 10);
+            if (Number.isNaN(parsed)) {
+                return undefined;
+            }
+            return Math.min(24, Math.max(3, parsed));
+        }),
+    WETNESS_THRESHOLD: z
+        .string()
+        .optional()
+        .transform((value) => {
+            if (!value) {
+                return undefined;
+            }
+            const parsed = Number.parseFloat(value);
+            if (Number.isNaN(parsed)) {
+                return undefined;
+            }
+            return Math.min(0.95, Math.max(0.1, parsed));
+        }),
     WEATHER_LAT: z
         .string()
         .optional()

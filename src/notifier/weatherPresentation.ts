@@ -110,38 +110,103 @@ export type WeatherSnapshot = {
     precipitationProbability?: number;
 };
 
+export type WetnessProfile = "conservative" | "balanced" | "aggressive";
+
+export type WetnessConfig = {
+  profile?: WetnessProfile;
+  lookbackHours?: number;
+  threshold?: number;
+};
+
+function clamp(min: number, max: number, value: number): number {
+  return Math.min(max, Math.max(min, value));
+}
+
+function parseSlotDateHour(ts: TimeSlotSummary): Date | null {
+  const dateMatch = ts.date.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const hourMatch = ts.time.match(/^(\d{2}):\d{2}$/);
+  if (!dateMatch || !hourMatch) return null;
+
+  const year = Number(dateMatch[1]);
+  const month = Number(dateMatch[2]);
+  const day = Number(dateMatch[3]);
+  const hour = Number(hourMatch[1]);
+
+  return new Date(year, month - 1, day, hour, 0, 0, 0);
+}
+
+function toHistoryKey(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hour = String(date.getHours()).padStart(2, "0");
+  return `${year}-${month}-${day} ${hour}:00`;
+}
+
+function isRainText(weatherText?: string): boolean {
+  return /(雨|陣雨|雷雨|毛毛雨|凍雨)/.test(weatherText ?? "");
+}
+
+function rainInput(snapshot?: WeatherSnapshot): number {
+  if (!snapshot) return 0;
+  const rainByText = isRainText(snapshot.weatherText) ? 0.55 : 0;
+  const rainByProbability = 0.45 * clamp(0, 1, (snapshot.precipitationProbability ?? 0) / 100);
+  return clamp(0, 1, rainByText + rainByProbability);
+}
+
+function dryingFactor(snapshot?: WeatherSnapshot): number {
+  const temperatureC = snapshot?.temperatureC ?? 23;
+  return clamp(0.08, 0.3, 0.12 + 0.01 * (temperatureC - 20));
+}
+
 export function isCourtWetted(
-    ts: TimeSlotSummary,
-  weatherHistory: (dateHourKey: string) => WeatherSnapshot | undefined
+  ts: TimeSlotSummary,
+  weatherHistory: (dateHourKey: string) => WeatherSnapshot | undefined,
+  config?: WetnessConfig
 ): boolean {
-    // 條件二：當前時段若下雨，視為場地潮濕
-    if (isRainyWeather(ts.weatherText, ts.precipitationProbability)) return true;
+  const currentDateHour = parseSlotDateHour(ts);
+  if (!currentDateHour) {
+    return isRainyWeather(ts.weatherText, ts.precipitationProbability);
+  }
 
-    // 條件三：（前 7 個小時均不下雨）或（前 5 個小時均不下雨且溫度皆超過 23 度）
-    // 溫度條件可在依據現在溫度調整，
-    // ex 例如現在溫度 30 度，則可以在縮短判定的小時數，畢竟溫度不會一下上升，所以前幾小時的溫度也應該不會太低，乾的速度會比較快。
-    const currentHour = parseInt(ts.time.slice(0, 2), 10);
+  // If current weather is entirely missing, keep conservative behavior.
+  const currentSnapshot = weatherHistory(toHistoryKey(currentDateHour));
+  if (!currentSnapshot && !ts.weatherText && ts.temperatureC == null && ts.precipitationProbability == null) {
+    return true;
+  }
 
-    const lookupPrevHours = (count: number): WeatherSnapshot[] =>
-        Array.from({ length: count }, (_, i) => currentHour - count + i)
-            .filter((h) => h >= 0)
-        .map((h) => weatherHistory(`${ts.date} ${String(h).padStart(2, "0")}:00`))
-            .filter((w): w is WeatherSnapshot => w != null);
+  const profile = config?.profile ?? "balanced";
+  const defaultsByProfile: Record<WetnessProfile, { lookbackHours: number; threshold: number }> = {
+    conservative: { lookbackHours: 10, threshold: 0.35 },
+    balanced: { lookbackHours: 8, threshold: 0.45 },
+    aggressive: { lookbackHours: 6, threshold: 0.55 }
+  };
 
-  const prev7 = lookupPrevHours(6);
-    const prev5 = lookupPrevHours(5);
+  const defaultConfig = defaultsByProfile[profile];
 
-    const prev7NoRain = prev7.every(
-        (s) => !isRainyWeather(s.weatherText, s.precipitationProbability)
-    );
-    const prev5NoRainAndWarm = prev5.every(
-        (s) =>
-            !isRainyWeather(s.weatherText, s.precipitationProbability) &&
-            (s.temperatureC ?? 0) > 23
-    );
+  // Wetness memory model: previous wetness decays with temperature and accumulates rain input.
+  // This captures "rain stopped but court is still wet" behavior.
+  const lookbackHours = clamp(
+    3,
+    24,
+    config?.lookbackHours ?? defaultConfig.lookbackHours
+  );
+  const wetThreshold = clamp(
+    0.1,
+    0.95,
+    config?.threshold ?? defaultConfig.threshold
+  );
+  let wetScore = 0;
 
-    const isDry = prev7NoRain || prev5NoRainAndWarm;
-    return !isDry;
+  for (let offset = lookbackHours - 1; offset >= 0; offset--) {
+    const hourDate = new Date(currentDateHour.getTime() - offset * 60 * 60 * 1000);
+    const snapshot = weatherHistory(toHistoryKey(hourDate));
+    const dry = dryingFactor(snapshot);
+    const rain = rainInput(snapshot);
+    wetScore = clamp(0, 1, wetScore * (1 - dry) + rain);
+  }
+
+  return wetScore >= wetThreshold;
 }
 
 export function isCourtUsable(ts: TimeSlotSummary): boolean {

@@ -40,6 +40,9 @@ jobs:
           cat > .env <<EOF
           VENUE_URL=https://vbs.sports.taipei/venues/?K=1042#Schedule
           TIMEZONE=Asia/Taipei
+          WETNESS_PROFILE=balanced
+          WETNESS_LOOKBACK_HOURS=7
+          WETNESS_THRESHOLD=0.35
           WEATHER_LAT=25.086
           WEATHER_LON=121.507
           OUTPUT_JSON=output/today-status.json

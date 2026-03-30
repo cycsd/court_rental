@@ -1,5 +1,6 @@
 import type { TimeSlotSummary } from "../types/schedule.js";
 import { isCourtWetted } from "../notifier/weatherPresentation.js";
+import type { WetnessConfig } from "../notifier/weatherPresentation.js";
 
 type OpenMeteoHourly = {
   time: string[];
@@ -91,7 +92,8 @@ export async function fetchTodayHourlyWeather(
 
 export function mergeWeatherToSummary(
   summary: TimeSlotSummary[],
-  weatherMap: Map<string, WeatherAtHour>
+  weatherMap: Map<string, WeatherAtHour>,
+  wetnessConfig?: WetnessConfig
 ): TimeSlotSummary[] {
   // First pass: merge weather fields
   const merged = summary.map((slot) => {
@@ -111,6 +113,6 @@ export function mergeWeatherToSummary(
   // weatherMap has hourly entries across days so prev-hour lookups stay on the same date.
   return merged.map((slot) => ({
     ...slot,
-    isWetted: isCourtWetted(slot, (key) => weatherMap.get(key))
+    isWetted: isCourtWetted(slot, (key) => weatherMap.get(key), wetnessConfig)
   }));
 }

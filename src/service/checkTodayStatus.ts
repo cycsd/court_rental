@@ -118,7 +118,11 @@ export async function checkTodayStatus(): Promise<TodayCheckResult> {
     let timeSummary = baseTimeSummary;
     try {
         const weatherMap = await fetchTodayHourlyWeather(env.WEATHER_LAT, env.WEATHER_LON, env.TIMEZONE);
-        timeSummary = mergeWeatherToSummary(baseTimeSummary, weatherMap);
+      timeSummary = mergeWeatherToSummary(baseTimeSummary, weatherMap, {
+        profile: env.WETNESS_PROFILE,
+        lookbackHours: env.WETNESS_LOOKBACK_HOURS,
+        threshold: env.WETNESS_THRESHOLD
+      });
     } catch (error) {
       logger.warn({ err: error }, "Weather data unavailable, fallback to no-weather summary");
     // Weather is supplemental; continue without weather data when API fails.
