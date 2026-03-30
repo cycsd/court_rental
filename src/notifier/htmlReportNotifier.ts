@@ -31,8 +31,7 @@ function buildWeatherBadge(
 function buildSummaryRows(result: TodayCheckResult, targetDate?: string): string {
   return result.timeSummary
     .filter((ts) => (targetDate ? ts.date === targetDate : true))
-        .map((ts) => {
-            const ratio = `${ts.available} / ${ts.total}`;
+    .map((ts) => {
             const weatherBadge = buildWeatherBadge(
                 ts.weatherText,
                 ts.temperatureC,
@@ -64,7 +63,6 @@ function buildSummaryRows(result: TodayCheckResult, targetDate?: string): string
           return `<tr class="${rowClass} daily-summary-row" data-date="${escapeHtml(ts.date)}" data-time="${escapeHtml(ts.time)}">
 <td>${escapeHtml(formatIsoDateWithWeekday(ts.date, result.timezone))}</td>
 <td>${escapeHtml(ts.time)}</td>
-<td>${ratio}</td>
           <td>${weatherBadge}</td>
 <td>${available}</td>
 <td>${unavailable}</td>
@@ -76,7 +74,6 @@ function buildSummaryRows(result: TodayCheckResult, targetDate?: string): string
 function buildRangeSummaryRows(result: TodayCheckResult): string {
   return result.timeSummary
     .map((ts) => {
-      const ratio = `${ts.available} / ${ts.total}`;
       const weatherBadge = buildWeatherBadge(
         ts.weatherText,
         ts.temperatureC,
@@ -104,7 +101,6 @@ function buildRangeSummaryRows(result: TodayCheckResult): string {
       return `<tr class="${rowClass}" data-date="${escapeHtml(ts.date)}" data-time="${escapeHtml(ts.time)}" data-available="${ts.available}" data-total="${ts.total}">
 <td>${escapeHtml(formatIsoDateWithWeekday(ts.date, result.timezone))}</td>
 <td>${escapeHtml(ts.time)}</td>
-<td>${ratio}</td>
 <td>${weatherBadge}</td>
 <td>${available}</td>
 <td>${unavailable}</td>
@@ -174,11 +170,11 @@ function buildDailyPanels(result: TodayCheckResult, dates: string[]): string {
   <h3>${escapeHtml(formattedDate)} 每日時段總覽</h3>
   <table>
     <thead>
-      <tr><th>時間</th><th>可用數</th><th>天氣</th><th>可用場地(停止租借)</th><th>不可用場地</th></tr>
+      <tr><th>時間</th><th>天氣</th><th>可用場地(停止租借)</th><th>不可用場地</th></tr>
     </thead>
     <tbody>
-      ${hasSummary ? summaryRows.replaceAll(`<td>${escapeHtml(formattedDate)}</td>\n`, "") : '<tr><td colspan="5">此日期目前無資料</td></tr>'}
-      <tr class="daily-summary-empty" style="display:none;"><td colspan="5">此日期在目前時間範圍沒有符合資料</td></tr>
+      ${hasSummary ? summaryRows.replaceAll(`<td>${escapeHtml(formattedDate)}</td>\n`, "") : '<tr><td colspan="4">此日期目前無資料</td></tr>'}
+      <tr class="daily-summary-empty" style="display:none;"><td colspan="4">此日期在目前時間範圍沒有符合資料</td></tr>
     </tbody>
   </table>
   <h3>${escapeHtml(formattedDate)} 各場地明細</h3>
@@ -496,6 +492,72 @@ th, td {
     grid-template-columns: repeat(2, minmax(150px, 1fr));
   }
 }
+
+.chart-desktop {
+  display: block;
+}
+
+.chart-mobile-list {
+  display: none;
+  gap: 10px;
+}
+
+.mini-slot-card {
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+
+.mini-slot-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.mini-slot-time {
+  font-size: 13px;
+  color: #334155;
+  font-weight: 600;
+}
+
+.mini-slot-ratio {
+  font-size: 12px;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.mini-slot-bar {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: #e2e8f0;
+  overflow: hidden;
+}
+
+.mini-slot-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+}
+
+.mini-slot-meta {
+  margin-top: 8px;
+  color: #64748b;
+  font-size: 12px;
+}
+
+@media (max-width: 768px) {
+  .chart-desktop {
+    display: none;
+  }
+
+  .chart-mobile-list {
+    display: grid;
+  }
+}
 </style>
 </head>
 <body>
@@ -519,7 +581,10 @@ th, td {
   <div class="grid2">
     <div class="card">
       <h2>各時段可用場地數（停止租借）</h2>
-      <canvas id="stackedChart" height="120"></canvas>
+      <div class="chart-desktop">
+        <canvas id="stackedChart" height="120"></canvas>
+      </div>
+      <div id="mobileChartList" class="chart-mobile-list" aria-label="各時段可用場地數卡片"></div>
     </div>
     <div class="card">
       <h2>比例（圓餅圖）</h2>
@@ -569,11 +634,11 @@ th, td {
       <h3>區間總覽：各日期時段場地可用彙總</h3>
       <table>
         <thead>
-          <tr><th class="date-col">日期</th><th>時間</th><th>可用數</th><th>天氣</th><th>可用場地(停止租借)</th><th>不可用場地</th></tr>
+          <tr><th class="date-col">日期</th><th>時間</th><th>天氣</th><th>可用場地(停止租借)</th><th>不可用場地</th></tr>
         </thead>
         <tbody id="rangeSummaryBody">
           ${rangeSummaryRows}
-          <tr id="rangeSummaryEmpty" style="display:none;"><td colspan="6">此區間沒有符合資料</td></tr>
+          <tr id="rangeSummaryEmpty" style="display:none;"><td colspan="5">此區間沒有符合資料</td></tr>
         </tbody>
       </table>
 
@@ -654,6 +719,34 @@ const initializeDefaultFiltersFromNow = () => {
   }
 };
 
+const renderMobileChartCards = (filteredSummary) => {
+  const container = document.getElementById("mobileChartList");
+  if (!container) return;
+
+  if (!filteredSummary || filteredSummary.length === 0) {
+    container.innerHTML = '<div class="mini-slot-card"><div class="mini-slot-meta">目前條件下無資料</div></div>';
+    return;
+  }
+
+  const cards = filteredSummary.map((ts) => {
+    const total = Number(ts.total) || 0;
+    const available = Number(ts.available) || 0;
+    const percent = total > 0 ? Math.round((available / total) * 100) : 0;
+    const label = (dateLabelMap[ts.date] ?? ts.date) + " " + ts.time;
+
+    return '<article class="mini-slot-card">'
+      + '<div class="mini-slot-head">'
+      + '<div class="mini-slot-time">' + label + '</div>'
+      + '<div class="mini-slot-ratio">' + available + ' / ' + total + '</div>'
+      + '</div>'
+      + '<div class="mini-slot-bar"><div class="mini-slot-fill" style="width:' + percent + '%"></div></div>'
+      + '<div class="mini-slot-meta">可用率 ' + percent + '%</div>'
+      + '</article>';
+  });
+
+  container.innerHTML = cards.join("");
+};
+
 const isInSelectedTimeRange = (time, startTime, endTime) => {
   if (!startTime || !endTime) return true;
   const t = toTimeNumber(time);
@@ -722,6 +815,8 @@ const updateCharts = (filteredSummary) => {
   const labels = filteredSummary.map((ts) => (dateLabelMap[ts.date] ?? ts.date) + " " + ts.time);
   const available = filteredSummary.map((ts) => ts.available);
   const unavailable = filteredSummary.map((ts) => ts.total - ts.available);
+
+  renderMobileChartCards(filteredSummary);
 
   stackedChart.data.labels = labels;
   stackedChart.data.datasets[0].data = available;
