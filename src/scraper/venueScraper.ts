@@ -36,9 +36,16 @@ const FOOTER_MARKERS = [
 ];
 
 const MONTH_LABEL_REGEX = /\d{4}\s*年\s*\d{1,2}\s*月/;
+const DATE_PICKER_VALUE_SELECTOR = "#DatePickerValue";
 const PREVIOUS_MONTH_BUTTON_SELECTOR = "#DatePickupPrevBtn";
 const TODAY_BUTTON_SELECTOR = "#DatePickupTodayBtn";
 const NEXT_MONTH_BUTTON_SELECTOR = "#DatePickupNextBtn";
+const BUTTON_CLICK_MAX_ATTEMPTS = 3;
+
+type YearMonth = {
+    year: number;
+    month: number;
+};
 
 export function trimTrailingNonScheduleText(value: string): string {
     const firstScheduleIdx = value.search(/\d{1,2}\s*\/\s*\d{1,2}\s*\d{1,2}\s*[:：]\s*\d{2}/);
@@ -89,6 +96,128 @@ async function extractScheduleText(page: Page): Promise<string> {
 async function getVisibleMonthLabel(page: Page): Promise<string | null> {
     const label = await page.getByText(MONTH_LABEL_REGEX).first().textContent().catch(() => null);
     return label ? normalizeWhitespace(label) : null;
+}
+
+function parseYearMonthFromLabel(label: string | null): YearMonth | null {
+    if (!label) {
+        return null;
+    }
+
+    const match = normalizeWhitespace(label).match(/(\d{4})\s*年\s*(\d{1,2})\s*月/);
+    if (!match) {
+        return null;
+    }
+
+    const year = Number.parseInt(match[1], 10);
+    const month = Number.parseInt(match[2], 10);
+    if (!Number.isFinite(year) || !Number.isFinite(month) || month < 1 || month > 12) {
+        return null;
+    }
+
+    return { year, month };
+}
+
+function addOneMonth(value: YearMonth): YearMonth {
+    if (value.month === 12) {
+        return { year: value.year + 1, month: 1 };
+    }
+    return { year: value.year, month: value.month + 1 };
+}
+
+function isSameYearMonth(a: YearMonth | null, b: YearMonth | null): boolean {
+    return !!a && !!b && a.year === b.year && a.month === b.month;
+}
+
+function compareYearMonth(a: YearMonth | null, b: YearMonth | null): number {
+    if (!a || !b) {
+        return 0;
+    }
+    if (a.year !== b.year) {
+        return a.year - b.year;
+    }
+    return a.month - b.month;
+}
+
+function getTaipeiTodayYearMonth(): YearMonth {
+    const formatter = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Taipei",
+        year: "numeric",
+        month: "numeric"
+    });
+    const parts = formatter.formatToParts(new Date());
+    const year = Number.parseInt(parts.find((part) => part.type === "year")?.value ?? "0", 10);
+    const month = Number.parseInt(parts.find((part) => part.type === "month")?.value ?? "0", 10);
+    return { year, month };
+}
+
+async function readDatePickerYearMonth(page: Page): Promise<YearMonth | null> {
+    const label = await page.locator(DATE_PICKER_VALUE_SELECTOR).first().textContent().catch(() => null);
+    return parseYearMonthFromLabel(label);
+}
+
+async function waitForDatePickerYearMonth(
+    page: Page,
+    predicate: (value: YearMonth | null) => boolean,
+    timeoutMs = 12000
+): Promise<boolean> {
+    const startedAt = Date.now();
+    while (Date.now() - startedAt < timeoutMs) {
+        const current = await readDatePickerYearMonth(page);
+        if (predicate(current)) {
+            return true;
+        }
+        await page.waitForTimeout(200);
+    }
+    return false;
+}
+
+async function waitForPageSettle(page: Page): Promise<void> {
+    await page.waitForLoadState("networkidle", { timeout: 8000 }).catch(() => { });
+    await page.waitForTimeout(300);
+}
+
+async function clickWithRetry(page: Page, locator: Locator, maxAttempts = BUTTON_CLICK_MAX_ATTEMPTS): Promise<boolean> {
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        const clicked = await locator
+            .first()
+            .click({ timeout: 5000 })
+            .then(() => true)
+            .catch(() => false);
+
+        if (clicked) {
+            return true;
+        }
+
+        await waitForPageSettle(page);
+    }
+
+    return false;
+}
+
+async function moveToPreviousMonth(page: Page): Promise<boolean> {
+    const previousButton = page.locator(PREVIOUS_MONTH_BUTTON_SELECTOR);
+    if (!(await isActionable(previousButton))) {
+        return false;
+    }
+
+    return clickWithRetry(page, previousButton, 1);
+}
+
+async function recoverMonthStateForNextMonth(page: Page, expectedNextMonth: YearMonth): Promise<void> {
+    const currentValue = await readDatePickerYearMonth(page);
+    const compareToExpected = compareYearMonth(currentValue, expectedNextMonth);
+
+    // If drifted to a later month (e.g. next-next month), step back once first.
+    if (compareToExpected > 0) {
+        await moveToPreviousMonth(page);
+        const afterPrevious = await readDatePickerYearMonth(page);
+        if (isSameYearMonth(afterPrevious, expectedNextMonth)) {
+            return;
+        }
+    }
+
+    // Reset to today if page state is still not what we expect.
+    await resetToToday(page);
 }
 
 async function isActionable(locator: Locator): Promise<boolean> {
@@ -148,13 +277,29 @@ async function restoreCurrentMonthView(page: Page, currentMonthLabel: string | n
 }
 
 async function resetToToday(page: Page): Promise<void> {
+    const expectedToday = getTaipeiTodayYearMonth();
     const todayButton = page.locator(TODAY_BUTTON_SELECTOR);
     if (!(await isActionable(todayButton))) {
         return;
     }
 
-    await todayButton.first().click().catch(() => { });
-    await page.waitForTimeout(400);
+    for (let attempt = 1; attempt <= BUTTON_CLICK_MAX_ATTEMPTS; attempt++) {
+        const clicked = await clickWithRetry(page, todayButton, 1);
+        if (!clicked) {
+            continue;
+        }
+
+        const ok = await waitForDatePickerYearMonth(
+            page,
+            (value) => isSameYearMonth(value, expectedToday),
+            5000
+        );
+        if (ok) {
+            return;
+        }
+
+        await waitForPageSettle(page);
+    }
 }
 
 async function extractScheduleTextAcrossMonthBoundary(page: Page): Promise<string> {
@@ -166,11 +311,38 @@ async function extractScheduleTextAcrossMonthBoundary(page: Page): Promise<strin
     }
 
     const currentMonthLabel = await getVisibleMonthLabel(page);
+    const todayMonth = await readDatePickerYearMonth(page);
+    const fallbackToday = getTaipeiTodayYearMonth();
+    const baseToday = todayMonth ?? fallbackToday;
+    const expectedNextMonth = addOneMonth(baseToday);
     let nextMonthText = "";
     let shouldRestoreMonth = false;
 
     try {
-        await nextMonthButton.first().click();
+        let nextMonthReady = false;
+        for (let attempt = 1; attempt <= BUTTON_CLICK_MAX_ATTEMPTS; attempt++) {
+            const clicked = await clickWithRetry(page, nextMonthButton, 1);
+            if (!clicked) {
+                await recoverMonthStateForNextMonth(page, expectedNextMonth);
+                continue;
+            }
+
+            nextMonthReady = await waitForDatePickerYearMonth(
+                page,
+                (value) => isSameYearMonth(value, expectedNextMonth),
+                5000
+            );
+            if (nextMonthReady) {
+                break;
+            }
+
+            await recoverMonthStateForNextMonth(page, expectedNextMonth);
+            await waitForPageSettle(page);
+        }
+
+        if (!nextMonthReady) {
+            return currentMonthText;
+        }
         await waitForMonthLabel(page, (label) => label !== currentMonthLabel);
 
         const nextMonthLabel = await getVisibleMonthLabel(page);
