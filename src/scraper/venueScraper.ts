@@ -147,6 +147,16 @@ async function restoreCurrentMonthView(page: Page, currentMonthLabel: string | n
     }
 }
 
+async function resetToToday(page: Page): Promise<void> {
+    const todayButton = page.locator(TODAY_BUTTON_SELECTOR);
+    if (!(await isActionable(todayButton))) {
+        return;
+    }
+
+    await todayButton.first().click().catch(() => { });
+    await page.waitForTimeout(400);
+}
+
 async function extractScheduleTextAcrossMonthBoundary(page: Page): Promise<string> {
     const currentMonthText = await extractScheduleText(page);
     const nextMonthButton = page.locator(NEXT_MONTH_BUTTON_SELECTOR);
@@ -249,6 +259,11 @@ export async function fetchAllCourtsData(
             await tab.click();
             await page.waitForLoadState("networkidle", { timeout: 15000 }).catch(() => { });
             await page.waitForTimeout(800);
+
+            // When reading next-month data, reset month first so "next month" is always based on today.
+            if (includeNextMonth) {
+                await resetToToday(page);
+            }
 
             const scheduleText = await extractScheduleTextForWindow(page, includeNextMonth);
             results.push({ courtName, scheduleText });
