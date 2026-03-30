@@ -99,11 +99,11 @@ function buildRangeSummaryRows(result: TodayCheckResult): string {
           : "—";
       const rowClass = isCourtUsable(ts) ? "row-usable" : "row-not-usable";
       return `<tr class="${rowClass}" data-date="${escapeHtml(ts.date)}" data-time="${escapeHtml(ts.time)}" data-available="${ts.available}" data-total="${ts.total}">
-    <td>${buildRangeDateCell(ts.date, result.timezone)}</td>
-<td>${escapeHtml(ts.time)}</td>
-<td>${weatherBadge}</td>
-<td>${available}</td>
-<td>${unavailable}</td>
+      <td data-label="日期">${buildRangeDateCell(ts.date, result.timezone)}</td>
+    <td data-label="時間">${escapeHtml(ts.time)}</td>
+    <td data-label="天氣">${weatherBadge}</td>
+    <td data-label="可用場地(停止租借)">${available}</td>
+    <td data-label="不可用場地">${unavailable}</td>
 </tr>`;
     })
     .join("\n");
@@ -136,11 +136,11 @@ function buildRangeDetailRows(result: TodayCheckResult): string {
       const statusClass = slot.isRented ? "expired" : "active";
       const yesNo = slot.isRented ? "是" : "否";
       return `<tr data-date="${escapeHtml(slot.date)}" data-time="${escapeHtml(slot.time)}">
-<td>${buildRangeDateCell(slot.date, result.timezone)}</td>
-<td>${escapeHtml(slot.time)}</td>
-<td>${escapeHtml(slot.court)}</td>
-<td class="${statusClass}">${escapeHtml(slot.rawStatus)}</td>
-<td>${yesNo}</td>
+    <td data-label="日期">${buildRangeDateCell(slot.date, result.timezone)}</td>
+    <td data-label="時間">${escapeHtml(slot.time)}</td>
+    <td data-label="場地">${escapeHtml(slot.court)}</td>
+    <td data-label="狀態" class="${statusClass}">${escapeHtml(slot.rawStatus)}</td>
+    <td data-label="是否已租借">${yesNo}</td>
 </tr>`;
     })
     .join("\n");
@@ -486,6 +486,130 @@ th, td {
 .mode-panel.active {
   display: block;
 }
+
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table-wrap table {
+  min-width: 760px;
+}
+
+.range-table td {
+  vertical-align: top;
+}
+.range-overview-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #f8fafc;
+  padding: 10px;
+  margin-bottom: 14px;
+}
+.range-overview-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+.range-overview-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+}
+.range-overview-meta {
+  font-size: 12px;
+  color: var(--muted);
+}
+.range-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 8px;
+}
+.range-overview-slot {
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: #fff;
+  padding: 8px;
+}
+.range-overview-slot-none {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+.range-overview-slot-partial {
+  background: #fff7ed;
+  border-color: #fdba74;
+}
+.range-overview-slot-full {
+  background: #ecfdf3;
+  border-color: #86efac;
+}
+.range-overview-slot-time {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+}
+.range-overview-slot-ratio {
+  margin-top: 2px;
+  font-size: 12px;
+  color: #334155;
+}
+.range-overview-dates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.range-overview-date {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #1e293b;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 12px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.range-overview-date:hover {
+  border-color: #2563eb;
+  color: #1d4ed8;
+}
+.range-overview-date:focus-visible {
+  outline: 2px solid #93c5fd;
+  outline-offset: 1px;
+}
+.range-overview-date.is-collapsed {
+  display: none;
+}
+.range-overview-slot.is-expanded .range-overview-date.is-collapsed {
+  display: inline-flex;
+}
+.range-overview-toggle {
+  margin-top: 8px;
+  border: 0;
+  background: transparent;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+.range-overview-toggle:hover {
+  text-decoration: underline;
+}
+.range-overview-slot-empty-text {
+  color: var(--muted);
+  font-size: 12px;
+}
+.range-focus {
+  animation: rangeFocusFlash 1.2s ease;
+}
+@keyframes rangeFocusFlash {
+  0% { box-shadow: inset 0 0 0 0 rgba(37, 99, 235, 0.0); }
+  30% { box-shadow: inset 0 0 0 999px rgba(37, 99, 235, 0.14); }
+  100% { box-shadow: inset 0 0 0 0 rgba(37, 99, 235, 0.0); }
+}
 .range-filters {
   display: grid;
   grid-template-columns: repeat(4, minmax(150px, 1fr));
@@ -587,6 +711,76 @@ th, td {
   .chart-mobile-list {
     display: grid;
   }
+
+  .table-wrap {
+    overflow: visible;
+  }
+
+  .table-wrap table {
+    min-width: 0;
+  }
+
+  .range-table thead {
+    display: none;
+  }
+
+  .range-table tbody {
+    display: grid;
+    gap: 10px;
+  }
+
+  .range-table tr[data-date] {
+    display: grid;
+    gap: 6px;
+    padding: 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #ffffff;
+  }
+
+  .range-table td {
+    display: grid;
+    grid-template-columns: 108px 1fr;
+    gap: 8px;
+    border-bottom: 0;
+    padding: 2px 0;
+    align-items: start;
+  }
+
+  .range-table td::before {
+    content: attr(data-label);
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .range-table td[data-label="天氣"] {
+    align-items: center;
+  }
+
+  .range-table tr#rangeSummaryEmpty,
+  .range-table tr#rangeDetailEmpty {
+    display: table-row;
+    border: 0;
+    padding: 0;
+    background: transparent;
+  }
+
+  .range-table tr#rangeSummaryEmpty td,
+  .range-table tr#rangeDetailEmpty td {
+    display: table-cell;
+    padding: 10px 8px;
+  }
+
+  .range-table tr#rangeSummaryEmpty td::before,
+  .range-table tr#rangeDetailEmpty td::before {
+    content: none;
+  }
+
+  .range-overview-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 </style>
 </head>
@@ -661,27 +855,39 @@ th, td {
         </label>
       </div>
 
+      <div class="range-overview-card">
+        <div class="range-overview-head">
+          <div class="range-overview-title">空場時段速覽</div>
+          <div id="rangeOverviewMeta" class="range-overview-meta"></div>
+        </div>
+        <div id="rangeAvailabilityOverview" class="range-overview-grid"></div>
+      </div>
+
       <h3>區間總覽：各日期時段場地可用彙總</h3>
-      <table>
-        <thead>
-          <tr><th class="date-col">日期</th><th>時間</th><th>天氣</th><th>可用場地(停止租借)</th><th>不可用場地</th></tr>
-        </thead>
-        <tbody id="rangeSummaryBody">
-          ${rangeSummaryRows}
-          <tr id="rangeSummaryEmpty" style="display:none;"><td colspan="5">此區間沒有符合資料</td></tr>
-        </tbody>
-      </table>
+      <div class="table-wrap">
+        <table class="range-table">
+          <thead>
+            <tr><th class="date-col">日期</th><th>時間</th><th>天氣</th><th>可用場地(停止租借)</th><th>不可用場地</th></tr>
+          </thead>
+          <tbody id="rangeSummaryBody">
+            ${rangeSummaryRows}
+            <tr id="rangeSummaryEmpty" style="display:none;"><td colspan="5">此區間沒有符合資料</td></tr>
+          </tbody>
+        </table>
+      </div>
 
       <h3>區間總覽：各場地明細</h3>
-      <table>
-        <thead>
-          <tr><th class="date-col">日期</th><th>時間</th><th>場地</th><th>狀態</th><th>是否已租借</th></tr>
-        </thead>
-        <tbody id="rangeDetailBody">
-          ${rangeDetailRows}
-          <tr id="rangeDetailEmpty" style="display:none;"><td colspan="5">此區間沒有符合資料</td></tr>
-        </tbody>
-      </table>
+      <div class="table-wrap">
+        <table class="range-table">
+          <thead>
+            <tr><th class="date-col">日期</th><th>時間</th><th>場地</th><th>狀態</th><th>是否已租借</th></tr>
+          </thead>
+          <tbody id="rangeDetailBody">
+            ${rangeDetailRows}
+            <tr id="rangeDetailEmpty" style="display:none;"><td colspan="5">此區間沒有符合資料</td></tr>
+          </tbody>
+        </table>
+      </div>
     </section>
   </div>
 </div>
@@ -713,6 +919,25 @@ const clampRangeValue = (value, min, max) => {
   if (value < min) return min;
   if (value > max) return max;
   return value;
+};
+
+const toCompactDateChipLabel = (date) => {
+  const fullLabel = dateLabelMap[date] ?? date;
+  const matched = fullLabel.match(/^(\d{4}-)?(\d{2}-\d{2})\s*\((週.)\)$/);
+  if (matched) {
+    return matched[2] + " " + matched[3];
+  }
+
+  const weekdayMatched = fullLabel.match(/^\d{4}-\d{2}-\d{2}\s*\((週.)\)$/);
+  if (weekdayMatched) {
+    return date.slice(5) + " " + weekdayMatched[1];
+  }
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    return date.slice(5);
+  }
+
+  return fullLabel;
 };
 
 const initializeDefaultFiltersFromNow = () => {
@@ -772,6 +997,74 @@ const renderMobileChartCards = (filteredSummary) => {
       + '<div class="mini-slot-bar"><div class="mini-slot-fill" style="width:' + percent + '%"></div></div>'
       + '<div class="mini-slot-meta">可用率 ' + percent + '%</div>'
       + '</article>';
+  });
+
+  container.innerHTML = cards.join("");
+};
+
+const renderRangeAvailabilityOverview = (filteredSummary) => {
+  const container = document.getElementById("rangeAvailabilityOverview");
+  const meta = document.getElementById("rangeOverviewMeta");
+  if (!container || !meta) return;
+
+  if (!filteredSummary || filteredSummary.length === 0) {
+    meta.textContent = "目前篩選：0 個時段";
+    container.innerHTML = '<div class="range-overview-slot range-overview-slot-none"><div class="range-overview-slot-empty-text">目前條件下無資料</div></div>';
+    return;
+  }
+
+  const totalsByTime = new Map();
+  const availableByTime = new Map();
+  const availableDatesByTime = new Map();
+
+  for (const ts of filteredSummary) {
+    totalsByTime.set(ts.time, (totalsByTime.get(ts.time) ?? 0) + 1);
+    if (Number(ts.available) > 0) {
+      availableByTime.set(ts.time, (availableByTime.get(ts.time) ?? 0) + 1);
+      const dates = availableDatesByTime.get(ts.time) ?? new Set();
+      dates.add(ts.date);
+      availableDatesByTime.set(ts.time, dates);
+    }
+  }
+
+  const allTimes = Array.from(totalsByTime.keys()).sort();
+  const availableTimeCount = allTimes.filter((time) => (availableByTime.get(time) ?? 0) > 0).length;
+  meta.textContent = "目前篩選：" + availableTimeCount + " / " + allTimes.length + " 個時段有空場";
+
+  const cards = allTimes.map((time) => {
+    const availableHits = availableByTime.get(time) ?? 0;
+    const totalHits = totalsByTime.get(time) ?? 0;
+    const availableDates = Array.from(availableDatesByTime.get(time) ?? []).sort();
+    const collapseThreshold = 3;
+    let slotClass = "range-overview-slot range-overview-slot-none";
+    if (availableHits > 0 && availableHits < totalHits) {
+      slotClass = "range-overview-slot range-overview-slot-partial";
+    } else if (availableHits > 0 && availableHits === totalHits) {
+      slotClass = "range-overview-slot range-overview-slot-full";
+    }
+
+    let datesMarkup = '<div class="range-overview-slot-empty-text">無空場日期</div>';
+    if (availableDates.length > 0) {
+      const dateButtons = availableDates
+        .map((date, index) => {
+          const collapsedClass = index >= collapseThreshold ? " is-collapsed" : "";
+          const label = toCompactDateChipLabel(date);
+          return '<button type="button" class="range-overview-date' + collapsedClass + '" data-time="' + time + '" data-date="' + date + '">' + label + '</button>';
+        })
+        .join("");
+
+      const toggleMarkup = availableDates.length > collapseThreshold
+        ? '<button type="button" class="range-overview-toggle" data-expand-label="顯示更多" data-collapse-label="收合">顯示更多</button>'
+        : "";
+
+      datesMarkup = '<div class="range-overview-dates">' + dateButtons + '</div>' + toggleMarkup;
+    }
+
+    return '<div class="' + slotClass + '">' +
+      '<div class="range-overview-slot-time">' + time + '</div>' +
+      '<div class="range-overview-slot-ratio">有空場天數：' + availableHits + ' / ' + totalHits + '</div>' +
+      datesMarkup +
+      '</div>';
   });
 
   container.innerHTML = cards.join("");
@@ -892,6 +1185,7 @@ const applyRangeFilter = () => {
   document.getElementById("rangeDetailEmpty").style.display = detailVisible === 0 ? "" : "none";
 
   const filteredSummary = allSummary.filter((ts) => isInSelectedRange(ts.date, ts.time));
+  renderRangeAvailabilityOverview(filteredSummary);
   updateCharts(filteredSummary);
 };
 
@@ -976,6 +1270,41 @@ for (const input of filterInputs) {
     }
 
     applyRangeFilter();
+  });
+}
+
+const focusRangeSummaryRow = (date, time) => {
+  const selector = '#rangeSummaryBody tr[data-date="' + date + '"][data-time="' + time + '"]';
+  const target = document.querySelector(selector);
+  if (!target) return;
+  target.scrollIntoView({ behavior: "smooth", block: "center" });
+  target.classList.add("range-focus");
+  window.setTimeout(() => target.classList.remove("range-focus"), 1400);
+};
+
+const rangeAvailabilityOverview = document.getElementById("rangeAvailabilityOverview");
+if (rangeAvailabilityOverview) {
+  rangeAvailabilityOverview.addEventListener("click", (event) => {
+    const toggleButton = event.target.closest(".range-overview-toggle");
+    if (toggleButton) {
+      const card = toggleButton.closest(".range-overview-slot");
+      if (!card) return;
+
+      const expanded = card.classList.toggle("is-expanded");
+      const expandLabel = toggleButton.getAttribute("data-expand-label") ?? "顯示更多";
+      const collapseLabel = toggleButton.getAttribute("data-collapse-label") ?? "收合";
+      toggleButton.textContent = expanded ? collapseLabel : expandLabel;
+      return;
+    }
+
+    const dateButton = event.target.closest(".range-overview-date");
+    if (!dateButton) return;
+
+    const date = dateButton.getAttribute("data-date");
+    const time = dateButton.getAttribute("data-time");
+    if (!date || !time) return;
+
+    focusRangeSummaryRow(date, time);
   });
 }
 
