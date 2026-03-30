@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import type { TodayCheckResult } from "../types/schedule.js";
+import type { TimeSlotSummary } from "../types/schedule.js";
 import { formatIsoDateWithWeekday } from "../utils/time.js";
 import {
     buildWeatherTooltipText,
@@ -26,6 +27,15 @@ function buildWeatherBadge(
     const title = buildWeatherTooltipText(weatherText, temperatureC, precipitationProbability);
     const classes = getWeatherBadgeClassName(weatherText, precipitationProbability);
     return `<span class="${classes} has-tip" data-tip="${escapeHtml(title)}" tabindex="0" role="button">${getWeatherTelegramIcon(weatherText)}</span>`;
+}
+
+function getRowClass(ts: TimeSlotSummary): string {
+  const isWetted = ts.isWetted ?? true;
+  const hasAvailability = ts.available > 0;
+  if (hasAvailability && !isWetted) return "row-playable";
+  if (hasAvailability && isWetted) return "row-available-wet";
+  if (!hasAvailability && !isWetted) return "row-unavailable-dry";
+  return "row-unavailable-wet";
 }
 
 function buildSummaryRows(result: TodayCheckResult, targetDate?: string): string {
@@ -59,8 +69,8 @@ function buildSummaryRows(result: TodayCheckResult, targetDate?: string): string
                         })
                         .join(" ")
                     : "—";
-            const rowClass = isCourtUsable(ts) ? "row-usable" : "row-not-usable";
-          return `<tr class="${rowClass} daily-summary-row" data-date="${escapeHtml(ts.date)}" data-time="${escapeHtml(ts.time)}">
+      const rowClass = getRowClass(ts);
+      return `<tr class="daily-summary-row ${rowClass}" data-date="${escapeHtml(ts.date)}" data-time="${escapeHtml(ts.time)}">
 <td>${escapeHtml(formatIsoDateWithWeekday(ts.date, result.timezone))}</td>
 <td>${escapeHtml(ts.time)}</td>
           <td>${weatherBadge}</td>
@@ -97,7 +107,7 @@ function buildRangeSummaryRows(result: TodayCheckResult): string {
             })
             .join(" ")
           : "—";
-      const rowClass = isCourtUsable(ts) ? "row-usable" : "row-not-usable";
+      const rowClass = getRowClass(ts);
       return `<tr class="${rowClass}" data-date="${escapeHtml(ts.date)}" data-time="${escapeHtml(ts.time)}" data-available="${ts.available}" data-total="${ts.total}">
       <td data-label="日期">${buildRangeDateCell(ts.date, result.timezone)}</td>
     <td data-label="時間">${escapeHtml(ts.time)}</td>
@@ -404,8 +414,11 @@ body {
 .has-tip {
   cursor: pointer;
 }
-.row-usable { background: #f0fdf4; }
-.row-not-usable { background: #fff5f5; }
+/* 列背景色：溼滑 × 空場 × 適打 四態 */
+.row-playable       { background: #f0fdf4; } /* 不溼 + 有空場 → 適合打球 */
+.row-available-wet  { background: #e6eef5; } /* 溼滑 + 有空場 → 有場但場地溼 */
+.row-unavailable-dry{ background: #fff1f2; } /* 不溼 + 無空場 → 場乾但全租 */
+.row-unavailable-wet{ background: #fff1f2; } /* 溼滑 + 無空場 → 不適合 */
 table {
   width: 100%;
   border-collapse: collapse;
