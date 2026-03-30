@@ -51,18 +51,31 @@ jobs:
 
       - name: Generate latest status files (with retry)
         run: |
+          set -o pipefail
           for attempt in 1 2 3; do
             echo "Run attempt #$attempt"
-            if npm run check:today; then
+            log_file="check-today-attempt-${attempt}.log"
+            npm run check:today 2>&1 | tee "$log_file"
+            cmd_exit=${PIPESTATUS[0]}
+
+            if [ "$cmd_exit" -eq 0 ] && ! grep -Fq "Next-month coverage still incomplete after retry" "$log_file"; then
               break
             fi
 
             if [ "$attempt" -eq 3 ]; then
-              echo "check:today failed after 3 attempts"
+              if [ "$cmd_exit" -ne 0 ]; then
+                echo "check:today failed after 3 attempts"
+              else
+                echo "check:today kept reporting incomplete next-month coverage after 3 attempts"
+              fi
               exit 1
             fi
 
-            echo "Retry after 20 seconds..."
+            if [ "$cmd_exit" -ne 0 ]; then
+              echo "check:today command failed, retry after 20 seconds..."
+            else
+              echo "Detected incomplete next-month coverage warning, retry after 20 seconds..."
+            fi
             sleep 20
           done
 
