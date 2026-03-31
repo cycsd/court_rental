@@ -2,8 +2,8 @@ name: Daily Scrape And Deploy
 
 on:
   schedule:
-    # 11:00 Asia/Taipei = 03:00 UTC
-    - cron: "0 3 * * *"
+    # 8:00 Asia/Taipei
+    - cron: "0 0 * * *"
   workflow_dispatch:
 
 permissions:

@@ -170,9 +170,13 @@ function isRainText(weatherText?: string): boolean {
 
 function rainInput(snapshot?: WeatherSnapshot): number {
   if (!snapshot) return 0;
-  const rainByText = isRainText(snapshot.weatherText) ? 0.55 : 0;
-  const rainByAmount = 0.45 * clamp(0, 1, (snapshot.precipitationMm ?? 0) / 3);
-  return clamp(0, 1, rainByText + rainByAmount);
+  // Primary: precipitationMm is the main driver, distinguishes light vs heavy rain.
+  // Saturation at 3mm/hr → score 0.85; heavy rain (≥3mm) dominates.
+  const rainByAmount = 0.85 * clamp(0, 1, (snapshot.precipitationMm ?? 0) / 3);
+  // Secondary: text provides a small supplement when precipMm is zero but
+  // the weather symbol still indicates rain (e.g. provider reported 0mm drizzle).
+  const rainByText = isRainText(snapshot.weatherText) ? 0.15 : 0;
+  return clamp(0, 1, rainByAmount + rainByText);
 }
 
 function dryingFactor(snapshot?: WeatherSnapshot): number {
