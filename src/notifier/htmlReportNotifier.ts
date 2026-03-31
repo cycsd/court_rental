@@ -22,11 +22,11 @@ function escapeHtml(text: string): string {
 function buildWeatherBadge(
     weatherText?: string,
     temperatureC?: number,
-  precipitationProbability?: number,
+  precipitationMm?: number,
   wetScore?: number
 ): string {
-  const title = buildWeatherTooltipText(weatherText, temperatureC, precipitationProbability, wetScore);
-    const classes = getWeatherBadgeClassName(weatherText, precipitationProbability);
+  const title = buildWeatherTooltipText(weatherText, temperatureC, precipitationMm, wetScore);
+  const classes = getWeatherBadgeClassName(weatherText, precipitationMm);
     return `<span class="${classes} has-tip" data-tip="${escapeHtml(title)}" tabindex="0" role="button">${getWeatherTelegramIcon(weatherText)}</span>`;
 }
 
@@ -58,7 +58,7 @@ function buildSummaryRows(result: TodayCheckResult, targetDate?: string): string
             const weatherBadge = buildWeatherBadge(
                 ts.weatherText,
                 ts.temperatureC,
-              ts.precipitationProbability,
+              ts.precipitationMm,
               ts.wetScore
             );
       const wetScore = buildWetScoreBadge(ts.wetScore);
@@ -103,7 +103,7 @@ function buildRangeSummaryRows(result: TodayCheckResult): string {
       const weatherBadge = buildWeatherBadge(
         ts.weatherText,
         ts.temperatureC,
-        ts.precipitationProbability,
+        ts.precipitationMm,
         ts.wetScore
       );
       const wetScore = buildWetScoreBadge(ts.wetScore);

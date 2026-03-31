@@ -1,6 +1,7 @@
 import type { TimeSlotSummary } from "../types/schedule.js";
 import { isCourtWetted } from "../notifier/weatherPresentation.js";
 import type { WetnessConfig } from "../notifier/weatherPresentation.js";
+import type { ProviderWeatherAtHour } from "./metNorwayWeather.js";
 
 type OpenMeteoHourly = {
   time: string[];
@@ -13,25 +14,61 @@ type OpenMeteoResponse = {
   hourly?: OpenMeteoHourly;
 };
 
-type WeatherAtHour = {
-  weatherText: string;
-  temperatureC: number;
-  precipitationProbability: number;
+const WEATHER_CODE_TO_TEXT: Record<number, string> = {
+  0: "晴朗",
+  1: "大致晴",
+  2: "局部多雲",
+  3: "陰",
+  45: "霧",
+  48: "霧",
+  51: "毛毛雨",
+  53: "毛毛雨",
+  55: "毛毛雨",
+  61: "雨",
+  63: "雨",
+  65: "雨",
+  66: "凍雨",
+  67: "凍雨",
+  71: "雪",
+  73: "雪",
+  75: "雪",
+  80: "陣雨",
+  81: "陣雨",
+  82: "陣雨",
+  95: "雷雨",
+  96: "雷雨",
+  99: "雷雨"
 };
 
 function weatherCodeText(code: number): string {
-  if (code === 0) return "晴朗";
-  if (code === 1) return "大致晴";
-  if (code === 2) return "局部多雲";
-  if (code === 3) return "陰";
-  if (code === 45 || code === 48) return "霧";
-  if (code === 51 || code === 53 || code === 55) return "毛毛雨";
-  if (code === 61 || code === 63 || code === 65) return "雨";
-  if (code === 66 || code === 67) return "凍雨";
-  if (code === 71 || code === 73 || code === 75) return "雪";
-  if (code === 80 || code === 81 || code === 82) return "陣雨";
-  if (code === 95 || code === 96 || code === 99) return "雷雨";
-  return "未知天氣";
+  return WEATHER_CODE_TO_TEXT[code] ?? "未知天氣";
+}
+
+function estimatePrecipitationMm(weatherCode: number, precipitationProbability?: number): number {
+  const probability = Math.max(0, Math.min(100, precipitationProbability ?? 0));
+
+  // Convert Open-Meteo probability to MET-like hourly precipitation amount using weather type intensity.
+  const typeMaxMm =
+    weatherCode >= 95
+      ? 10
+      : weatherCode >= 80
+        ? 6
+        : weatherCode >= 66
+          ? 3
+          : weatherCode >= 61
+            ? 4
+            : weatherCode >= 51
+              ? 1.2
+              : weatherCode >= 71 && weatherCode <= 75
+                ? 1.8
+                : 0;
+
+  const estimatedMm = typeMaxMm * (probability / 100);
+
+  if (typeMaxMm > 0 && probability >= 20) {
+    return Math.max(0.1, Number(estimatedMm.toFixed(2)));
+  }
+  return Number(estimatedMm.toFixed(2));
 }
 
 function hourKey(isoTime: string): string {
@@ -40,11 +77,11 @@ function hourKey(isoTime: string): string {
   return `${date} ${hour}:00`;
 }
 
-export async function fetchTodayHourlyWeather(
+export async function fetchOpenMeteoHourlyWeather(
   lat: number,
   lon: number,
   timezone: string
-): Promise<Map<string, WeatherAtHour>> {
+): Promise<Map<string, ProviderWeatherAtHour>> {
   const url = new URL("https://api.open-meteo.com/v1/forecast");
   url.searchParams.set("latitude", String(lat));
   url.searchParams.set("longitude", String(lon));
@@ -72,7 +109,7 @@ export async function fetchTodayHourlyWeather(
   }
 
   const hourly = data.hourly;
-  const map = new Map<string, WeatherAtHour>();
+  const map = new Map<string, ProviderWeatherAtHour>();
 
   if (!hourly) {
     return map;
@@ -80,10 +117,12 @@ export async function fetchTodayHourlyWeather(
 
   for (let i = 0; i < hourly.time.length; i++) {
     const key = hourKey(hourly.time[i]);
+    const weatherCode = hourly.weather_code[i];
+    const precipitationProbability = hourly.precipitation_probability[i];
     map.set(key, {
-      weatherText: weatherCodeText(hourly.weather_code[i]),
+      weatherText: weatherCodeText(weatherCode),
       temperatureC: hourly.temperature_2m[i],
-      precipitationProbability: hourly.precipitation_probability[i]
+      precipitationMm: estimatePrecipitationMm(weatherCode, precipitationProbability)
     });
   }
 
@@ -92,7 +131,7 @@ export async function fetchTodayHourlyWeather(
 
 export function mergeWeatherToSummary(
   summary: TimeSlotSummary[],
-  weatherMap: Map<string, WeatherAtHour>,
+  weatherMap: Map<string, ProviderWeatherAtHour>,
   wetnessConfig?: WetnessConfig
 ): TimeSlotSummary[] {
   // First pass: merge weather fields
@@ -105,7 +144,7 @@ export function mergeWeatherToSummary(
       ...slot,
       weatherText: weather.weatherText,
       temperatureC: weather.temperatureC,
-      precipitationProbability: weather.precipitationProbability
+      precipitationMm: weather.precipitationMm
     };
   });
 

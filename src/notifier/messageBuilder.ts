@@ -15,7 +15,7 @@ export function buildNotificationMessage(result: TodayCheckResult): string {
             const weatherSummary = buildTelegramWeatherSummary(
                 ts.weatherText,
                 ts.temperatureC,
-                ts.precipitationProbability,
+                ts.precipitationMm,
                 ts.wetScore
             );
             return `${icon} ${formatIsoDateWithWeekday(ts.date, result.timezone)} ${ts.time}  ${ts.available}/${ts.total}  ${weatherSummary}  ${label}`;

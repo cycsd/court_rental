@@ -11,13 +11,13 @@ export type WeatherIconType =
   | "cloudy"
   | "unknown";
 
-export function isRainyWeather(weatherText?: string, precipitationProbability?: number): boolean {
-  // if ((precipitationProbability ?? 0) >= 30) {
+export function isRainyWeather(weatherText?: string, precipitationMm?: number): boolean {
+  // if ((precipitationMm ?? 0) >= 0.2) {
   //   return true;
   // }
 
   const text = weatherText ?? "";
-  return (precipitationProbability ?? 0) >= 30 && /(雨|陣雨|雷雨|毛毛雨|凍雨)/.test(text);
+  return (precipitationMm ?? 0) >= 0.2 && /(雨|陣雨|雷雨|毛毛雨|凍雨)/.test(text);
 }
 
 export function getWeatherIconType(weatherText?: string): WeatherIconType {
@@ -61,7 +61,7 @@ export function getWeatherTelegramIcon(weatherText?: string): string {
 export function buildWeatherTooltipText(
   weatherText?: string,
   temperatureC?: number,
-  precipitationProbability?: number,
+  precipitationMm?: number,
   wetScore?: number
 ): string {
   if (!weatherText) {
@@ -71,9 +71,9 @@ export function buildWeatherTooltipText(
   const temperaturePart =
     temperatureC == null ? "氣溫資料暫缺" : `氣溫約 ${temperatureC.toFixed(1)} 度`;
   const precipitationPart =
-    precipitationProbability == null
-      ? "降雨機率資料暫缺"
-      : `降雨機率約 ${precipitationProbability}%`;
+    precipitationMm == null
+      ? "降雨量資料暫缺"
+      : `降雨量約 ${formatPrecipitationMm(precipitationMm)}`;
   const wetScorePart = wetScore == null ? "場地溼度資料暫缺" : `場地溼度 ${formatWetScore(wetScore)}`;
 
   return `目前天氣為${weatherText}，${temperaturePart}，${precipitationPart}，${wetScorePart}。`;
@@ -82,7 +82,7 @@ export function buildWeatherTooltipText(
 export function buildTelegramWeatherSummary(
   weatherText?: string,
   temperatureC?: number,
-  precipitationProbability?: number,
+  precipitationMm?: number,
   wetScore?: number
 ): string {
   if (!weatherText) {
@@ -90,10 +90,17 @@ export function buildTelegramWeatherSummary(
   }
 
   const temperaturePart = temperatureC == null ? "--.-C" : `${temperatureC.toFixed(1)}C`;
-  const precipitationPart = precipitationProbability == null ? "--%" : `${precipitationProbability}%`;
+  const precipitationPart = precipitationMm == null ? "--mm" : formatPrecipitationMm(precipitationMm);
   const wetScorePart = wetScore == null ? "--" : formatWetScore(wetScore);
 
   return `${getWeatherTelegramIcon(weatherText)} ${weatherText} ${temperaturePart} 降雨 ${precipitationPart} 場地溼度 ${wetScorePart}`;
+}
+
+export function formatPrecipitationMm(precipitationMm?: number): string {
+  if (precipitationMm == null) {
+    return "--mm";
+  }
+  return `${clamp(0, 1000, precipitationMm).toFixed(1)}mm`;
 }
 
 export function formatWetScore(wetScore?: number): string {
@@ -105,10 +112,10 @@ export function formatWetScore(wetScore?: number): string {
 
 export function getWeatherBadgeClassName(
   weatherText?: string,
-  precipitationProbability?: number
+  precipitationMm?: number
 ): string {
   const iconType = getWeatherIconType(weatherText);
-  const alertClass = isRainyWeather(weatherText, precipitationProbability)
+  const alertClass = isRainyWeather(weatherText, precipitationMm)
     ? " weather-alert"
     : "";
 
@@ -118,7 +125,7 @@ export function getWeatherBadgeClassName(
 export type WeatherSnapshot = {
     weatherText?: string;
     temperatureC?: number;
-    precipitationProbability?: number;
+  precipitationMm?: number;
 };
 
 export type WetnessProfile = "conservative" | "balanced" | "aggressive";
@@ -164,8 +171,8 @@ function isRainText(weatherText?: string): boolean {
 function rainInput(snapshot?: WeatherSnapshot): number {
   if (!snapshot) return 0;
   const rainByText = isRainText(snapshot.weatherText) ? 0.55 : 0;
-  const rainByProbability = 0.45 * clamp(0, 1, (snapshot.precipitationProbability ?? 0) / 100);
-  return clamp(0, 1, rainByText + rainByProbability);
+  const rainByAmount = 0.45 * clamp(0, 1, (snapshot.precipitationMm ?? 0) / 3);
+  return clamp(0, 1, rainByText + rainByAmount);
 }
 
 function dryingFactor(snapshot?: WeatherSnapshot): number {
@@ -177,7 +184,7 @@ function slotToSnapshot(ts: TimeSlotSummary): WeatherSnapshot {
   return {
     weatherText: ts.weatherText,
     temperatureC: ts.temperatureC,
-    precipitationProbability: ts.precipitationProbability
+    precipitationMm: ts.precipitationMm
   };
 }
 
@@ -188,12 +195,12 @@ export function isCourtWetted(
 ): boolean {
   const currentDateHour = parseSlotDateHour(ts);
   if (!currentDateHour) {
-    return isRainyWeather(ts.weatherText, ts.precipitationProbability);
+    return isRainyWeather(ts.weatherText, ts.precipitationMm);
   }
 
   // If current weather is entirely missing, keep conservative behavior.
   const currentSnapshot = weatherHistory(toHistoryKey(currentDateHour));
-  if (!currentSnapshot && !ts.weatherText && ts.temperatureC == null && ts.precipitationProbability == null) {
+  if (!currentSnapshot && !ts.weatherText && ts.temperatureC == null && ts.precipitationMm == null) {
     return true;
   }
 

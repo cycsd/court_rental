@@ -15,6 +15,7 @@ export type TimeSlotSummary = {
     available: number;
     weatherText?: string;
     temperatureC?: number;
+  precipitationMm?: number;
     precipitationProbability?: number;
   wetScore?: number;
     isWetted?: boolean;

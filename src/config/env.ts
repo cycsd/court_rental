@@ -31,6 +31,19 @@ const asStringArray = (value: string | undefined): string[] => {
 const envSchema = z.object({
   VENUE_URL: z.string().url(),
   TIMEZONE: z.string().default("Asia/Taipei"),
+    WEATHER_PROVIDER: z
+        .enum(["met-norway", "open-meteo"])
+        .default("met-norway"),
+    MET_USER_AGENT: z
+        .string()
+        .optional()
+        .transform((value) => {
+            const trimmed = value?.trim();
+            if (!trimmed) {
+                return "court-rental-checker/1.0 (contact: local-dev)";
+            }
+            return trimmed;
+        }),
     WETNESS_PROFILE: z
         .enum(["conservative", "balanced", "aggressive"])
         .default("balanced"),

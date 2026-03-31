@@ -87,14 +87,27 @@ OUTPUT_HTML=output/today-status.html
 
 ## Weather Data
 
-The app fetches hourly weather from Open-Meteo (no API key required) and shows it per time slot in both Console and HTML summary table.
+The app supports two hourly weather providers and defaults to MET Norway.
 
 Configure location in `.env`:
 
 ```env
+WEATHER_PROVIDER=met-norway
+MET_USER_AGENT=court-rental-checker/1.0 (contact: local-dev)
 WEATHER_LAT=25.086
 WEATHER_LON=121.507
 ```
+
+- `WEATHER_PROVIDER`
+    - `met-norway` (default): model baseline used by this project
+    - `open-meteo`: compatible fallback provider
+- `MET_USER_AGENT`: required by MET Norway API policy. Use a unique identifier for your app.
+
+Provider normalization:
+
+- Unified weather model uses `precipitationMm` as the rain metric.
+- MET Norway provides precipitation amount directly.
+- Open-Meteo estimates `precipitationMm` from weather type + precipitation probability.
 
 Configure wetness model style in `.env`:
 

@@ -5,7 +5,8 @@ import { fetchAllCourtsData } from "../scraper/venueScraper.js";
 import type { TodayCheckResult } from "../types/schedule.js";
 import type { SlotStatus } from "../types/schedule.js";
 import { getDateRangeParts, nowIsoInTimezone } from "../utils/time.js";
-import { fetchTodayHourlyWeather, mergeWeatherToSummary } from "../weather/openMeteoWeather.js";
+import { mergeWeatherToSummary } from "../weather/openMeteoWeather.js";
+import { fetchTodayHourlyWeatherByProvider } from "../weather/weatherProvider.js";
 
 const logger = pino({ name: "check-today-status" });
 
@@ -117,7 +118,13 @@ export async function checkTodayStatus(): Promise<TodayCheckResult> {
 
     let timeSummary = baseTimeSummary;
     try {
-        const weatherMap = await fetchTodayHourlyWeather(env.WEATHER_LAT, env.WEATHER_LON, env.TIMEZONE);
+      const weatherMap = await fetchTodayHourlyWeatherByProvider(
+        env.WEATHER_PROVIDER,
+        env.WEATHER_LAT,
+        env.WEATHER_LON,
+        env.TIMEZONE,
+        env.MET_USER_AGENT
+      );
       timeSummary = mergeWeatherToSummary(baseTimeSummary, weatherMap, {
         profile: env.WETNESS_PROFILE,
         lookbackHours: env.WETNESS_LOOKBACK_HOURS,

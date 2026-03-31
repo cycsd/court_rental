@@ -1,6 +1,6 @@
 import type { TodayCheckResult } from "../types/schedule.js";
 import { formatIsoDateWithWeekday } from "../utils/time.js";
-import { formatWetScore, isCourtUsable } from "./weatherPresentation.js";
+import { formatPrecipitationMm, formatWetScore, isCourtUsable } from "./weatherPresentation.js";
 
 export function printConsoleSummary(result: TodayCheckResult): void {
   console.log("=== Court Rental 7-Day Status ===");
@@ -25,7 +25,7 @@ export function printConsoleSummary(result: TodayCheckResult): void {
         const usableIcon = isCourtUsable(ts) ? "✅" : "🚫";
         const ratio = `${ts.available}/${ts.total}`;
         const weather = ts.weatherText
-            ? `${ts.weatherText} ${ts.temperatureC?.toFixed(1) ?? "-"}C/${ts.precipitationProbability ?? "-"}%`
+          ? `${ts.weatherText} ${ts.temperatureC?.toFixed(1) ?? "-"}C/${formatPrecipitationMm(ts.precipitationMm)}`
             : "-";
       const wetScore = formatWetScore(ts.wetScore);
         const available = ts.availableCourts.length > 0 ? ts.availableCourts.join(", ") : "無可用(停止租借)場地";
