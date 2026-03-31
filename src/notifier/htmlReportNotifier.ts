@@ -329,7 +329,6 @@ body {
 .badge.na { background: #f1f5f9; color: var(--muted); }
 .wet-score-badge {
   display: inline-block;
-  min-width: 52px;
   text-align: center;
   border-radius: 999px;
   padding: 3px 10px;
@@ -788,7 +787,9 @@ th, td {
     display: inline-flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     line-height: 1.2;
+    width: 100%;
   }
 
   .chart-desktop {
