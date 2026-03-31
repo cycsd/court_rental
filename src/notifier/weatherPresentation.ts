@@ -61,7 +61,8 @@ export function getWeatherTelegramIcon(weatherText?: string): string {
 export function buildWeatherTooltipText(
   weatherText?: string,
   temperatureC?: number,
-  precipitationProbability?: number
+  precipitationProbability?: number,
+  wetScore?: number
 ): string {
   if (!weatherText) {
     return "目前沒有可用的天氣資料。";
@@ -73,14 +74,16 @@ export function buildWeatherTooltipText(
     precipitationProbability == null
       ? "降雨機率資料暫缺"
       : `降雨機率約 ${precipitationProbability}%`;
+  const wetScorePart = wetScore == null ? "場地溼度資料暫缺" : `場地溼度 ${formatWetScore(wetScore)}`;
 
-  return `目前天氣為${weatherText}，${temperaturePart}，${precipitationPart}。`;
+  return `目前天氣為${weatherText}，${temperaturePart}，${precipitationPart}，${wetScorePart}。`;
 }
 
 export function buildTelegramWeatherSummary(
   weatherText?: string,
   temperatureC?: number,
-  precipitationProbability?: number
+  precipitationProbability?: number,
+  wetScore?: number
 ): string {
   if (!weatherText) {
     return "❔ 無天氣資料";
@@ -88,8 +91,16 @@ export function buildTelegramWeatherSummary(
 
   const temperaturePart = temperatureC == null ? "--.-C" : `${temperatureC.toFixed(1)}C`;
   const precipitationPart = precipitationProbability == null ? "--%" : `${precipitationProbability}%`;
+  const wetScorePart = wetScore == null ? "--" : formatWetScore(wetScore);
 
-  return `${getWeatherTelegramIcon(weatherText)} ${weatherText} ${temperaturePart} 降雨 ${precipitationPart}`;
+  return `${getWeatherTelegramIcon(weatherText)} ${weatherText} ${temperaturePart} 降雨 ${precipitationPart} 場地溼度 ${wetScorePart}`;
+}
+
+export function formatWetScore(wetScore?: number): string {
+  if (wetScore == null) {
+    return "--";
+  }
+  return `${Math.round(clamp(0, 1, wetScore) * 100)}%`;
 }
 
 export function getWeatherBadgeClassName(
@@ -116,6 +127,9 @@ export type WetnessConfig = {
   profile?: WetnessProfile;
   lookbackHours?: number;
   threshold?: number;
+  initialWetScore?: number;
+  getWetScore?: (dateHourKey: string) => number | undefined;
+  setWetScore?: (dateHourKey: string, wetScore: number) => void;
 };
 
 function clamp(min: number, max: number, value: number): number {
@@ -159,6 +173,14 @@ function dryingFactor(snapshot?: WeatherSnapshot): number {
   return clamp(0.08, 0.3, 0.12 + 0.01 * (temperatureC - 20));
 }
 
+function slotToSnapshot(ts: TimeSlotSummary): WeatherSnapshot {
+  return {
+    weatherText: ts.weatherText,
+    temperatureC: ts.temperatureC,
+    precipitationProbability: ts.precipitationProbability
+  };
+}
+
 export function isCourtWetted(
   ts: TimeSlotSummary,
   weatherHistory: (dateHourKey: string) => WeatherSnapshot | undefined,
@@ -196,7 +218,28 @@ export function isCourtWetted(
     0.95,
     config?.threshold ?? defaultConfig.threshold
   );
-  let wetScore = 0;
+  const initialWetScore = clamp(0, 1, config?.initialWetScore ?? 0);
+  const currentHourKey = toHistoryKey(currentDateHour);
+
+  // Hybrid mode: prefer incremental recurrence when previous-hour state exists,
+  // then fallback to deterministic lookback recomputation.
+  if (config?.getWetScore) {
+    const previousHourDate = new Date(currentDateHour.getTime() - 60 * 60 * 1000);
+    const previousHourKey = toHistoryKey(previousHourDate);
+    const previousWetScore = config.getWetScore(previousHourKey);
+
+    if (previousWetScore != null) {
+      const safePreviousWetScore = clamp(0, 1, previousWetScore);
+      const snapshotForCurrentHour = currentSnapshot ?? slotToSnapshot(ts);
+      const dry = dryingFactor(snapshotForCurrentHour);
+      const rain = rainInput(snapshotForCurrentHour);
+      const currentWetScore = clamp(0, 1, safePreviousWetScore * (1 - dry) + rain);
+      config.setWetScore?.(currentHourKey, currentWetScore);
+      return currentWetScore >= wetThreshold;
+    }
+  }
+
+  let wetScore = initialWetScore;
 
   for (let offset = lookbackHours - 1; offset >= 0; offset--) {
     const hourDate = new Date(currentDateHour.getTime() - offset * 60 * 60 * 1000);
@@ -205,6 +248,8 @@ export function isCourtWetted(
     const rain = rainInput(snapshot);
     wetScore = clamp(0, 1, wetScore * (1 - dry) + rain);
   }
+
+  config?.setWetScore?.(currentHourKey, wetScore);
 
   return wetScore >= wetThreshold;
 }

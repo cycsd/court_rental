@@ -5,9 +5,9 @@ import type { TimeSlotSummary } from "../types/schedule.js";
 import { formatIsoDateWithWeekday } from "../utils/time.js";
 import {
     buildWeatherTooltipText,
-    getWeatherBadgeClassName,
-    getWeatherTelegramIcon,
-    isCourtUsable
+  formatWetScore,
+  getWeatherBadgeClassName,
+  getWeatherTelegramIcon
 } from "./weatherPresentation.js";
 
 function escapeHtml(text: string): string {
@@ -22,9 +22,10 @@ function escapeHtml(text: string): string {
 function buildWeatherBadge(
     weatherText?: string,
     temperatureC?: number,
-    precipitationProbability?: number
+  precipitationProbability?: number,
+  wetScore?: number
 ): string {
-    const title = buildWeatherTooltipText(weatherText, temperatureC, precipitationProbability);
+  const title = buildWeatherTooltipText(weatherText, temperatureC, precipitationProbability, wetScore);
     const classes = getWeatherBadgeClassName(weatherText, precipitationProbability);
     return `<span class="${classes} has-tip" data-tip="${escapeHtml(title)}" tabindex="0" role="button">${getWeatherTelegramIcon(weatherText)}</span>`;
 }
@@ -38,6 +39,18 @@ function getRowClass(ts: TimeSlotSummary): string {
   return "row-unavailable-wet";
 }
 
+function getWetScoreRiskClass(wetScore?: number): string {
+  if (wetScore == null) return "wet-score-unknown";
+  if (wetScore < 0.35) return "wet-score-low";
+  if (wetScore < 0.55) return "wet-score-mid";
+  return "wet-score-high";
+}
+
+function buildWetScoreBadge(wetScore?: number): string {
+  const riskClass = getWetScoreRiskClass(wetScore);
+  return `<span class="wet-score-badge ${riskClass}">${escapeHtml(formatWetScore(wetScore))}</span>`;
+}
+
 function buildSummaryRows(result: TodayCheckResult, targetDate?: string): string {
   return result.timeSummary
     .filter((ts) => (targetDate ? ts.date === targetDate : true))
@@ -45,8 +58,10 @@ function buildSummaryRows(result: TodayCheckResult, targetDate?: string): string
             const weatherBadge = buildWeatherBadge(
                 ts.weatherText,
                 ts.temperatureC,
-                ts.precipitationProbability
+              ts.precipitationProbability,
+              ts.wetScore
             );
+      const wetScore = buildWetScoreBadge(ts.wetScore);
             const statusByCourt = new Map(
                 result.slots
                 .filter((slot) => slot.date === ts.date && slot.time === ts.time)
@@ -74,6 +89,7 @@ function buildSummaryRows(result: TodayCheckResult, targetDate?: string): string
 <td>${escapeHtml(formatIsoDateWithWeekday(ts.date, result.timezone))}</td>
 <td>${escapeHtml(ts.time)}</td>
           <td>${weatherBadge}</td>
+<td>${wetScore}</td>
 <td>${available}</td>
 <td>${unavailable}</td>
 </tr>`;
@@ -87,8 +103,10 @@ function buildRangeSummaryRows(result: TodayCheckResult): string {
       const weatherBadge = buildWeatherBadge(
         ts.weatherText,
         ts.temperatureC,
-        ts.precipitationProbability
+        ts.precipitationProbability,
+        ts.wetScore
       );
+      const wetScore = buildWetScoreBadge(ts.wetScore);
       const statusByCourt = new Map(
         result.slots
           .filter((slot) => slot.date === ts.date && slot.time === ts.time)
@@ -112,6 +130,7 @@ function buildRangeSummaryRows(result: TodayCheckResult): string {
       <td data-label="日期">${buildRangeDateCell(ts.date, result.timezone)}</td>
     <td data-label="時間">${escapeHtml(ts.time)}</td>
     <td data-label="天氣">${weatherBadge}</td>
+    <td data-label="場地溼度">${wetScore}</td>
     <td data-label="可用場地(停止租借)">${available}</td>
     <td data-label="不可用場地">${unavailable}</td>
 </tr>`;
@@ -190,11 +209,11 @@ function buildDailyPanels(result: TodayCheckResult, dates: string[]): string {
   <h3>${escapeHtml(formattedDate)} 每日時段總覽</h3>
   <table>
     <thead>
-      <tr><th>時間</th><th>天氣</th><th>可用場地(停止租借)</th><th>不可用場地</th></tr>
+      <tr><th>時間</th><th>天氣</th><th>場地溼度</th><th>可用場地(停止租借)</th><th>不可用場地</th></tr>
     </thead>
     <tbody>
-      ${hasSummary ? summaryRows.replaceAll(`<td>${escapeHtml(formattedDate)}</td>\n`, "") : '<tr><td colspan="4">此日期目前無資料</td></tr>'}
-      <tr class="daily-summary-empty" style="display:none;"><td colspan="4">此日期在目前時間範圍沒有符合資料</td></tr>
+      ${hasSummary ? summaryRows.replaceAll(`<td>${escapeHtml(formattedDate)}</td>\n`, "") : '<tr><td colspan="5">此日期目前無資料</td></tr>'}
+      <tr class="daily-summary-empty" style="display:none;"><td colspan="5">此日期在目前時間範圍沒有符合資料</td></tr>
     </tbody>
   </table>
   <h3>${escapeHtml(formattedDate)} 各場地明細</h3>
@@ -308,6 +327,36 @@ body {
 .badge.ok { background: #dcfce7; color: #166534; }
 .badge.warn { background: #fee2e2; color: #991b1b; }
 .badge.na { background: #f1f5f9; color: var(--muted); }
+.wet-score-badge {
+  display: inline-block;
+  min-width: 52px;
+  text-align: center;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid transparent;
+}
+.wet-score-low {
+  background: #dcfce7;
+  color: #166534;
+  border-color: #86efac;
+}
+.wet-score-mid {
+  background: #ffedd5;
+  color: #9a3412;
+  border-color: #fdba74;
+}
+.wet-score-high {
+  background: #fee2e2;
+  color: #991b1b;
+  border-color: #fca5a5;
+}
+.wet-score-unknown {
+  background: #f1f5f9;
+  color: #475569;
+  border-color: #cbd5e1;
+}
 .weather-badge {
   position: relative;
   display: inline-flex;
@@ -880,11 +929,11 @@ th, td {
       <div class="table-wrap">
         <table class="range-table">
           <thead>
-            <tr><th class="date-col">日期</th><th>時間</th><th>天氣</th><th>可用場地(停止租借)</th><th>不可用場地</th></tr>
+            <tr><th class="date-col">日期</th><th>時間</th><th>天氣</th><th>場地溼度</th><th>可用場地(停止租借)</th><th>不可用場地</th></tr>
           </thead>
           <tbody id="rangeSummaryBody">
             ${rangeSummaryRows}
-            <tr id="rangeSummaryEmpty" style="display:none;"><td colspan="5">此區間沒有符合資料</td></tr>
+            <tr id="rangeSummaryEmpty" style="display:none;"><td colspan="6">此區間沒有符合資料</td></tr>
           </tbody>
         </table>
       </div>

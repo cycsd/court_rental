@@ -109,10 +109,35 @@ export function mergeWeatherToSummary(
     };
   });
 
-  // Second pass: compute isWetted now that every slot has weather data
-  // weatherMap has hourly entries across days so prev-hour lookups stay on the same date.
-  return merged.map((slot) => ({
-    ...slot,
-    isWetted: isCourtWetted(slot, (key) => weatherMap.get(key), wetnessConfig)
-  }));
+  // Second pass: compute isWetted in chronological order so previous-hour score can be reused.
+  const wetScoreMemory = new Map<string, number>();
+  const sortedSlots = [...merged].sort((a, b) => {
+    const left = `${a.date} ${a.time}`;
+    const right = `${b.date} ${b.time}`;
+    return left.localeCompare(right);
+  });
+
+  const isWettedByKey = new Map<string, boolean>();
+  for (const slot of sortedSlots) {
+    const key = `${slot.date} ${slot.time}`;
+    isWettedByKey.set(
+      key,
+      isCourtWetted(slot, (historyKey) => weatherMap.get(historyKey), {
+        ...wetnessConfig,
+        getWetScore: (historyKey) => wetScoreMemory.get(historyKey),
+        setWetScore: (historyKey, wetScore) => {
+          wetScoreMemory.set(historyKey, wetScore);
+        }
+      })
+    );
+  }
+
+  return merged.map((slot) => {
+    const key = `${slot.date} ${slot.time}`;
+    return {
+      ...slot,
+      wetScore: wetScoreMemory.get(key),
+      isWetted: isWettedByKey.get(key) ?? isCourtWetted(slot, (historyKey) => weatherMap.get(historyKey), wetnessConfig)
+    };
+  });
 }

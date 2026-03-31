@@ -1,6 +1,6 @@
 import type { TodayCheckResult } from "../types/schedule.js";
 import { formatIsoDateWithWeekday } from "../utils/time.js";
-import { isCourtUsable } from "./weatherPresentation.js";
+import { formatWetScore, isCourtUsable } from "./weatherPresentation.js";
 
 export function printConsoleSummary(result: TodayCheckResult): void {
   console.log("=== Court Rental 7-Day Status ===");
@@ -19,16 +19,17 @@ export function printConsoleSummary(result: TodayCheckResult): void {
   }
 
   console.log("\n=== 各日期時段可用場地（停止租借） ===");
-  console.log("日期       | 時間  | 可用數 | 天氣 | 可用場地(停止租借)");
-  console.log("-----------+-------+--------+--------------------+------------------------------");
+  console.log("日期       | 時間  | 可用數 | 天氣 | 場地溼度 | 可用場地(停止租借)");
+  console.log("-----------+-------+--------+--------------------+----------+------------------------------");
     for (const ts of result.timeSummary) {
         const usableIcon = isCourtUsable(ts) ? "✅" : "🚫";
         const ratio = `${ts.available}/${ts.total}`;
         const weather = ts.weatherText
             ? `${ts.weatherText} ${ts.temperatureC?.toFixed(1) ?? "-"}C/${ts.precipitationProbability ?? "-"}%`
             : "-";
+      const wetScore = formatWetScore(ts.wetScore);
         const available = ts.availableCourts.length > 0 ? ts.availableCourts.join(", ") : "無可用(停止租借)場地";
-      console.log(`${usableIcon} ${formatIsoDateWithWeekday(ts.date, result.timezone)} | ${ts.time} | ${ratio.padEnd(6)} | ${weather.padEnd(18)} | ${available}`);
+      console.log(`${usableIcon} ${formatIsoDateWithWeekday(ts.date, result.timezone)} | ${ts.time} | ${ratio.padEnd(6)} | ${weather.padEnd(18)} | ${wetScore.padEnd(8)} | ${available}`);
     }
 
   console.log("\n=== 各場地日期時段明細 ===");
