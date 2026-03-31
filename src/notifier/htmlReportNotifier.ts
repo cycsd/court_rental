@@ -209,7 +209,7 @@ function buildDailyPanels(result: TodayCheckResult, dates: string[]): string {
   <h3>${escapeHtml(formattedDate)} 每日時段總覽</h3>
   <table>
     <thead>
-      <tr><th>時間</th><th>天氣</th><th>場地溼度</th><th>可用場地(停止租借)</th><th>不可用場地</th></tr>
+      <tr><th>時間</th><th>天氣</th><th><span class="daily-wetness-head"><span>場地</span><span>溼度</span></span></th><th>可用場地(停止租借)</th><th>不可用場地</th></tr>
     </thead>
     <tbody>
       ${hasSummary ? summaryRows.replaceAll(`<td>${escapeHtml(formattedDate)}</td>\n`, "") : '<tr><td colspan="5">此日期目前無資料</td></tr>'}
@@ -426,17 +426,27 @@ body {
   line-height: 1.45;
   padding: 6px 8px;
   border-radius: 8px;
-  white-space: nowrap;
-  max-width: min(360px, 92vw);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  word-break: keep-all;
+  white-space: normal;
+  max-width: 50vw;
+  overflow-wrap: break-word;
+  word-break: normal;
   box-shadow: 0 6px 18px rgba(15, 23, 42, 0.25);
   opacity: 0;
   pointer-events: none;
   visibility: hidden;
   transition: opacity 0.15s ease;
   z-index: 20;
+}
+
+.badge.has-tip::after {
+  width: max-content;
+  max-width: 50vw;
+}
+
+.weather-badge.has-tip::after {
+  width: max-content;
+  min-width: min(220px, 50vw);
+  max-width: 50vw;
 }
 .has-tip::before {
   content: "";
@@ -765,7 +775,22 @@ th, td {
   font-size: 12px;
 }
 
+.daily-wetness-head {
+  display: inline;
+}
+
+.daily-wetness-head span {
+  display: inline;
+}
+
 @media (max-width: 768px) {
+  #mode-daily .daily-wetness-head {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1.2;
+  }
+
   .chart-desktop {
     display: none;
   }
