@@ -1030,8 +1030,15 @@ const toCompactDateChipLabel = (date) => {
 
 const initializeDefaultFiltersFromNow = () => {
   const now = new Date();
-  const nowDateValue = formatDateInputValue(now);
-  const nowTimeValue = formatTimeInputValue(now);
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+  const defaultStart = new Date(now);
+  if (currentMinutes > 21 * 60) {
+    defaultStart.setDate(defaultStart.getDate() + 1);
+    defaultStart.setHours(8, 0, 0, 0);
+  }
+
+  const nowDateValue = formatDateInputValue(defaultStart);
+  const nowTimeValue = formatTimeInputValue(defaultStart);
 
   const startDateInput = document.getElementById("filterStartDate");
   const endDateInput = document.getElementById("filterEndDate");
