@@ -42,3 +42,21 @@ export function formatIsoDateWithWeekday(isoDate: string, tz: string): string {
   const weekdayText = ["週一", "週二", "週三", "週四", "週五", "週六", "週日"][date.weekday - 1] ?? "";
   return `${date.toISODate()} (${weekdayText})`;
 }
+
+export function normalizeTimeValueToHour(timeValue: string): string {
+  const matched = timeValue?.trim().match(/^(\d{1,2})[:：](\d{1,2})(?::\d{1,2})?$/);
+  if (!matched) {
+    return timeValue;
+  }
+
+  const hour = Number(matched[1]);
+  const minute = Number(matched[2]);
+  if (!Number.isFinite(hour) || !Number.isFinite(minute)) {
+    return timeValue;
+  }
+  if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
+    return timeValue;
+  }
+
+  return `${String(hour).padStart(2, "0")}:00`;
+}

@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import type { TodayCheckResult } from "../types/schedule.js";
 import type { TimeSlotSummary } from "../types/schedule.js";
-import { formatIsoDateWithWeekday } from "../utils/time.js";
+import { formatIsoDateWithWeekday, normalizeTimeValueToHour } from "../utils/time.js";
 import {
     buildWeatherTooltipText,
   formatWetScore,
@@ -915,10 +915,10 @@ th, td {
       <h3>每日分頁檢視</h3>
       <div class="range-filters">
         <label class="filter-item">起始時間
-          <input id="dailyFilterStartTime" type="time" value="${escapeHtml(minTime)}" step="3600" />
+          <input id="dailyFilterStartTime" type="time" value="${escapeHtml(minTime)}" step="60" />
         </label>
         <label class="filter-item">結束時間
-          <input id="dailyFilterEndTime" type="time" value="${escapeHtml(maxTime)}" step="3600" />
+          <input id="dailyFilterEndTime" type="time" value="${escapeHtml(maxTime)}" step="60" />
         </label>
       </div>
       <div class="day-tabs">
@@ -936,10 +936,10 @@ th, td {
           <input id="filterEndDate" type="date" min="${escapeHtml(result.dateRange.startDate)}" max="${escapeHtml(result.dateRange.endDate)}" value="${escapeHtml(result.dateRange.endDate)}" />
         </label>
         <label class="filter-item">起始時間
-          <input id="filterStartTime" type="time" value="${escapeHtml(minTime)}" step="3600" />
+          <input id="filterStartTime" type="time" value="${escapeHtml(minTime)}" step="60" />
         </label>
         <label class="filter-item">結束時間
-          <input id="filterEndTime" type="time" value="${escapeHtml(maxTime)}" step="3600" />
+          <input id="filterEndTime" type="time" value="${escapeHtml(maxTime)}" step="60" />
         </label>
       </div>
 
@@ -1003,6 +1003,7 @@ const formatTimeInputValue = (date) => {
   const minutes = String(date.getMinutes()).padStart(2, "0");
   return hours + ":" + minutes;
 };
+const normalizeTimeToHour = ${normalizeTimeValueToHour.toString()};
 const clampRangeValue = (value, min, max) => {
   if (value < min) return min;
   if (value > max) return max;
@@ -1174,8 +1175,8 @@ const isInSelectedTimeRange = (time, startTime, endTime) => {
 const isInSelectedRange = (date, time) => {
   const startDate = document.getElementById("filterStartDate").value;
   const endDate = document.getElementById("filterEndDate").value;
-  const startTime = document.getElementById("filterStartTime").value;
-  const endTime = document.getElementById("filterEndTime").value;
+  const startTime = normalizeTimeToHour(document.getElementById("filterStartTime").value);
+  const endTime = normalizeTimeToHour(document.getElementById("filterEndTime").value);
 
   if (!startDate || !endDate || !startTime || !endTime) return true;
 
@@ -1258,6 +1259,10 @@ const updateCharts = (filteredSummary) => {
 };
 
 const applyRangeFilter = () => {
+  rangeFilterStartTime.value = normalizeTimeToHour(rangeFilterStartTime.value);
+  rangeFilterEndTime.value = normalizeTimeToHour(rangeFilterEndTime.value);
+  dailyFilterStartTime.value = normalizeTimeToHour(dailyFilterStartTime.value);
+  dailyFilterEndTime.value = normalizeTimeToHour(dailyFilterEndTime.value);
   const summaryRows = document.querySelectorAll("#rangeSummaryBody tr[data-date]");
   const detailRows = document.querySelectorAll("#rangeDetailBody tr[data-date]");
 
@@ -1285,6 +1290,10 @@ const applyRangeFilter = () => {
 };
 
 const applyDailyFilter = () => {
+  rangeFilterStartTime.value = normalizeTimeToHour(rangeFilterStartTime.value);
+  rangeFilterEndTime.value = normalizeTimeToHour(rangeFilterEndTime.value);
+  dailyFilterStartTime.value = normalizeTimeToHour(dailyFilterStartTime.value);
+  dailyFilterEndTime.value = normalizeTimeToHour(dailyFilterEndTime.value);
   const activeDayTab = document.querySelector(".day-tab.active");
   const activeDay = activeDayTab?.dataset.day;
   if (!activeDay) {
@@ -1299,8 +1308,10 @@ const applyDailyFilter = () => {
     endTimeInput.value = startTimeInput.value;
   }
 
-  const startTime = startTimeInput.value;
-  const endTime = endTimeInput.value;
+  const startTime = normalizeTimeToHour(startTimeInput.value);
+  const endTime = normalizeTimeToHour(endTimeInput.value);
+  startTimeInput.value = startTime;
+  endTimeInput.value = endTime;
 
   const panel = document.querySelector('.day-panel.active[data-day="' + activeDay + '"]');
   if (!panel) {
@@ -1356,6 +1367,9 @@ for (const input of filterInputs) {
     const endDateInput = document.getElementById("filterEndDate");
     const startTimeInput = document.getElementById("filterStartTime");
     const endTimeInput = document.getElementById("filterEndTime");
+
+    startTimeInput.value = normalizeTimeToHour(startTimeInput.value);
+    endTimeInput.value = normalizeTimeToHour(endTimeInput.value);
 
     if (startDateInput.value > endDateInput.value) {
       endDateInput.value = startDateInput.value;
@@ -1430,8 +1444,16 @@ const dayPanels = document.querySelectorAll(".day-panel");
 const modeButtons = document.querySelectorAll(".mode-btn");
 const modeRange = document.getElementById("mode-range");
 const modeDaily = document.getElementById("mode-daily");
+const rangeFilterStartTime = document.getElementById("filterStartTime");
+const rangeFilterEndTime = document.getElementById("filterEndTime");
 const dailyFilterStartTime = document.getElementById("dailyFilterStartTime");
 const dailyFilterEndTime = document.getElementById("dailyFilterEndTime");
+
+for (const input of [rangeFilterStartTime, rangeFilterEndTime, dailyFilterStartTime, dailyFilterEndTime]) {
+  input.addEventListener("input", () => {
+    input.value = normalizeTimeToHour(input.value);
+  });
+}
 
 initializeDefaultFiltersFromNow();
 
@@ -1486,8 +1508,14 @@ for (const tab of dayTabs) {
   });
 }
 
-dailyFilterStartTime.addEventListener("change", applyDailyFilter);
-dailyFilterEndTime.addEventListener("change", applyDailyFilter);
+dailyFilterStartTime.addEventListener("change", () => {
+  dailyFilterStartTime.value = normalizeTimeToHour(dailyFilterStartTime.value);
+  applyDailyFilter();
+});
+dailyFilterEndTime.addEventListener("change", () => {
+  dailyFilterEndTime.value = normalizeTimeToHour(dailyFilterEndTime.value);
+  applyDailyFilter();
+});
 
 syncDailyViewToStartDate();
 applyRangeFilter();
