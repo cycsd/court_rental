@@ -239,12 +239,13 @@ export function isCourtWetted(
     const previousHourKey = toHistoryKey(previousHourDate);
     const previousWetScore = config.getWetScore(previousHourKey);
 
+    const maxWetScore = 1.5;
     if (previousWetScore != null) {
-      const safePreviousWetScore = clamp(0, 1, previousWetScore);
+      const safePreviousWetScore = clamp(0, maxWetScore, previousWetScore);
       const snapshotForCurrentHour = currentSnapshot ?? slotToSnapshot(ts);
       const dry = dryingFactor(snapshotForCurrentHour);
       const rain = rainInput(snapshotForCurrentHour);
-      const currentWetScore = clamp(0, 1.5, safePreviousWetScore * (1 - dry) + rain);
+      const currentWetScore = clamp(0, maxWetScore, safePreviousWetScore * (1 - dry) + rain);
       config.setWetScore?.(currentHourKey, currentWetScore);
       return currentWetScore >= wetThreshold;
     }
