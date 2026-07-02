@@ -1,5 +1,7 @@
 import { chromium, type Locator, type Page } from "playwright";
 
+// ─── Public types ─────────────────────────────────────────────────────────────
+
 export type CourtPageData = {
     courtName: string;
     scheduleText: string;
@@ -14,39 +16,39 @@ export type VenueScrapeOptions = {
     includeNextMonth?: boolean;
 };
 
+// ─── Selectors ────────────────────────────────────────────────────────────────
+
+// The full-screen venue detail modal opened when a venue card is clicked
+const MODAL_SELECTOR = ".el-dialog.app-dialog";
+
+// The calendar grid inside the schedule tab panel
+const CALENDAR_SELECTOR = ".calendar";
+
+// Individual court tab items inside the schedule section
+const COURT_TAB_SELECTOR = ".el-tabs__item";
+
+// The clickable wrapper of the month <el-select> inside the schedule section
+const MONTH_SELECT_WRAPPER_SELECTOR = ".el-select__wrapper";
+
+// Options rendered by ElementPlus into a global dropdown list
+const MONTH_OPTION_SELECTOR = ".el-select-dropdown__item";
+
+// Text on the "reset to today's month" button
+const TODAY_BUTTON_TEXT = "今日";
+
+// ─── Utility ──────────────────────────────────────────────────────────────────
+
 function normalizeWhitespace(value: string): string {
     return value.replace(/[\u00A0\u3000]/g, " ").replace(/\s+/g, " ").trim();
 }
 
-const SCHEDULE_CONTAINER_SELECTORS = [
-    ".tab-pane.active",
-    ".tab-content",
-    ".BookingDate",
-    ".bookingDate",
-    ".BookDateTable",
-    ".VenueBookDateTable",
-    "#tab-content",
-    "main"
-];
-
+// Kept for backward-compatibility with existing tests.
+// On the new site the extracted text has no footer markers, so this is a no-op.
 const FOOTER_MARKERS = [
     "可租借時段 ( Can be rented )",
     "Notice:",
-    "Department of Sports, Taipei City Government Venue Booking System"
+    "Department of Sports, Taipei City Government Venue Booking System",
 ];
-
-const MONTH_LABEL_REGEX = /\d{4}\s*年\s*\d{1,2}\s*月/;
-const DATE_PICKER_VALUE_SELECTOR = "#DatePickerValue";
-const DATE_PICKUP_LOADING_SELECTOR = "#DatePickupLoadingDiv";
-const PREVIOUS_MONTH_BUTTON_SELECTOR = "#DatePickupPrevBtn";
-const TODAY_BUTTON_SELECTOR = "#DatePickupTodayBtn";
-const NEXT_MONTH_BUTTON_SELECTOR = "#DatePickupNextBtn";
-const BUTTON_CLICK_MAX_ATTEMPTS = 3;
-
-type YearMonth = {
-    year: number;
-    month: number;
-};
 
 export function trimTrailingNonScheduleText(value: string): string {
     const firstScheduleIdx = value.search(/\d{1,2}\s*\/\s*\d{1,2}\s*\d{1,2}\s*[:：]\s*\d{2}/);
@@ -64,360 +66,171 @@ export function combineScheduleTexts(values: string[]): string {
     return [...new Set(values.map((value) => normalizeWhitespace(value)).filter(Boolean))].join("\n");
 }
 
-function scoreScheduleText(value: string): number {
-    const dateTimeHits = value.match(/\d{1,2}\s*\/\s*\d{1,2}\s*\d{1,2}\s*[:：]\s*\d{2}/g)?.length ?? 0;
-    const isoDateHits = value.match(/\d{4}\s*\/\s*\d{1,2}\s*\/\s*\d{1,2}/g)?.length ?? 0;
-    return dateTimeHits * 1000 + isoDateHits * 100 + Math.min(value.length, 500);
-}
+// ─── Year/Month helpers ───────────────────────────────────────────────────────
 
-async function extractScheduleText(page: Page): Promise<string> {
-    const candidates: string[] = [];
-
-    for (const selector of SCHEDULE_CONTAINER_SELECTORS) {
-        const texts = await page.locator(selector).allInnerTexts().catch(() => []);
-        for (const text of texts) {
-            const normalized = trimTrailingNonScheduleText(normalizeWhitespace(text));
-            if (!normalized) continue;
-            candidates.push(normalized);
-        }
-    }
-
-    const best = candidates
-        .filter((text) => /\d{1,2}\s*\/\s*\d{1,2}\s*\d{1,2}\s*[:：]\s*\d{2}/.test(text))
-        .sort((a, b) => scoreScheduleText(b) - scoreScheduleText(a))[0];
-
-    if (best) {
-        return best;
-    }
-
-    const bodyText = await page.locator("body").innerText();
-    return trimTrailingNonScheduleText(normalizeWhitespace(bodyText));
-}
-
-async function getVisibleMonthLabel(page: Page): Promise<string | null> {
-    const label = await page.getByText(MONTH_LABEL_REGEX).first().textContent().catch(() => null);
-    return label ? normalizeWhitespace(label) : null;
-}
-
-function parseYearMonthFromLabel(label: string | null): YearMonth | null {
-    if (!label) {
-        return null;
-    }
-
-    const match = normalizeWhitespace(label).match(/(\d{4})\s*年\s*(\d{1,2})\s*月/);
-    if (!match) {
-        return null;
-    }
-
-    const year = Number.parseInt(match[1], 10);
-    const month = Number.parseInt(match[2], 10);
-    if (!Number.isFinite(year) || !Number.isFinite(month) || month < 1 || month > 12) {
-        return null;
-    }
-
-    return { year, month };
-}
-
-function addOneMonth(value: YearMonth): YearMonth {
-    if (value.month === 12) {
-        return { year: value.year + 1, month: 1 };
-    }
-    return { year: value.year, month: value.month + 1 };
-}
-
-function isSameYearMonth(a: YearMonth | null, b: YearMonth | null): boolean {
-    return !!a && !!b && a.year === b.year && a.month === b.month;
-}
-
-function compareYearMonth(a: YearMonth | null, b: YearMonth | null): number {
-    if (!a || !b) {
-        return 0;
-    }
-    if (a.year !== b.year) {
-        return a.year - b.year;
-    }
-    return a.month - b.month;
-}
+type YearMonth = { year: number; month: number };
 
 function getTaipeiTodayYearMonth(): YearMonth {
     const formatter = new Intl.DateTimeFormat("en-CA", {
         timeZone: "Asia/Taipei",
         year: "numeric",
-        month: "numeric"
+        month: "numeric",
     });
     const parts = formatter.formatToParts(new Date());
-    const year = Number.parseInt(parts.find((part) => part.type === "year")?.value ?? "0", 10);
-    const month = Number.parseInt(parts.find((part) => part.type === "month")?.value ?? "0", 10);
+    const year = parseInt(parts.find((p) => p.type === "year")?.value ?? "0", 10);
+    const month = parseInt(parts.find((p) => p.type === "month")?.value ?? "0", 10);
     return { year, month };
 }
 
-async function readDatePickerYearMonth(page: Page): Promise<YearMonth | null> {
-    const label = await page.locator(DATE_PICKER_VALUE_SELECTOR).first().textContent().catch(() => null);
-    return parseYearMonthFromLabel(label);
+function addOneMonth(ym: YearMonth): YearMonth {
+    return ym.month === 12 ? { year: ym.year + 1, month: 1 } : { year: ym.year, month: ym.month + 1 };
 }
 
-async function waitForDatePickerYearMonth(
-    page: Page,
-    predicate: (value: YearMonth | null) => boolean,
-    timeoutMs = 12000
-): Promise<boolean> {
-    const startedAt = Date.now();
-    while (Date.now() - startedAt < timeoutMs) {
-        const current = await readDatePickerYearMonth(page);
-        if (predicate(current)) {
-            return true;
+// Format a YearMonth as the string shown in the month <el-select> dropdown,
+// e.g. { year: 2026, month: 8 } → "2026年08月"
+function formatMonthLabel(ym: YearMonth): string {
+    return `${ym.year}年${String(ym.month).padStart(2, "0")}月`;
+}
+
+// ─── Schedule tabs locator helper ─────────────────────────────────────────────
+
+// The modal contains two sets of <el-tabs>: one for pricing, one for the
+// schedule.  The schedule section is the one that contains the .calendar grid.
+function getScheduleTabsLocator(page: Page): Locator {
+    return page.locator(".el-tabs").filter({ has: page.locator(CALENDAR_SELECTOR) });
+}
+
+// ─── Calendar grid extraction ─────────────────────────────────────────────────
+
+// Reads the currently visible month's .calendar grid and returns the schedule
+// as a single normalised string in the format:
+//   "M/D HH:MM | <status>"  (one slot per entry, space-separated)
+//
+// <status> is either the renter's name (booked) or text containing "停止租借"
+// (not available / expired).  This format is directly compatible with
+// scheduleParser.parseSlotsForDate().
+async function extractCalendarScheduleText(page: Page): Promise<string> {
+    const lines = await page.evaluate((calendarSel: string) => {
+        const modal = document.querySelector(".el-dialog.app-dialog");
+        const calendar = modal?.querySelector(calendarSel) as HTMLElement | null;
+        if (!calendar) return [] as string[];
+
+        const children = [...calendar.children] as HTMLElement[];
+        if (children.length < 2) return [] as string[];
+
+        // First child = sticky column with time labels.
+        // children[0].children[0] = empty header placeholder.
+        // children[0].children[1..N] = "08:00", "09:00", ..., "21:00"
+        const timeLabels = [...children[0].children].map((c) => c.textContent?.trim() ?? "");
+
+        const result: string[] = [];
+
+        // Remaining children are date columns (one per day in the month view).
+        for (let colIdx = 1; colIdx < children.length; colIdx++) {
+            const col = children[colIdx];
+            const cells = [...col.children] as HTMLElement[];
+            if (!cells.length) continue;
+
+            // cells[0] = date header, e.g. "2026/7/1 (三)"
+            const dateHeader = cells[0]?.textContent?.trim() ?? "";
+            const mdMatch = dateHeader.match(/\d{4}\/(\d{1,2})\/(\d{1,2})/);
+            if (!mdMatch) continue;
+            const md = `${mdMatch[1]}/${mdMatch[2]}`; // "7/1"
+
+            // cells[1..N] = time-slot cells (aligned with timeLabels[1..N])
+            for (let rowIdx = 1; rowIdx < cells.length; rowIdx++) {
+                const time = timeLabels[rowIdx];
+                if (!time || !/^\d{1,2}:\d{2}$/.test(time)) continue;
+
+                const raw = cells[rowIdx]?.textContent?.trim() ?? "";
+                const status = raw || "停止租借";
+                result.push(`${md} ${time} | ${status}`);
+            }
         }
-        await page.waitForTimeout(200);
-    }
-    return false;
+
+        return result;
+    }, CALENDAR_SELECTOR);
+
+    // Join with a space so that after normaliseWhitespace() the text is a
+    // single long line — exactly the format the existing parser expects.
+    return normalizeWhitespace(lines.join(" "));
 }
 
-async function waitForPageSettle(page: Page): Promise<void> {
-    await waitForDatePickupLoadingDone(page);
-    await page.waitForLoadState("networkidle", { timeout: 8000 }).catch(() => { });
-    await waitForDatePickupLoadingDone(page);
+// ─── Month navigation ─────────────────────────────────────────────────────────
+
+async function navigateToTodayMonth(page: Page): Promise<void> {
+    const scheduleTabs = getScheduleTabsLocator(page);
+    const todayBtn = scheduleTabs.locator("button").filter({ hasText: TODAY_BUTTON_TEXT }).first();
+    const visible = await todayBtn.isVisible().catch(() => false);
+    if (visible) {
+        await todayBtn.click({ timeout: 5000 }).catch(() => { });
+        await page.waitForTimeout(400);
+    }
+}
+
+// Opens the month <el-select> dropdown and clicks the option whose text equals
+// targetLabel (e.g. "2026年08月").  Returns false if the option isn't found.
+async function selectMonthFromDropdown(page: Page, targetLabel: string): Promise<boolean> {
+    const scheduleTabs = getScheduleTabsLocator(page);
+    const wrapper = scheduleTabs.locator(MONTH_SELECT_WRAPPER_SELECTOR).first();
+
+    await wrapper.click({ timeout: 5000 }).catch(() => { });
     await page.waitForTimeout(300);
-}
 
-async function waitForDatePickupLoadingDone(page: Page, timeoutMs = 12000): Promise<void> {
-    await page
-        .waitForFunction(
-            ({ selector }) => {
-                const loading = document.querySelector(selector) as HTMLElement | null;
-                if (!loading) {
-                    return true;
-                }
+    // ElementPlus renders the dropdown list as a teleported element outside the
+    // modal, so we search the full page for the target option text.
+    const targetOption = page.locator(MONTH_OPTION_SELECTOR).filter({ hasText: targetLabel });
 
-                const style = window.getComputedStyle(loading);
-                const hidden =
-                    style.display === "none" ||
-                    style.visibility === "hidden" ||
-                    style.opacity === "0" ||
-                    loading.offsetParent === null;
-
-                return hidden || !loading.classList.contains("Open");
-            },
-            { selector: DATE_PICKUP_LOADING_SELECTOR },
-            { timeout: timeoutMs }
-        )
-        .catch(() => { });
-}
-
-async function waitForCalendarControlsReady(page: Page): Promise<void> {
-    await page.locator(DATE_PICKER_VALUE_SELECTOR).first().waitFor({ state: "visible", timeout: 12000 }).catch(() => { });
-    await waitForPageSettle(page);
-}
-
-async function clickWithRetry(page: Page, locator: Locator, maxAttempts = BUTTON_CLICK_MAX_ATTEMPTS): Promise<boolean> {
-    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-        const clicked = await locator
-            .first()
-            .click({ timeout: 5000 })
-            .then(() => true)
-            .catch(() => false);
-
-        if (clicked) {
-            return true;
-        }
-
-        await waitForPageSettle(page);
-    }
-
-    return false;
-}
-
-async function moveToPreviousMonth(page: Page): Promise<boolean> {
-    const previousButton = page.locator(PREVIOUS_MONTH_BUTTON_SELECTOR);
-    if (!(await isActionable(previousButton))) {
+    const found = (await targetOption.count().catch(() => 0)) > 0;
+    if (!found) {
+        await page.keyboard.press("Escape");
         return false;
     }
 
-    return clickWithRetry(page, previousButton, 1);
-}
-
-async function recoverMonthStateForNextMonth(page: Page, expectedNextMonth: YearMonth): Promise<void> {
-    const currentValue = await readDatePickerYearMonth(page);
-    const compareToExpected = compareYearMonth(currentValue, expectedNextMonth);
-
-    // If drifted to a later month (e.g. next-next month), step back once first.
-    if (compareToExpected > 0) {
-        await moveToPreviousMonth(page);
-        const afterPrevious = await readDatePickerYearMonth(page);
-        if (isSameYearMonth(afterPrevious, expectedNextMonth)) {
-            return;
-        }
-    }
-
-    // Reset to today if page state is still not what we expect.
-    await resetToToday(page);
-}
-
-async function isActionable(locator: Locator): Promise<boolean> {
-    const target = locator.first();
-    const count = await target.count();
-
-    if (count === 0) {
-        return false;
-    }
-
-    const disabled = await target.isDisabled().catch(() => false);
-    return !disabled;
-}
-
-async function waitForMonthLabel(
-    page: Page,
-    predicate: (currentLabel: string | null) => boolean
-): Promise<void> {
-    await page
-        .waitForFunction(
-            ({ regexSource }) => {
-                const bodyText = document.body?.innerText ?? "";
-                const match = bodyText.match(new RegExp(regexSource));
-                return match ? match[0].replace(/\s+/g, " ").trim() : null;
-            },
-            { regexSource: MONTH_LABEL_REGEX.source },
-            { timeout: 15000 }
-        )
-        .catch(() => null);
-
-    const startedAt = Date.now();
-    while (Date.now() - startedAt < 15000) {
-        const currentLabel = await getVisibleMonthLabel(page);
-        if (predicate(currentLabel)) {
-            break;
-        }
-        await page.waitForTimeout(250);
-    }
-
-    await page.waitForLoadState("networkidle", { timeout: 15000 }).catch(() => { });
+    await targetOption.first().click({ timeout: 5000 });
     await page.waitForTimeout(500);
+    await page.waitForLoadState("networkidle", { timeout: 8000 }).catch(() => { });
+    return true;
 }
 
-async function restoreCurrentMonthView(page: Page, currentMonthLabel: string | null): Promise<void> {
-    const todayButton = page.locator(TODAY_BUTTON_SELECTOR);
-    if (await isActionable(todayButton)) {
-        await clickWithRetry(page, todayButton, 1);
-        await waitForMonthLabel(page, (label) => !currentMonthLabel || label === currentMonthLabel);
-        return;
-    }
+// ─── Per-court extraction ─────────────────────────────────────────────────────
 
-    const previousMonthButton = page.locator(PREVIOUS_MONTH_BUTTON_SELECTOR);
-    if (await isActionable(previousMonthButton)) {
-        await clickWithRetry(page, previousMonthButton, 1);
-        await waitForMonthLabel(page, (label) => !currentMonthLabel || label === currentMonthLabel);
-    }
-}
+// After a court tab is already selected, this resets to today's month, reads
+// the schedule, optionally navigates to the next month and reads again, then
+// resets back to today.
+async function extractScheduleForCourtTab(page: Page, includeNextMonth: boolean): Promise<string> {
+    await navigateToTodayMonth(page);
+    await page.waitForTimeout(300);
 
-async function resetToToday(page: Page): Promise<void> {
-    const expectedToday = getTaipeiTodayYearMonth();
-    const todayButton = page.locator(TODAY_BUTTON_SELECTOR);
-    if (!(await isActionable(todayButton))) {
-        return;
-    }
+    const currentMonthText = await extractCalendarScheduleText(page);
 
-    for (let attempt = 1; attempt <= BUTTON_CLICK_MAX_ATTEMPTS; attempt++) {
-        const clicked = await clickWithRetry(page, todayButton, 1);
-        if (!clicked) {
-            continue;
-        }
-
-        const ok = await waitForDatePickerYearMonth(
-            page,
-            (value) => isSameYearMonth(value, expectedToday),
-            9000
-        );
-        if (ok) {
-            return;
-        }
-
-        await waitForPageSettle(page);
-    }
-}
-
-async function extractScheduleTextAcrossMonthBoundary(page: Page): Promise<string> {
-    await resetToToday(page);
-    await waitForCalendarControlsReady(page);
-    const currentMonthText = await extractScheduleText(page);
-    const nextMonthButton = page.locator(NEXT_MONTH_BUTTON_SELECTOR);
-
-    if (!(await isActionable(nextMonthButton))) {
+    if (!includeNextMonth) {
         return currentMonthText;
     }
 
-    const currentMonthLabel = await getVisibleMonthLabel(page);
-    // const pickerMonth = await readDatePickerYearMonth(page);
-    // const expectedNextMonth = addOneMonth(pickerMonth ?? getTaipeiTodayYearMonth());
-    const expectedNextMonth = addOneMonth(getTaipeiTodayYearMonth());
-    let nextMonthText = "";
-    let shouldRestoreMonth = false;
+    const nextMonthLabel = formatMonthLabel(addOneMonth(getTaipeiTodayYearMonth()));
+    const navigated = await selectMonthFromDropdown(page, nextMonthLabel);
 
-    try {
-        let nextMonthReady = false;
-        for (let attempt = 1; attempt <= BUTTON_CLICK_MAX_ATTEMPTS; attempt++) {
-            const clicked = await clickWithRetry(page, nextMonthButton, 1);
-            if (!clicked) {
-                await recoverMonthStateForNextMonth(page, expectedNextMonth);
-                continue;
-            }
-
-            nextMonthReady = await waitForDatePickerYearMonth(
-                page,
-                (value) => isSameYearMonth(value, expectedNextMonth),
-                9000
-            );
-            if (nextMonthReady) {
-                break;
-            }
-
-            await recoverMonthStateForNextMonth(page, expectedNextMonth);
-            await waitForPageSettle(page);
-        }
-
-        if (!nextMonthReady) {
-            return currentMonthText;
-        }
-        await waitForMonthLabel(page, (label) => label !== currentMonthLabel);
-
-        const nextMonthLabel = await getVisibleMonthLabel(page);
-        shouldRestoreMonth = nextMonthLabel !== currentMonthLabel;
-        nextMonthText = await extractScheduleText(page);
-    } finally {
-        if (shouldRestoreMonth) {
-            await restoreCurrentMonthView(page, currentMonthLabel);
-        }
+    if (!navigated) {
+        return currentMonthText;
     }
+
+    const nextMonthText = await extractCalendarScheduleText(page);
+
+    // Restore to today's month so the next court tab starts from today.
+    await navigateToTodayMonth(page);
 
     return combineScheduleTexts([currentMonthText, nextMonthText]);
 }
 
-async function extractScheduleTextForWindow(page: Page, includeNextMonth: boolean): Promise<string> {
-    if (!includeNextMonth) {
-        return extractScheduleText(page);
-    }
+// ─── Venue name ───────────────────────────────────────────────────────────────
 
-    return extractScheduleTextAcrossMonthBoundary(page);
+function extractVenueName(rawText: string): string {
+    const normalized = normalizeWhitespace(rawText);
+    return normalized || "未知場地";
 }
 
-function extractVenueName(rawHeading: string): string {
-    const normalized = normalizeWhitespace(rawHeading);
-    if (!normalized) {
-        return "未知場地";
-    }
-
-    // Split mixed title into "中文 / English" by first Latin character.
-    const firstLatinIdx = normalized.search(/[A-Za-z]/);
-    if (firstLatinIdx <= 0) {
-        return normalized;
-    }
-
-    const zhName = normalizeWhitespace(normalized.slice(0, firstLatinIdx));
-    const enName = normalizeWhitespace(normalized.slice(firstLatinIdx));
-    if (!zhName || !enName) {
-        return normalized;
-    }
-
-    return `${zhName} / (${enName})`;
-}
+// ─── Main public API ──────────────────────────────────────────────────────────
 
 export async function fetchAllCourtsData(
     url: string,
@@ -429,78 +242,77 @@ export async function fetchAllCourtsData(
 
     try {
         const page = await browser.newPage();
+
+        // ── 1. Load venue listing page ────────────────────────────────────────
         await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
         await page.waitForLoadState("networkidle", { timeout: 60000 });
         await page.waitForTimeout(1500);
 
-        const rawHeading = await page.locator("div.MainTitleTxt").first().innerText().catch(() => "");
-        const fallbackHeading = await page.locator("h1").first().innerText().catch(() => "");
-        const venueName = extractVenueName(rawHeading || fallbackHeading);
+        // Venue/park name (e.g. "百齡河濱公園(社子岸)")
+        const rawHeading = await page.locator("h1").first().innerText().catch(() => "");
+        const venueName = extractVenueName(rawHeading);
 
-        // Locate all court tab links (e.g. "網球場5(社子岸) Court 5")
-        const courtTabs = page.locator("a").filter({ hasText: /網球場\d+/ });
-        const tabCount = await courtTabs.count();
+        // ── 2. Click the tennis court group card to open the detail modal ─────
+        // The card header div contains the group name "網球場(社子岸)".
+        // We use exact text matching to avoid clicking sub-court items such as
+        // "網球場5(社子岸)" or the unrelated "網球場A(社子岸)" group.
+        const venueCard = page.locator("div.font-bold").getByText("網球場(社子岸)", { exact: true }).first();
+        await venueCard.click();
 
-        // Fallback: no tabs found, return body text as a single unknown court
+        // ── 3. Wait for the full-screen detail modal ──────────────────────────
+        const modal = page.locator(MODAL_SELECTOR);
+        await modal.waitFor({ state: "visible", timeout: 15000 });
+        await page.waitForLoadState("networkidle", { timeout: 10000 }).catch(() => { });
+        await page.waitForTimeout(600);
+
+        // ── 4. Locate the schedule tabs section inside the modal ──────────────
+        const scheduleTabs = getScheduleTabsLocator(page);
+        await scheduleTabs.waitFor({ state: "visible", timeout: 10000 });
+
+        const courtTabItems = scheduleTabs.locator(COURT_TAB_SELECTOR);
+        const tabCount = await courtTabItems.count();
+
+        // ── 5. Fallback: no tabs found ────────────────────────────────────────
         if (tabCount === 0) {
-            const scheduleText = await extractScheduleTextForWindow(page, includeNextMonth);
+            const scheduleText = await extractCalendarScheduleText(page);
             return {
                 venueName,
-                courtsData: [{ courtName: "網球場", scheduleText }]
+                courtsData: [{ courtName: "網球場", scheduleText }],
             };
         }
 
+        // ── 6. Iterate over court tabs ────────────────────────────────────────
         const results: CourtPageData[] = [];
 
         for (let i = 0; i < tabCount; i++) {
-            // Re-locate tabs each iteration to avoid stale element handles
-            const tab = page.locator("a").filter({ hasText: /網球場\d+/ }).nth(i);
-            const tabText = (await tab.innerText()).trim();
+            // Re-locate each iteration to avoid stale element references.
+            const tab = scheduleTabs.locator(COURT_TAB_SELECTOR).nth(i);
+            const tabText = normalizeWhitespace(await tab.innerText().catch(() => ""));
 
-            // Extract short name: "網球場5"
+            // Use short name "網球場5" extracted from "網球場5(社子岸)"
             const nameMatch = tabText.match(/網球場\d+/);
             const courtName = nameMatch ? nameMatch[0] : tabText;
 
             await tab.click();
-            await page.waitForLoadState("networkidle", { timeout: 15000 }).catch(() => { });
-            await page.waitForTimeout(800);
-            await waitForCalendarControlsReady(page);
+            await page.waitForLoadState("networkidle", { timeout: 10000 }).catch(() => { });
+            await page.waitForTimeout(500);
 
-            // When reading next-month data, reset month first so "next month" is always based on today.
-            if (includeNextMonth) {
-                await resetToToday(page);
-            }
-
-            const scheduleText = await extractScheduleTextForWindow(page, includeNextMonth);
+            const scheduleText = await extractScheduleForCourtTab(page, includeNextMonth);
             results.push({ courtName, scheduleText });
         }
 
-        return {
-            venueName,
-            courtsData: results
-        };
+        return { venueName, courtsData: results };
     } finally {
         await browser.close();
     }
 }
 
-// Kept for direct single-page text usage if needed
+// Kept for direct single-page text usage if needed.
 export async function fetchVenuePageText(
     url: string,
     headless: boolean,
     options: VenueScrapeOptions = {}
 ): Promise<string> {
-    const includeNextMonth = options.includeNextMonth ?? false;
-  const browser = await chromium.launch({ headless });
-
-  try {
-    const page = await browser.newPage();
-    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
-      await page.waitForLoadState("networkidle", { timeout: 60000 });
-    await page.waitForTimeout(1500);
-
-      return await extractScheduleTextForWindow(page, includeNextMonth);
-  } finally {
-    await browser.close();
-  }
+    const result = await fetchAllCourtsData(url, headless, options);
+    return result.courtsData.map((c) => c.scheduleText).join("\n");
 }

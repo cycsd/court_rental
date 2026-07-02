@@ -41,7 +41,7 @@ jobs:
       - name: Build runtime .env
         run: |
           cat > .env <<EOF
-          VENUE_URL=https://vbs.sports.taipei/venues/?K=1042#Schedule
+          VENUE_URL=https://vbs.sports.gov.taipei/venues/1036?sports=%E7%B6%B2%E7%90%83
           TIMEZONE=Asia/Taipei
           WETNESS_PROFILE=balanced
           WETNESS_LOOKBACK_HOURS=7
