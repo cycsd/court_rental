@@ -1,0 +1,3760 @@
+{
+  "venueName": "百齡河濱公園(社子岸)",
+  "venueUrl": "https://vbs.sports.gov.taipei/venues/1036?sports=%E7%B6%B2%E7%90%83",
+  "checkedAt": "2026-09-27T02:46:57.412+08:00",
+  "timezone": "Asia/Taipei",
+  "dateRange": {
+    "startDate": "2026-09-27",
+    "endDate": "2026-10-03",
+    "days": [
+      "2026-09-27",
+      "2026-09-28",
+      "2026-09-29",
+      "2026-09-30",
+      "2026-10-01",
+      "2026-10-02",
+      "2026-10-03"
+    ]
+  },
+  "courts": [
+    "網球場5",
+    "網球場6",
+    "網球場7"
+  ],
+  "totalSlots": 294,
+  "rentedSlots": 98,
+  "slots": [
+    {
+      "date": "2026-09-27",
+      "court": "網球場5",
+      "time": "08:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場5",
+      "time": "09:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場5",
+      "time": "10:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場5",
+      "time": "11:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場5",
+      "time": "12:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場5",
+      "time": "13:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場5",
+      "time": "14:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場5",
+      "time": "15:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場5",
+      "time": "16:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場5",
+      "time": "17:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場5",
+      "time": "18:00",
+      "rawStatus": "葳葳比賽",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場5",
+      "time": "19:00",
+      "rawStatus": "葳葳比賽",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場5",
+      "time": "20:00",
+      "rawStatus": "網球小班",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場5",
+      "time": "21:00",
+      "rawStatus": "網球小班",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場5",
+      "time": "08:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場5",
+      "time": "09:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場5",
+      "time": "10:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場5",
+      "time": "11:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場5",
+      "time": "12:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場5",
+      "time": "13:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場5",
+      "time": "14:00",
+      "rawStatus": "網球自主訓練",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場5",
+      "time": "15:00",
+      "rawStatus": "網球自主訓練",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場5",
+      "time": "16:00",
+      "rawStatus": "Xplus",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場5",
+      "time": "17:00",
+      "rawStatus": "Xp",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場5",
+      "time": "18:00",
+      "rawStatus": "Xp",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場5",
+      "time": "19:00",
+      "rawStatus": "Xp",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場5",
+      "time": "20:00",
+      "rawStatus": "格蘭帝網球",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場5",
+      "time": "21:00",
+      "rawStatus": "網球",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場5",
+      "time": "08:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場5",
+      "time": "09:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場5",
+      "time": "10:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場5",
+      "time": "11:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場5",
+      "time": "12:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場5",
+      "time": "13:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場5",
+      "time": "14:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場5",
+      "time": "15:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場5",
+      "time": "16:00",
+      "rawStatus": "Xplus",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場5",
+      "time": "17:00",
+      "rawStatus": "X網球X",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場5",
+      "time": "18:00",
+      "rawStatus": "Xplus",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場5",
+      "time": "19:00",
+      "rawStatus": "Xplus",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場5",
+      "time": "20:00",
+      "rawStatus": "網球冒險村",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場5",
+      "time": "21:00",
+      "rawStatus": "GD M",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場5",
+      "time": "08:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場5",
+      "time": "09:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場5",
+      "time": "10:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場5",
+      "time": "11:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場5",
+      "time": "12:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場5",
+      "time": "13:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場5",
+      "time": "14:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場5",
+      "time": "15:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場5",
+      "time": "16:00",
+      "rawStatus": "X網球X",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場5",
+      "time": "17:00",
+      "rawStatus": "TL",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場5",
+      "time": "18:00",
+      "rawStatus": "TL",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場5",
+      "time": "19:00",
+      "rawStatus": "TL",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場5",
+      "time": "20:00",
+      "rawStatus": "breakpoint網球教學",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場5",
+      "time": "21:00",
+      "rawStatus": "TL",
+      "isRented": true
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場5",
+      "time": "08:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場5",
+      "time": "09:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場5",
+      "time": "10:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場5",
+      "time": "11:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場5",
+      "time": "12:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場5",
+      "time": "13:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場5",
+      "time": "14:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場5",
+      "time": "15:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場5",
+      "time": "16:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場5",
+      "time": "17:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場5",
+      "time": "18:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場5",
+      "time": "19:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場5",
+      "time": "20:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場5",
+      "time": "21:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場5",
+      "time": "08:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場5",
+      "time": "09:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場5",
+      "time": "10:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場5",
+      "time": "11:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場5",
+      "time": "12:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場5",
+      "time": "13:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場5",
+      "time": "14:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場5",
+      "time": "15:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場5",
+      "time": "16:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場5",
+      "time": "17:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場5",
+      "time": "18:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場5",
+      "time": "19:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場5",
+      "time": "20:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場5",
+      "time": "21:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場5",
+      "time": "08:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場5",
+      "time": "09:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場5",
+      "time": "10:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場5",
+      "time": "11:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場5",
+      "time": "12:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場5",
+      "time": "13:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場5",
+      "time": "14:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場5",
+      "time": "15:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場5",
+      "time": "16:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場5",
+      "time": "17:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場5",
+      "time": "18:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場5",
+      "time": "19:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場5",
+      "time": "20:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場5",
+      "time": "21:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場6",
+      "time": "08:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場6",
+      "time": "09:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場6",
+      "time": "10:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場6",
+      "time": "11:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場6",
+      "time": "12:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場6",
+      "time": "13:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場6",
+      "time": "14:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場6",
+      "time": "15:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場6",
+      "time": "16:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場6",
+      "time": "17:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場6",
+      "time": "18:00",
+      "rawStatus": "葳葳比賽",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場6",
+      "time": "19:00",
+      "rawStatus": "葳葳比賽",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場6",
+      "time": "20:00",
+      "rawStatus": "Pe",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場6",
+      "time": "21:00",
+      "rawStatus": "Pe",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場6",
+      "time": "08:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場6",
+      "time": "09:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場6",
+      "time": "10:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場6",
+      "time": "11:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場6",
+      "time": "12:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場6",
+      "time": "13:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場6",
+      "time": "14:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場6",
+      "time": "15:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場6",
+      "time": "16:00",
+      "rawStatus": "X網球",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場6",
+      "time": "17:00",
+      "rawStatus": "Xplus",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場6",
+      "time": "18:00",
+      "rawStatus": "Xp",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場6",
+      "time": "19:00",
+      "rawStatus": "歡樂網球",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場6",
+      "time": "20:00",
+      "rawStatus": "GD",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場6",
+      "time": "21:00",
+      "rawStatus": "GD",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場6",
+      "time": "08:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場6",
+      "time": "09:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場6",
+      "time": "10:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場6",
+      "time": "11:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場6",
+      "time": "12:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場6",
+      "time": "13:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場6",
+      "time": "14:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場6",
+      "time": "15:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場6",
+      "time": "16:00",
+      "rawStatus": "X網球X",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場6",
+      "time": "17:00",
+      "rawStatus": "Xplus",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場6",
+      "time": "18:00",
+      "rawStatus": "X網球",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場6",
+      "time": "19:00",
+      "rawStatus": "breakpoint 網球教學",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場6",
+      "time": "20:00",
+      "rawStatus": "GD M",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場6",
+      "time": "21:00",
+      "rawStatus": "台灣網球協會訓練",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場6",
+      "time": "08:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場6",
+      "time": "09:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場6",
+      "time": "10:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場6",
+      "time": "11:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場6",
+      "time": "12:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場6",
+      "time": "13:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場6",
+      "time": "14:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場6",
+      "time": "15:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場6",
+      "time": "16:00",
+      "rawStatus": "Xplus",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場6",
+      "time": "17:00",
+      "rawStatus": "TL",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場6",
+      "time": "18:00",
+      "rawStatus": "Xplus",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場6",
+      "time": "19:00",
+      "rawStatus": "KOF網球隊",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場6",
+      "time": "20:00",
+      "rawStatus": "TL",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場6",
+      "time": "21:00",
+      "rawStatus": "GD",
+      "isRented": true
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場6",
+      "time": "08:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場6",
+      "time": "09:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場6",
+      "time": "10:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場6",
+      "time": "11:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場6",
+      "time": "12:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場6",
+      "time": "13:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場6",
+      "time": "14:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場6",
+      "time": "15:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場6",
+      "time": "16:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場6",
+      "time": "17:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場6",
+      "time": "18:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場6",
+      "time": "19:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場6",
+      "time": "20:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場6",
+      "time": "21:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場6",
+      "time": "08:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場6",
+      "time": "09:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場6",
+      "time": "10:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場6",
+      "time": "11:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場6",
+      "time": "12:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場6",
+      "time": "13:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場6",
+      "time": "14:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場6",
+      "time": "15:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場6",
+      "time": "16:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場6",
+      "time": "17:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場6",
+      "time": "18:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場6",
+      "time": "19:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場6",
+      "time": "20:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場6",
+      "time": "21:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場6",
+      "time": "08:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場6",
+      "time": "09:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場6",
+      "time": "10:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場6",
+      "time": "11:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場6",
+      "time": "12:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場6",
+      "time": "13:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場6",
+      "time": "14:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場6",
+      "time": "15:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場6",
+      "time": "16:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場6",
+      "time": "17:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場6",
+      "time": "18:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場6",
+      "time": "19:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場6",
+      "time": "20:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場6",
+      "time": "21:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場7",
+      "time": "08:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場7",
+      "time": "09:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場7",
+      "time": "10:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場7",
+      "time": "11:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場7",
+      "time": "12:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場7",
+      "time": "13:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場7",
+      "time": "14:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場7",
+      "time": "15:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場7",
+      "time": "16:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場7",
+      "time": "17:00",
+      "rawStatus": "認養日",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場7",
+      "time": "18:00",
+      "rawStatus": "xp",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場7",
+      "time": "19:00",
+      "rawStatus": "xp",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場7",
+      "time": "20:00",
+      "rawStatus": "XX",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-27",
+      "court": "網球場7",
+      "time": "21:00",
+      "rawStatus": "XX",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場7",
+      "time": "08:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場7",
+      "time": "09:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場7",
+      "time": "10:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場7",
+      "time": "11:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場7",
+      "time": "12:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場7",
+      "time": "13:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場7",
+      "time": "14:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場7",
+      "time": "15:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場7",
+      "time": "16:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場7",
+      "time": "17:00",
+      "rawStatus": "xp",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場7",
+      "time": "18:00",
+      "rawStatus": "xp",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場7",
+      "time": "19:00",
+      "rawStatus": "好好網球隊",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場7",
+      "time": "20:00",
+      "rawStatus": "好好網球隊",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-28",
+      "court": "網球場7",
+      "time": "21:00",
+      "rawStatus": "網球球感練習",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場7",
+      "time": "08:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場7",
+      "time": "09:00",
+      "rawStatus": "吳",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場7",
+      "time": "10:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場7",
+      "time": "11:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場7",
+      "time": "12:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場7",
+      "time": "13:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場7",
+      "time": "14:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場7",
+      "time": "15:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場7",
+      "time": "16:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場7",
+      "time": "17:00",
+      "rawStatus": "Xplus",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場7",
+      "time": "18:00",
+      "rawStatus": "Xplus",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場7",
+      "time": "19:00",
+      "rawStatus": "X網球",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場7",
+      "time": "20:00",
+      "rawStatus": "網球冒險村",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-29",
+      "court": "網球場7",
+      "time": "21:00",
+      "rawStatus": "GD W",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場7",
+      "time": "08:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場7",
+      "time": "09:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場7",
+      "time": "10:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場7",
+      "time": "11:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場7",
+      "time": "12:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場7",
+      "time": "13:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場7",
+      "time": "14:00",
+      "rawStatus": "已過期停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場7",
+      "time": "15:00",
+      "rawStatus": "Trender Tennis",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場7",
+      "time": "16:00",
+      "rawStatus": "Xplus",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場7",
+      "time": "17:00",
+      "rawStatus": "X網球",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場7",
+      "time": "18:00",
+      "rawStatus": "TL",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場7",
+      "time": "19:00",
+      "rawStatus": "Xplus",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場7",
+      "time": "20:00",
+      "rawStatus": "TL",
+      "isRented": true
+    },
+    {
+      "date": "2026-09-30",
+      "court": "網球場7",
+      "time": "21:00",
+      "rawStatus": "TL",
+      "isRented": true
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場7",
+      "time": "08:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場7",
+      "time": "09:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場7",
+      "time": "10:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場7",
+      "time": "11:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場7",
+      "time": "12:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場7",
+      "time": "13:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場7",
+      "time": "14:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場7",
+      "time": "15:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場7",
+      "time": "16:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場7",
+      "time": "17:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場7",
+      "time": "18:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場7",
+      "time": "19:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場7",
+      "time": "20:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-01",
+      "court": "網球場7",
+      "time": "21:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場7",
+      "time": "08:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場7",
+      "time": "09:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場7",
+      "time": "10:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場7",
+      "time": "11:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場7",
+      "time": "12:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場7",
+      "time": "13:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場7",
+      "time": "14:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場7",
+      "time": "15:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場7",
+      "time": "16:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場7",
+      "time": "17:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場7",
+      "time": "18:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場7",
+      "time": "19:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場7",
+      "time": "20:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-02",
+      "court": "網球場7",
+      "time": "21:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場7",
+      "time": "08:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場7",
+      "time": "09:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場7",
+      "time": "10:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場7",
+      "time": "11:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場7",
+      "time": "12:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場7",
+      "time": "13:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場7",
+      "time": "14:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場7",
+      "time": "15:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場7",
+      "time": "16:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場7",
+      "time": "17:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場7",
+      "time": "18:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場7",
+      "time": "19:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場7",
+      "time": "20:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    },
+    {
+      "date": "2026-10-03",
+      "court": "網球場7",
+      "time": "21:00",
+      "rawStatus": "停止租借",
+      "isRented": false
+    }
+  ],
+  "timeSummary": [
+    {
+      "time": "08:00",
+      "date": "2026-09-27",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "晴朗",
+      "temperatureC": 27.3,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "09:00",
+      "date": "2026-09-27",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "晴朗",
+      "temperatureC": 29.2,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "10:00",
+      "date": "2026-09-27",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "晴朗",
+      "temperatureC": 31.1,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "11:00",
+      "date": "2026-09-27",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "晴朗",
+      "temperatureC": 32.4,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "12:00",
+      "date": "2026-09-27",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "晴朗",
+      "temperatureC": 32.8,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "13:00",
+      "date": "2026-09-27",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "晴朗",
+      "temperatureC": 32.8,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "14:00",
+      "date": "2026-09-27",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "晴朗",
+      "temperatureC": 32.7,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "15:00",
+      "date": "2026-09-27",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "晴朗",
+      "temperatureC": 32.4,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "16:00",
+      "date": "2026-09-27",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "晴朗",
+      "temperatureC": 31.7,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "17:00",
+      "date": "2026-09-27",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "晴朗",
+      "temperatureC": 30.4,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "18:00",
+      "date": "2026-09-27",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "晴朗",
+      "temperatureC": 28.1,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "19:00",
+      "date": "2026-09-27",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "晴朗",
+      "temperatureC": 27.1,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "20:00",
+      "date": "2026-09-27",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "晴朗",
+      "temperatureC": 26.6,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "21:00",
+      "date": "2026-09-27",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "晴朗",
+      "temperatureC": 26.3,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "08:00",
+      "date": "2026-09-28",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "晴朗",
+      "temperatureC": 27.2,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "09:00",
+      "date": "2026-09-28",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "晴朗",
+      "temperatureC": 29.5,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "10:00",
+      "date": "2026-09-28",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "晴朗",
+      "temperatureC": 31.6,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "11:00",
+      "date": "2026-09-28",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "晴朗",
+      "temperatureC": 33,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "12:00",
+      "date": "2026-09-28",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "晴朗",
+      "temperatureC": 33.6,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "13:00",
+      "date": "2026-09-28",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "晴朗",
+      "temperatureC": 33.8,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "14:00",
+      "date": "2026-09-28",
+      "availableCourts": [
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [
+        "網球場5"
+      ],
+      "total": 3,
+      "available": 2,
+      "weatherText": "晴朗",
+      "temperatureC": 33.5,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "15:00",
+      "date": "2026-09-28",
+      "availableCourts": [
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [
+        "網球場5"
+      ],
+      "total": 3,
+      "available": 2,
+      "weatherText": "晴朗",
+      "temperatureC": 32.9,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "16:00",
+      "date": "2026-09-28",
+      "availableCourts": [
+        "網球場7"
+      ],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6"
+      ],
+      "total": 3,
+      "available": 1,
+      "weatherText": "晴朗",
+      "temperatureC": 32,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "17:00",
+      "date": "2026-09-28",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "晴朗",
+      "temperatureC": 30.8,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "18:00",
+      "date": "2026-09-28",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "晴朗",
+      "temperatureC": 28.7,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "19:00",
+      "date": "2026-09-28",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "晴朗",
+      "temperatureC": 27.7,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "20:00",
+      "date": "2026-09-28",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "晴朗",
+      "temperatureC": 27,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "21:00",
+      "date": "2026-09-28",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "晴朗",
+      "temperatureC": 26.4,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "08:00",
+      "date": "2026-09-29",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "晴朗",
+      "temperatureC": 27.2,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "09:00",
+      "date": "2026-09-29",
+      "availableCourts": [
+        "網球場5",
+        "網球場6"
+      ],
+      "unavailableCourts": [
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 2,
+      "weatherText": "晴朗",
+      "temperatureC": 29.1,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "10:00",
+      "date": "2026-09-29",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "晴朗",
+      "temperatureC": 31,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "11:00",
+      "date": "2026-09-29",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "晴朗",
+      "temperatureC": 32.4,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "12:00",
+      "date": "2026-09-29",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "晴朗",
+      "temperatureC": 33.4,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "13:00",
+      "date": "2026-09-29",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "晴朗",
+      "temperatureC": 33.8,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "14:00",
+      "date": "2026-09-29",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "晴朗",
+      "temperatureC": 33.6,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "15:00",
+      "date": "2026-09-29",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "晴朗",
+      "temperatureC": 34.1,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "16:00",
+      "date": "2026-09-29",
+      "availableCourts": [
+        "網球場7"
+      ],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6"
+      ],
+      "total": 3,
+      "available": 1,
+      "weatherText": "晴朗",
+      "temperatureC": 33.1,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "17:00",
+      "date": "2026-09-29",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "晴朗",
+      "temperatureC": 31.6,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "18:00",
+      "date": "2026-09-29",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "晴朗",
+      "temperatureC": 29.6,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "19:00",
+      "date": "2026-09-29",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "晴朗",
+      "temperatureC": 28.4,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "20:00",
+      "date": "2026-09-29",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "晴朗",
+      "temperatureC": 27.1,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "21:00",
+      "date": "2026-09-29",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "晴朗",
+      "temperatureC": 27,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "08:00",
+      "date": "2026-09-30",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "晴朗",
+      "temperatureC": 27.6,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "09:00",
+      "date": "2026-09-30",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "晴朗",
+      "temperatureC": 29,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "10:00",
+      "date": "2026-09-30",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "大致晴",
+      "temperatureC": 31.6,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "11:00",
+      "date": "2026-09-30",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "大致晴",
+      "temperatureC": 33.6,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "12:00",
+      "date": "2026-09-30",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "局部多雲",
+      "temperatureC": 34.5,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "13:00",
+      "date": "2026-09-30",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "局部多雲",
+      "temperatureC": 34.7,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "14:00",
+      "date": "2026-09-30",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "局部多雲",
+      "temperatureC": 32.8,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "15:00",
+      "date": "2026-09-30",
+      "availableCourts": [
+        "網球場5",
+        "網球場6"
+      ],
+      "unavailableCourts": [
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 2,
+      "weatherText": "局部多雲",
+      "temperatureC": 33.6,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "16:00",
+      "date": "2026-09-30",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "大致晴",
+      "temperatureC": 32.3,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "17:00",
+      "date": "2026-09-30",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "大致晴",
+      "temperatureC": 31,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "18:00",
+      "date": "2026-09-30",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "大致晴",
+      "temperatureC": 29.8,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "19:00",
+      "date": "2026-09-30",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "晴朗",
+      "temperatureC": 28.7,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "20:00",
+      "date": "2026-09-30",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "晴朗",
+      "temperatureC": 27,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "21:00",
+      "date": "2026-09-30",
+      "availableCourts": [],
+      "unavailableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "total": 3,
+      "available": 0,
+      "weatherText": "晴朗",
+      "temperatureC": 26.8,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "08:00",
+      "date": "2026-10-01",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "晴朗",
+      "temperatureC": 27.6,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "09:00",
+      "date": "2026-10-01",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "晴朗",
+      "temperatureC": 30,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "10:00",
+      "date": "2026-10-01",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "晴朗",
+      "temperatureC": 32.3,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "11:00",
+      "date": "2026-10-01",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "大致晴",
+      "temperatureC": 33.7,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "12:00",
+      "date": "2026-10-01",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 33.7,
+      "precipitationMm": 0.34,
+      "wetScore": 0.15766666666666668,
+      "isWetted": false
+    },
+    {
+      "time": "13:00",
+      "date": "2026-10-01",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 32.7,
+      "precipitationMm": 0.54,
+      "wetScore": 0.33972300000000005,
+      "isWetted": false
+    },
+    {
+      "time": "14:00",
+      "date": "2026-10-01",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 31.6,
+      "precipitationMm": 0,
+      "wetScore": 0.309548372,
+      "isWetted": false
+    },
+    {
+      "time": "15:00",
+      "date": "2026-10-01",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 30.3,
+      "precipitationMm": 0.73,
+      "wetScore": 0.5216857517106667,
+      "isWetted": true
+    },
+    {
+      "time": "16:00",
+      "date": "2026-10-01",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 28.9,
+      "precipitationMm": 0.72,
+      "wetScore": 0.6906534296031372,
+      "isWetted": true
+    },
+    {
+      "time": "17:00",
+      "date": "2026-10-01",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 27.7,
+      "precipitationMm": 0.66,
+      "wetScore": 0.8135947039713192,
+      "isWetted": true
+    },
+    {
+      "time": "18:00",
+      "date": "2026-10-01",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "大致晴",
+      "temperatureC": 26.9,
+      "precipitationMm": 0,
+      "wetScore": 0.6598253049207398,
+      "isWetted": true
+    },
+    {
+      "time": "19:00",
+      "date": "2026-10-01",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "大致晴",
+      "temperatureC": 26.4,
+      "precipitationMm": 0,
+      "wetScore": 0.5384174488153237,
+      "isWetted": true
+    },
+    {
+      "time": "20:00",
+      "date": "2026-10-01",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "局部多雲",
+      "temperatureC": 26.2,
+      "precipitationMm": 0,
+      "wetScore": 0.44042547313093483,
+      "isWetted": true
+    },
+    {
+      "time": "21:00",
+      "date": "2026-10-01",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "局部多雲",
+      "temperatureC": 25.5,
+      "precipitationMm": 0,
+      "wetScore": 0.3633510153330212,
+      "isWetted": true
+    },
+    {
+      "time": "08:00",
+      "date": "2026-10-02",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 28.4,
+      "precipitationMm": 0,
+      "wetScore": 0.16405088,
+      "isWetted": false
+    },
+    {
+      "time": "09:00",
+      "date": "2026-10-02",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 25.7,
+      "precipitationMm": 0.14,
+      "wetScore": 0.22934720757333332,
+      "isWetted": false
+    },
+    {
+      "time": "10:00",
+      "date": "2026-10-02",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 26.5,
+      "precipitationMm": 0.22,
+      "wetScore": 0.30658464083893333,
+      "isWetted": false
+    },
+    {
+      "time": "11:00",
+      "date": "2026-10-02",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 27.1,
+      "precipitationMm": 0.3,
+      "wetScore": 0.39302697443869705,
+      "isWetted": true
+    },
+    {
+      "time": "12:00",
+      "date": "2026-10-02",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 27.2,
+      "precipitationMm": 0.41,
+      "wetScore": 0.4973991286798006,
+      "isWetted": true
+    },
+    {
+      "time": "13:00",
+      "date": "2026-10-02",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 27,
+      "precipitationMm": 0.53,
+      "wetScore": 0.6207266275639718,
+      "isWetted": true
+    },
+    {
+      "time": "14:00",
+      "date": "2026-10-02",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 31.4,
+      "precipitationMm": 0,
+      "wetScore": 0.5254765967140024,
+      "isWetted": true
+    },
+    {
+      "time": "15:00",
+      "date": "2026-10-02",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 31.5,
+      "precipitationMm": 0.56,
+      "wetScore": 0.6293229298195451,
+      "isWetted": true
+    },
+    {
+      "time": "16:00",
+      "date": "2026-10-02",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 30.6,
+      "precipitationMm": 0.49,
+      "wetScore": 0.6922626143469945,
+      "isWetted": true
+    },
+    {
+      "time": "17:00",
+      "date": "2026-10-02",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 29.4,
+      "precipitationMm": 0.42,
+      "wetScore": 0.7271184148767378,
+      "isWetted": true
+    },
+    {
+      "time": "18:00",
+      "date": "2026-10-02",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 28.1,
+      "precipitationMm": 0.36,
+      "wetScore": 0.7449676134865135,
+      "isWetted": true
+    },
+    {
+      "time": "19:00",
+      "date": "2026-10-02",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 27,
+      "precipitationMm": 0.31,
+      "wetScore": 0.7515904335907426,
+      "isWetted": true
+    },
+    {
+      "time": "20:00",
+      "date": "2026-10-02",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 26.1,
+      "precipitationMm": 0,
+      "wetScore": 0.6655525651108182,
+      "isWetted": true
+    },
+    {
+      "time": "21:00",
+      "date": "2026-10-02",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "晴朗",
+      "temperatureC": 25.5,
+      "precipitationMm": 0,
+      "wetScore": 0.5490808662164249,
+      "isWetted": true
+    },
+    {
+      "time": "08:00",
+      "date": "2026-10-03",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "晴朗",
+      "temperatureC": 27.9,
+      "precipitationMm": 0,
+      "wetScore": 0,
+      "isWetted": false
+    },
+    {
+      "time": "09:00",
+      "date": "2026-10-03",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 28.4,
+      "precipitationMm": 0.16,
+      "wetScore": 0.10066666666666667,
+      "isWetted": false
+    },
+    {
+      "time": "10:00",
+      "date": "2026-10-03",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 29.2,
+      "precipitationMm": 0.24,
+      "wetScore": 0.20532533333333333,
+      "isWetted": false
+    },
+    {
+      "time": "11:00",
+      "date": "2026-10-03",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 30,
+      "precipitationMm": 0.31,
+      "wetScore": 0.3083204266666667,
+      "isWetted": false
+    },
+    {
+      "time": "12:00",
+      "date": "2026-10-03",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 30.6,
+      "precipitationMm": 0.38,
+      "wetScore": 0.40897334357333337,
+      "isWetted": true
+    },
+    {
+      "time": "13:00",
+      "date": "2026-10-03",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 31,
+      "precipitationMm": 0.46,
+      "wetScore": 0.5105761412181333,
+      "isWetted": true
+    },
+    {
+      "time": "14:00",
+      "date": "2026-10-03",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 30.6,
+      "precipitationMm": 0,
+      "wetScore": 0.4451859333028352,
+      "isWetted": true
+    },
+    {
+      "time": "15:00",
+      "date": "2026-10-03",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 30.8,
+      "precipitationMm": 0.55,
+      "wetScore": 0.5678502071764555,
+      "isWetted": true
+    },
+    {
+      "time": "16:00",
+      "date": "2026-10-03",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 30,
+      "precipitationMm": 0.58,
+      "wetScore": 0.6765898282643019,
+      "isWetted": true
+    },
+    {
+      "time": "17:00",
+      "date": "2026-10-03",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 29.1,
+      "precipitationMm": 0.59,
+      "wetScore": 0.7706627078338675,
+      "isWetted": true
+    },
+    {
+      "time": "18:00",
+      "date": "2026-10-03",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 28,
+      "precipitationMm": 0.59,
+      "wetScore": 0.8533634996004273,
+      "isWetted": true
+    },
+    {
+      "time": "19:00",
+      "date": "2026-10-03",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 27.1,
+      "precipitationMm": 0.58,
+      "wetScore": 0.9240377378434124,
+      "isWetted": true
+    },
+    {
+      "time": "20:00",
+      "date": "2026-10-03",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "毛毛雨",
+      "temperatureC": 26,
+      "precipitationMm": 0,
+      "wetScore": 0.8077109450315982,
+      "isWetted": true
+    },
+    {
+      "time": "21:00",
+      "date": "2026-10-03",
+      "availableCourts": [
+        "網球場5",
+        "網球場6",
+        "網球場7"
+      ],
+      "unavailableCourts": [],
+      "total": 3,
+      "available": 3,
+      "weatherText": "晴朗",
+      "temperatureC": 25.9,
+      "precipitationMm": 0,
+      "wetScore": 0.6631306858709421,
+      "isWetted": true
+    }
+  ]
+}
